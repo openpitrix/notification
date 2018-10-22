@@ -1,7 +1,7 @@
 package main
 
 import (
-	"notificationService/apigateway"
+	"notification/pkg/apigateway"
 )
 
 func main() {

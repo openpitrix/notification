@@ -1,0 +1,186 @@
+// Copyright 2015 gRPC authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.openpitrix.nf";
+option java_outer_classname = "notificationProto";
+
+//package nf;
+package pb;
+
+import "google/api/annotations.proto";
+import "google/protobuf/wrappers.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+
+// The nf service definition.
+service notification {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply) {
+      option (google.api.http) = {
+        post: "/v1/hello"
+        body: "*"
+    };
+  }
+
+
+  rpc CreateNfWUserFilter (CreateNfWUserFilterRequest) returns (CreateNfResponse) {
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create nf with User Filter"
+		};
+      option (google.api.http) = {
+			post: "/v1/nf/CreateNfWUserFilter"
+			body: "*"
+		};
+  }
+
+  rpc CreateNfWAppFilter (CreateNfWAppFilterRequest) returns (CreateNfResponse) {
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create nf with App Filter"
+		};
+      option (google.api.http) = {
+			post: "/v1/nf/CreateNfWAppFilter"
+			body: "*"
+		};
+  }
+
+  rpc CreateNfWaddrs (CreateNfWaddrsRequest) returns (CreateNfResponse) {
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create nf with addrs(email addrs, phone numbers)"
+		};
+      option (google.api.http) = {
+			post: "/v1/nf/CreateNfWaddrs"
+			body: "*"
+		};
+  }
+
+
+  rpc DescribeNfs (DescribeNfsRequest) returns (DescribeNfsResponse) {
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe Notification with filter"
+		};
+      option (google.api.http) = {
+			//get: "/v1/nf/DescribeNfs"
+			post: "/v1/nf/DescribeNfs"
+			body: "*"
+		};
+  }
+
+  rpc DescribeUserNfs (DescribeNfsRequest) returns (DescribeNfsResponse) {
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe User Notification with filter"
+		};
+      option (google.api.http) = {
+			//get: "/v1/nf/DescribeUserNfs"
+			post: "/v1/nf/DescribeUserNfs"
+			body: "*"
+		};
+  }
+
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
+
+message CreateNfWUserFilterRequest {
+    google.protobuf.StringValue nf_post_type = 1;
+    google.protobuf.StringValue notify_type = 2;
+    google.protobuf.StringValue title = 3;
+    google.protobuf.StringValue content = 4;
+    google.protobuf.StringValue short_content = 5;
+    google.protobuf.StringValue expired_days = 6;
+    google.protobuf.StringValue owner = 7;
+    google.protobuf.StringValue user_filter_type = 8;
+    google.protobuf.StringValue user_filter_condition = 9;
+    google.protobuf.StringValue userid_list = 10;
+}
+
+
+message CreateNfResponse {
+    //google.protobuf.StringValue nf_post_id = 1;
+    string message = 1;
+}
+
+
+message CreateNfWAppFilterRequest {
+    google.protobuf.StringValue nf_post_type = 1;
+    google.protobuf.StringValue notify_type = 2;
+    google.protobuf.StringValue title = 3;
+    google.protobuf.StringValue content = 4;
+    google.protobuf.StringValue short_content = 5;
+    google.protobuf.StringValue expired_days = 6;
+    google.protobuf.StringValue owner = 7;
+    google.protobuf.StringValue app_id = 8;
+    google.protobuf.StringValue app_versions = 9;
+    google.protobuf.StringValue cluster_status = 10;
+}
+
+
+message CreateNfWaddrsRequest {
+    google.protobuf.StringValue nf_post_type = 1;
+    google.protobuf.StringValue notify_type = 2;
+    google.protobuf.StringValue title = 3;
+    google.protobuf.StringValue content = 4;
+    google.protobuf.StringValue short_content = 5;
+    google.protobuf.StringValue expired_days = 6;
+    google.protobuf.StringValue owner = 7;
+    google.protobuf.StringValue addrs_str = 8;
+}
+
+
+message DescribeNfsRequest {
+    repeated string nf_post_type = 1;
+    repeated string notify_type = 2;
+    google.protobuf.StringValue title = 3;
+    google.protobuf.StringValue content = 4;
+    google.protobuf.StringValue owner = 5;
+    google.protobuf.StringValue userids_str = 6;
+    repeated string status = 7;
+    uint32 limit = 8; // NOTE: uint64 marshal to json will convert to string
+    uint32 offset = 9;
+    google.protobuf.StringValue sort_key = 10;
+}
+
+
+message DescribeNfsResponse {
+    string message = 1;
+    //uint32 total_count = 1;
+    //repeated Notification nf_set = 2;
+}
+
+
+message Notification {
+    google.protobuf.StringValue nf_post_id = 1;
+    google.protobuf.StringValue nf_post_type = 2;
+    google.protobuf.StringValue notify_type = 3;
+    google.protobuf.StringValue title = 4;
+    google.protobuf.StringValue content = 5;
+    google.protobuf.StringValue short_content = 6;
+    google.protobuf.StringValue expired_days = 7;
+    google.protobuf.StringValue status = 8;
+    google.protobuf.Timestamp create_time = 9;
+    google.protobuf.Timestamp status_time = 10;
+    google.protobuf.StringValue owner = 11;
+}
+

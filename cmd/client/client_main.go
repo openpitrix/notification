@@ -1,7 +1,7 @@
 package main
 
 import (
-	"notificationService/apiserver/nf/client"
+	"notification/pkg/client"
 )
 
 func main() {

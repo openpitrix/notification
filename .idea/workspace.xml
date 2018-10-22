@@ -1,0 +1,984 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="609c9523-80ea-4224-8f51-cfd27cb27a2f" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/pkg/models/notification.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/models/notification.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/services/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/services/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/services/nf/interface.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/services/nf/interface.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/services/nf/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/services/nf/service.go" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="-1725007883">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="27" />
+          <entry key="project.open.time.0" value="7" />
+          <entry key="project.open.time.1" value="5" />
+          <entry key="project.open.time.10" value="2" />
+          <entry key="project.open.time.11" value="2" />
+          <entry key="project.open.time.12" value="1" />
+          <entry key="project.open.time.15" value="1" />
+          <entry key="project.open.time.2" value="1" />
+          <entry key="project.open.time.24" value="1" />
+          <entry key="project.open.time.4" value="2" />
+          <entry key="project.open.time.5" value="1" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.open.time.7" value="1" />
+          <entry key="project.open.time.8" value="2" />
+          <entry key="project.open.time.9" value="4" />
+          <entry key="project.opened" value="31" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="Makefile" value="7" />
+          <entry key="cmd" value="1" />
+          <entry key="erm" value="1" />
+          <entry key="go" value="420" />
+          <entry key="hello" value="1" />
+          <entry key="html" value="4" />
+          <entry key="java" value="1" />
+          <entry key="jq" value="1" />
+          <entry key="json" value="13" />
+          <entry key="md" value="67" />
+          <entry key="proto" value="46" />
+          <entry key="sh" value="8" />
+          <entry key="sql" value="13" />
+          <entry key="txt" value="1" />
+          <entry key="xml" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Bash" value="8" />
+          <entry key="Go" value="420" />
+          <entry key="HTML" value="4" />
+          <entry key="JSON" value="13" />
+          <entry key="Markdown" value="61" />
+          <entry key="PLAIN_TEXT" value="24" />
+          <entry key="PROTO" value="41" />
+          <entry key="SQL" value="13" />
+          <entry key="XML" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="Makefile" value="10" />
+          <entry key="cmd" value="5" />
+          <entry key="go" value="2051" />
+          <entry key="html" value="6" />
+          <entry key="md" value="2374" />
+          <entry key="proto" value="614" />
+          <entry key="sh" value="22" />
+          <entry key="sql" value="21" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Bash" value="22" />
+          <entry key="Go" value="2051" />
+          <entry key="HTML" value="6" />
+          <entry key="Markdown" value="2374" />
+          <entry key="PLAIN_TEXT" value="17" />
+          <entry key="PROTO" value="612" />
+          <entry key="SQL" value="21" />
+        </counts>
+      </usages-collector>
+    </session>
+    <session id="1628964453">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="5" />
+          <entry key="project.open.time.1" value="4" />
+          <entry key="project.open.time.15" value="2" />
+          <entry key="project.open.time.3" value="1" />
+          <entry key="project.open.time.4" value="1" />
+          <entry key="project.open.time.5" value="1" />
+          <entry key="project.open.time.7" value="1" />
+          <entry key="project.opened" value="10" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="go" value="310" />
+          <entry key="json" value="4" />
+          <entry key="md" value="16" />
+          <entry key="proto" value="6" />
+          <entry key="s" value="1" />
+          <entry key="sh" value="7" />
+          <entry key="sql" value="2" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="Bash" value="7" />
+          <entry key="Go" value="310" />
+          <entry key="JSON" value="4" />
+          <entry key="Markdown" value="16" />
+          <entry key="PROTO" value="6" />
+          <entry key="SQL" value="2" />
+          <entry key="x86 Plan9 Assembly" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="go" value="4327" />
+          <entry key="md" value="93" />
+          <entry key="proto" value="5" />
+          <entry key="sh" value="129" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="Bash" value="129" />
+          <entry key="Go" value="4327" />
+          <entry key="Markdown" value="93" />
+          <entry key="PROTO" value="5" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.go.postfix.template.usages.trigger">
+        <counts>
+          <entry key=".p" value="1" />
+          <entry key=".println" value="1" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pkg/services/nf/service.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="187">
+              <caret line="20" column="14" lean-forward="true" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
+              <folding>
+                <element signature="e#12#82#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pkg/models/model.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="6" column="9" selection-start-line="6" selection-start-column="9" selection-end-line="6" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pkg/services/handler.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="218">
+              <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+              <folding>
+                <element signature="e#18#86#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pkg/models/notification.go">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="269">
+              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>Client</find>
+      <find>Greeter</find>
+      <find>helloworld</find>
+      <find>SayHello</find>
+      <find>Endpoint</find>
+      <find>HandlerFromEndpoint</find>
+      <find>greeterEndpoint</find>
+      <find>DescribeNfsRequest</find>
+      <find>CreateNfWUserFilterRequest</find>
+      <find>CreateNfResponse</find>
+      <find>type</find>
+      <find>CreateNfWAppFilter</find>
+      <find>HelloReply</find>
+      <find>CreateNfWUserFilter</find>
+      <find>RegisterNotificationServer</find>
+      <find>CreateNfWaddrs</find>
+      <find>DescribeUserNfs</find>
+      <find>GreeterClient</find>
+      <find>nf_mock</find>
+      <find>NewMockNotificationClient</find>
+      <find>notificationService</find>
+      <find>swagger</find>
+      <find>Asset</find>
+      <find>api-server</find>
+      <find>api_gateway</find>
+      <find>DB</find>
+      <find>MysqlDB</find>
+      <find>fmt</find>
+      <find>service</find>
+      <find>Nfservices</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>nfmock</replace>
+      <replace>Notification</replace>
+      <replace>NotificationClient</replace>
+      <replace>SendMail</replace>
+      <replace>notification</replace>
+      <replace>api_server</replace>
+      <replace>apigateway</replace>
+      <replace>MysqlDB</replace>
+      <replace>Db</replace>
+      <replace>nfservice</replace>
+      <replace>service</replace>
+    </replaceStrings>
+  </component>
+  <component name="GOROOT" path="C:\Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/pkgTest/hellomock/company_test.go" />
+        <option value="$PROJECT_DIR$/cmd/server2/server_main.go" />
+        <option value="$PROJECT_DIR$/apiserver/config/config_test.go" />
+        <option value="$PROJECT_DIR$/apiserver/nf/service2/server.go" />
+        <option value="$PROJECT_DIR$/apiserver/config/config.go" />
+        <option value="$PROJECT_DIR$/apiserver/util/db/db.go" />
+        <option value="$PROJECT_DIR$/apiserver/nf/service2/service.go" />
+        <option value="$PROJECT_DIR$/apiserver/nf/service/handler.go" />
+        <option value="$PROJECT_DIR$/apiserver/nf/service/server.go" />
+        <option value="$PROJECT_DIR$/apiserver/nf/service/interface.go" />
+        <option value="$PROJECT_DIR$/apiserver/nf/models/notification.go" />
+        <option value="$PROJECT_DIR$/apiserver/nf/service/service_test.go" />
+        <option value="$PROJECT_DIR$/apiserver/nf/service/service.go" />
+        <option value="$PROJECT_DIR$/pkg/nf/service/handler.go" />
+        <option value="$PROJECT_DIR$/api/notification.proto" />
+        <option value="$PROJECT_DIR$/Docs/genGofromProto.sh" />
+        <option value="$PROJECT_DIR$/pkg/client/client.go" />
+        <option value="$PROJECT_DIR$/pkg/apigateway/apigateway.go" />
+        <option value="$PROJECT_DIR$/pkg/service/service_test.go" />
+        <option value="$PROJECT_DIR$/pkg/config/config_test.go" />
+        <option value="$PROJECT_DIR$/pkg/service/notification/handler.go" />
+        <option value="$PROJECT_DIR$/pkg/service/handler.go" />
+        <option value="$PROJECT_DIR$/pkg/pb/notification.swagger.go" />
+        <option value="$PROJECT_DIR$/Docs/nf-dev-setup.md" />
+        <option value="$PROJECT_DIR$/pkg/models/Product.go" />
+        <option value="$PROJECT_DIR$/pkg/service/server_test.go" />
+        <option value="$PROJECT_DIR$/pkg/service/notification/service.go" />
+        <option value="$PROJECT_DIR$/pkg/service/notification/service_test.go" />
+        <option value="$PROJECT_DIR$/pkg/service/notification/interface.go" />
+        <option value="$PROJECT_DIR$/pkg/service/notification/nfservice_test.go" />
+        <option value="$PROJECT_DIR$/pkg/service/server.go" />
+        <option value="$PROJECT_DIR$/pkg/service/notification/nfservice.go" />
+        <option value="$PROJECT_DIR$/pkg/services/notification/nfservice.go" />
+        <option value="$PROJECT_DIR$/pkg/services/notification/interface.go" />
+        <option value="$PROJECT_DIR$/pkg/handlers/notification/handler.go" />
+        <option value="$PROJECT_DIR$/pkg/handlers/notification/interface.go" />
+        <option value="$PROJECT_DIR$/pkg/handlers/notification/handler_test.go" />
+        <option value="$PROJECT_DIR$/pkg/services/notification/handler.go" />
+        <option value="$PROJECT_DIR$/pkg/services/notification/server.go" />
+        <option value="$PROJECT_DIR$/pkg/services/notification/service.go" />
+        <option value="$PROJECT_DIR$/pkg/services/notification/service_test.go" />
+        <option value="$PROJECT_DIR$/pkgTest/pkgTest_gorm/grom2.go" />
+        <option value="$PROJECT_DIR$/pkg/config/config.go" />
+        <option value="$PROJECT_DIR$/cmd/server/server_main.go" />
+        <option value="$PROJECT_DIR$/pkg/services/nf/service_test.go" />
+        <option value="$PROJECT_DIR$/pkg/services/server.go" />
+        <option value="$PROJECT_DIR$/pkg/services/server_test.go" />
+        <option value="$PROJECT_DIR$/pkg/services/nf/interface.go" />
+        <option value="$PROJECT_DIR$/pkg/models/notification.go" />
+        <option value="$PROJECT_DIR$/pkg/services/nf/service.go" />
+        <option value="$PROJECT_DIR$/pkg/services/handler.go" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="105" />
+    <option name="width" value="1400" />
+    <option name="height" value="780" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State />
+          <State>
+            <id>GeneralGo</id>
+          </State>
+          <State>
+            <id>Go</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>GoInvalidCompositeLiteral</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="notification" type="b2602c69:ProjectViewProjectNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="notification" type="b2602c69:ProjectViewProjectNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+              <item name="Docs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="notification" type="b2602c69:ProjectViewProjectNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+              <item name="pkg" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="notification" type="b2602c69:ProjectViewProjectNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+              <item name="pkg" type="462c0819:PsiDirectoryNode" />
+              <item name="models" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="notification" type="b2602c69:ProjectViewProjectNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+              <item name="pkg" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="notification" type="b2602c69:ProjectViewProjectNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+              <item name="pkg" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
+              <item name="nf" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="notification" type="b2602c69:ProjectViewProjectNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+              <item name="pkgTest" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="notification" type="b2602c69:ProjectViewProjectNode" />
+              <item name="notification" type="462c0819:PsiDirectoryNode" />
+              <item name="pkgTest" type="462c0819:PsiDirectoryNode" />
+              <item name="pkgTest_gorm" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="go.gopath.indexing.explicitly.defined" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="File.Encoding" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\ASUS\go\src\notification\pkg\handlers\notification" />
+      <recent name="C:\Users\ASUS\go\src\notification\api" />
+      <recent name="C:\Users\ASUS\go\src\notification\pkg\apigateway\third_party" />
+      <recent name="C:\Users\ASUS\go\src\notification\apiserver\nf" />
+      <recent name="C:\Users\ASUS\go\src\notification\apiserver\config" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ASUS\go\src\notification\pkg\services" />
+      <recent name="C:\Users\ASUS\go\src\notification\pkg\services\notification" />
+      <recent name="C:\Users\ASUS\go\src\notification\pkg\service" />
+      <recent name="C:\Users\ASUS\go\src\notification\pkg\service\notification" />
+      <recent name="C:\Users\ASUS\go\src\notification\pkg\pb" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Go Test.TestNewServer in notification/pkg/services">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="notification" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/" />
+      <package value="notificationService" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build grom2.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="notification" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/pkgTest/pkgTest_gorm/grom2.go" />
+      <package value="notificationService" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestGetDataFromDB4Test in notification/pkg/services" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="notification" />
+      <working_directory value="$PROJECT_DIR$/pkg/services" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="notification/pkg/services" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestGetDataFromDB4Test$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestNewServer in notification/pkg/services" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="notification" />
+      <working_directory value="$PROJECT_DIR$/pkg/services" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="notification/pkg/services" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestNewServer$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestNewServices in notification/pkg/services/nf" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="notification" />
+      <working_directory value="$PROJECT_DIR$/pkg/services/nf" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="notification/pkg/services/nf" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestNewServices$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestSayHello in notification/pkg/services/nf" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="notification" />
+      <working_directory value="$PROJECT_DIR$/pkg/services/nf" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="notification/pkg/services/nf" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestSayHello$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="notification" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="DIRECTORY" />
+      <package value="notificationService" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Test.TestGetDataFromDB4Test in notification/pkg/services" />
+      <item itemvalue="Go Test.TestNewServer in notification/pkg/services" />
+      <item itemvalue="Go Build.go build grom2.go" />
+      <item itemvalue="Go Test.TestNewServices in notification/pkg/services/nf" />
+      <item itemvalue="Go Test.TestSayHello in notification/pkg/services/nf" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.TestNewServer in notification/pkg/services" />
+        <item itemvalue="Go Test.TestSayHello in notification/pkg/services/nf" />
+        <item itemvalue="Go Test.TestNewServices in notification/pkg/services/nf" />
+        <item itemvalue="Go Build.go build grom2.go" />
+        <item itemvalue="Go Test.TestGetDataFromDB4Test in notification/pkg/services" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TestHistory">
+    <history-entry file="TestNewServices_in_notification_pkg_services_nf - 2018.10.22 at 21h 09m 40s.xml">
+      <configuration name="TestNewServices in notification/pkg/services/nf" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestSayHello_in_notification_pkg_services_nf - 2018.10.22 at 21h 10m 04s.xml">
+      <configuration name="TestSayHello in notification/pkg/services/nf" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestNewServices_in_notification_pkg_services_nf - 2018.10.22 at 21h 10m 36s.xml">
+      <configuration name="TestNewServices in notification/pkg/services/nf" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestNewServices_in_notification_pkg_services_nf - 2018.10.22 at 21h 12m 46s.xml">
+      <configuration name="TestNewServices in notification/pkg/services/nf" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestNewServices_in_notification_pkg_services_nf - 2018.10.22 at 21h 13m 10s.xml">
+      <configuration name="TestNewServices in notification/pkg/services/nf" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestNewServices_in_notification_pkg_services_nf - 2018.10.22 at 21h 42m 44s.xml">
+      <configuration name="TestNewServices in notification/pkg/services/nf" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestSayHello_in_notification_pkg_services_nf - 2018.10.22 at 21h 42m 59s.xml">
+      <configuration name="TestSayHello in notification/pkg/services/nf" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestNewServer_in_notification_pkg_services - 2018.10.22 at 21h 50m 06s.xml">
+      <configuration name="TestNewServer in notification/pkg/services" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestNewServer_in_notification_pkg_services - 2018.10.22 at 21h 50m 27s.xml">
+      <configuration name="TestNewServer in notification/pkg/services" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestNewServer_in_notification_pkg_services - 2018.10.22 at 21h 51m 55s.xml">
+      <configuration name="TestNewServer in notification/pkg/services" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4992928" visible="true" weight="0.2613941" />
+      <window_info id="Structure" order="1" sideWeight="0.5007072" side_tool="true" weight="0.1266756" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3286119" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49932975" visible="true" weight="0.3512748" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49798927" weight="0.398017" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5020107" side_tool="true" weight="0.39886847" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" weight="0.3297587" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://C:/Go/src/net/smtp/smtp.go</url>
+          <line>319</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/pkgTest/pkgTest_chan/chan.go</url>
+          <line>33</line>
+          <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/pkgTest/pkgTest_chan/chan.go</url>
+          <line>30</line>
+          <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/pkgTest/helloGoProtobuf/helloTest.go</url>
+          <line>19</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/pkgTest/helloGoProtobuf/helloTest.go</url>
+          <line>29</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/pkgTest/pkgTest/test.go</url>
+          <line>5</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/pkgTest/hellomock/company.go">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkgTest/hellomock/company_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/mock/nf_mock_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="12" column="38" lean-forward="true" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/mock/mockgen/nfmock.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1224" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/util/db/db_test.go">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/apiserver/nf/service2/handler.go" />
+    <entry file="file://$PROJECT_DIR$/apiserver/nf/service2/server.go" />
+    <entry file="file://$PROJECT_DIR$/apiserver/nf/service2/service_test.go" />
+    <entry file="file://$PROJECT_DIR$/apiserver/nf/service2/service.go" />
+    <entry file="file://$PROJECT_DIR$/pkg/util/db/db.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="17" selection-start-line="15" selection-start-column="17" selection-end-line="15" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cmd/server2/server_main.go" />
+    <entry file="file://$PROJECT_DIR$/pkg/apigateway/third_party/googleapis/google/api/http.proto" />
+    <entry file="file://$PROJECT_DIR$/pkg/proto/notification.proto" />
+    <entry file="file://$PROJECT_DIR$/pkg/pb/notification.proto">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-561">
+          <caret line="21" column="10" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/client/client.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="26" column="24" selection-start-line="26" selection-start-column="24" selection-end-line="26" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/apigateway/apigateway.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="32" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/internal/race/norace.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="41" selection-start-line="41" selection-end-line="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/time/time.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="909" selection-start-line="909" selection-end-line="909" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/testing/testing.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="302">
+          <caret line="830" selection-start-line="830" selection-end-line="830" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/runtime/asm_amd64.s">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="132">
+          <caret line="1333" selection-start-line="1333" selection-end-line="1333" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/pb/notification.swagger.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-340">
+          <caret line="19" column="38" lean-forward="true" selection-end-line="363" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/nf-dev-setup.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="85">
+            <caret line="134" column="1" lean-forward="true" selection-start-line="134" selection-start-column="1" selection-end-line="134" selection-end-column="1" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/pb/notification.swagger.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="371">
+          <caret line="366" lean-forward="true" selection-start-line="366" selection-end-line="366" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/models/Product.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cmd/gateway/gateway_main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="7" column="16" lean-forward="true" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cmd/client/client_main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="17" selection-start-line="3" selection-start-column="17" selection-end-line="3" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/handlers/notification/handler_test.go" />
+    <entry file="file://$PROJECT_DIR$/pkg/handlers/notification/interface.go" />
+    <entry file="file://$PROJECT_DIR$/pkg/handlers/notification/handler.go" />
+    <entry file="file://$PROJECT_DIR$/pkg/pb/notification.pb.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="835" column="23" selection-start-line="835" selection-start-column="5" selection-end-line="835" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/genGofromProto.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="32" lean-forward="true" selection-start-line="32" selection-end-line="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/env.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Docs/common.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="408">
+            <caret line="24" column="17" lean-forward="true" selection-start-line="24" selection-start-column="17" selection-end-line="24" selection-end-column="17" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkgTest/pkgTest_gorm/grom.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="22" column="18" selection-start-line="22" selection-start-column="18" selection-end-line="22" selection-end-column="18" />
+          <folding>
+            <element signature="e#14#100#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/config/config_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cmd/server/server_main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="19" column="19" lean-forward="true" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
+          <folding>
+            <element signature="e#14#60#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/config/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-34">
+          <caret line="35" column="5" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
+          <folding>
+            <element signature="e#16#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkgTest/pkgTest_gorm/grom2.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="21" column="19" lean-forward="true" selection-start-line="21" selection-start-column="19" selection-end-line="21" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../github.com/jinzhu/gorm/main.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="62" selection-start-line="62" selection-end-line="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/sync/rwmutex.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="67" selection-start-line="67" selection-end-line="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/database/sql/sql.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="698" selection-start-line="698" selection-end-line="698" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/fmt/print.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="211" selection-start-line="211" selection-end-line="211" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Go/src/runtime/panic.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="67">
+          <caret line="685" column="17" selection-start-line="685" selection-start-column="17" selection-end-line="685" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/services/nf/service_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="16" selection-start-line="18" selection-start-column="16" selection-end-line="18" selection-end-column="16" />
+          <folding>
+            <element signature="e#12#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/services/server_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="28" lean-forward="true" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+          <folding>
+            <element signature="e#18#80#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/services/server.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="41" selection-start-line="41" selection-end-line="41" />
+          <folding>
+            <element signature="e#725#910#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/services/nf/interface.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="4" lean-forward="true" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/models/notification.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/models/model.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="9" selection-start-line="6" selection-start-column="9" selection-end-line="6" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/services/nf/service.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="20" column="14" lean-forward="true" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
+          <folding>
+            <element signature="e#12#82#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pkg/services/handler.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="218">
+          <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
+          <folding>
+            <element signature="e#18#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
