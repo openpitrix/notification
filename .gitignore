@@ -1,2 +1,5 @@
 pkgTest
 Docs
+.idea
+.settings
+.project
