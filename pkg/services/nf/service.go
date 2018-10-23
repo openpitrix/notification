@@ -15,17 +15,6 @@ type nfservice struct {
 	db           *gorm.DB
 }
 
-func (nfs *nfservice) CreateNfWaddrs(nfPostID string, nfPostType string, title string, content string, shortContent string, exporedDays int64, owner string) (error) {
-	log.Println("Test CreateNfWaddrs..")
-
-	return nil
-}
-
-func (nfs *nfservice) SayHello(str string) (string, error) {
-	log.Println("Test SayHello..")
-	return "ss",nil
-}
-
 
 // NewService initialization. db *gorm.DB
 func NewServices() (Service, error) {
@@ -82,6 +71,9 @@ func (nfs *nfservice) createDatabaseConnection() (*gorm.DB, error) {
 	db.DB().SetMaxIdleConns(10)
 	db.LogMode(nfs.cfg.DBLogMode)
 
+	 // 全局禁用表名复数
+	db.SingularTable(true)
+
 	return db, nil
 }
 
@@ -93,4 +85,53 @@ func (nfs *nfservice) GetDataFromDB4Test() () {
 	db.First(&product, 1) // 查询id为1的product
 	db.First(&product, "code = ?", "L1212") // 查询code为l1212的product
 	fmt.Println(product)
+}
+
+func (nfs *nfservice) SayHello(str string) (string, error) {
+	log.Println("Test SayHello..")
+	return "ss",nil
+}
+
+
+func (nfs *nfservice) CreateNfWaddrs(nfPostID string, nfPostType string, title string, content string, shortContent string, exporedDays int64, owner string) (error) {
+	log.Println("Test CreateNfWaddrs..")
+
+	return nil
+}
+
+
+
+func (nfs *nfservice) CreateNfWaddrs2(nf *models.NotificationCenterPost) error {
+	err := nfs.db.Create(&nf).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (nfs *nfservice) CreateNfWaddrs3(nf *models.NotificationCenterPost, job *models.Job, task *models.Task) error {
+	panic("implement me")
+	log.Print("Test CreateNfWaddrs3")
+
+	tx := nfs.db.Begin()
+	// 注意，一旦你在一个事务中，使用tx作为数据库句柄
+
+	if err := tx.Create(&nf).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Create(&job).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Create(&task).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+	return nil
 }
