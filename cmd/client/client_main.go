@@ -1,7 +1,7 @@
 package main
 
 import (
-	"notification/pkg/client"
+	"openpitrix.io/notification/pkg/client"
 )
 
 func main() {

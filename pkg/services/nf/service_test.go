@@ -2,7 +2,7 @@ package nf
 
 import (
 	"log"
-	"notification/pkg/models"
+	"openpitrix.io/notification/pkg/models"
 	"testing"
 	"time"
 )

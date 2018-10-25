@@ -1,7 +1,8 @@
 package pb
 
 const (
-	Swagger = ` {
+	Swagger = ` 
+{
   "swagger": "2.0",
   "info": {
     "title": "package nf;",
@@ -41,7 +42,7 @@ const (
           }
         ],
         "tags": [
-          "nf"
+          "notification"
         ]
       }
     },
@@ -68,7 +69,7 @@ const (
           }
         ],
         "tags": [
-          "nf"
+          "notification"
         ]
       }
     },
@@ -95,7 +96,7 @@ const (
           }
         ],
         "tags": [
-          "nf"
+          "notification"
         ]
       }
     },
@@ -122,7 +123,7 @@ const (
           }
         ],
         "tags": [
-          "nf"
+          "notification"
         ]
       }
     },
@@ -149,7 +150,7 @@ const (
           }
         ],
         "tags": [
-          "nf"
+          "notification"
         ]
       }
     },
@@ -176,7 +177,7 @@ const (
           }
         ],
         "tags": [
-          "nf"
+          "notification"
         ]
       }
     }
@@ -270,6 +271,9 @@ const (
         "notify_type": {
           "type": "string"
         },
+        "addrs_str": {
+          "type": "string"
+        },
         "title": {
           "type": "string"
         },
@@ -285,7 +289,7 @@ const (
         "owner": {
           "type": "string"
         },
-        "addrs_str": {
+        "status": {
           "type": "string"
         }
       }
@@ -364,6 +368,7 @@ const (
     }
   }
 }
+
 
 `
 )

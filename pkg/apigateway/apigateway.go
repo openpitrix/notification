@@ -10,10 +10,10 @@ import (
 	"github.com/philips/go-bindata-assetfs"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	gw "notification/pkg/pb"
+	gw "openpitrix.io/notification/pkg/pb"
 	"io"
 	"strings"
-	"notification/pkg/apigateway/pkg/ui/data/swagger"
+	"openpitrix.io/notification/pkg/apigateway/pkg/ui/data/swagger"
 
 )
 var (

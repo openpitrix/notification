@@ -1,9 +1,10 @@
 package nf
 
 import (
-	"notification/pkg/models"
-	"notification/pkg/pb"
-	"notification/pkg/util/idutil"
+	"openpitrix.io/notification/pkg/models"
+	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/notification/pkg/util/idutil"
+	"time"
 )
 
 type NfHandlerModelParser struct{
@@ -20,11 +21,16 @@ func  (parser *NfHandlerModelParser)CreateNfWaddrs(in *pb.CreateNfWaddrsRequest)
 	nf := &models.NotificationCenterPost{
 		NfPostID:        createnfPostID(),
 		NfPostType:  in.GetNfPostType().GetValue(),
+		AddrsStr:in.GetAddrsStr().GetValue(),
 		Title:  in.GetTitle().GetValue(),
 		Content:  in.GetContent().GetValue(),
 		ShortContent :  in.GetShortContent().GetValue(),
 		ExporedDays :2,
 		Owner :  in.GetOwner().GetValue(),
+		Status:"New",
+		CreatedAt:time.Now(),
+		UpdatedAt:time.Now(),
+		DeletedAt:time.Now(),
 	}
 	return nf, nil
 }

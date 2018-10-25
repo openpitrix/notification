@@ -140,12 +140,13 @@ message CreateNfWAppFilterRequest {
 message CreateNfWaddrsRequest {
     google.protobuf.StringValue nf_post_type = 1;
     google.protobuf.StringValue notify_type = 2;
-    google.protobuf.StringValue title = 3;
-    google.protobuf.StringValue content = 4;
-    google.protobuf.StringValue short_content = 5;
-    google.protobuf.StringValue expired_days = 6;
-    google.protobuf.StringValue owner = 7;
-    google.protobuf.StringValue addrs_str = 8;
+    google.protobuf.StringValue addrs_str = 3;
+    google.protobuf.StringValue title = 4;
+    google.protobuf.StringValue content = 5;
+    google.protobuf.StringValue short_content = 6;
+    google.protobuf.StringValue expired_days = 7;
+    google.protobuf.StringValue owner = 8;
+    google.protobuf.StringValue status = 9;
 }
 
 

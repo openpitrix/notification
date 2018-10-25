@@ -9,4 +9,3 @@ func TestNewServer(t *testing.T){
 	server.nfservice.SayHello("ssss")
 	server.nfservice.GetDataFromDB4Test()
 }
-

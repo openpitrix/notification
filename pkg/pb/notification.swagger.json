@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "package notification;",
+    "title": "package nf;",
     "version": "version not set"
   },
   "schemes": [
@@ -44,7 +44,7 @@
     },
     "/v1/nf/CreateNfWAppFilter": {
       "post": {
-        "summary": "create notification with App Filter",
+        "summary": "create nf with App Filter",
         "operationId": "CreateNfWAppFilter",
         "responses": {
           "200": {
@@ -71,7 +71,7 @@
     },
     "/v1/nf/CreateNfWUserFilter": {
       "post": {
-        "summary": "create notification with User Filter",
+        "summary": "create nf with User Filter",
         "operationId": "CreateNfWUserFilter",
         "responses": {
           "200": {
@@ -98,7 +98,7 @@
     },
     "/v1/nf/CreateNfWaddrs": {
       "post": {
-        "summary": "create notification with addrs(email addrs, phone numbers)",
+        "summary": "create nf with addrs(email addrs, phone numbers)",
         "operationId": "CreateNfWaddrs",
         "responses": {
           "200": {
@@ -267,6 +267,9 @@
         "notify_type": {
           "type": "string"
         },
+        "addrs_str": {
+          "type": "string"
+        },
         "title": {
           "type": "string"
         },
@@ -282,7 +285,7 @@
         "owner": {
           "type": "string"
         },
-        "addrs_str": {
+        "status": {
           "type": "string"
         }
       }

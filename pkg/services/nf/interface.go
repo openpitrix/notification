@@ -1,6 +1,6 @@
 package nf
 
-import "notification/pkg/models"
+import "openpitrix.io/notification/pkg/models"
 
 //import "nf/pkg/nf/models"
 

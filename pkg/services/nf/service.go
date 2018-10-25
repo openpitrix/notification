@@ -5,8 +5,8 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
-	"notification/pkg/config"
-	"notification/pkg/models"
+	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/models"
 )
 
 //Contains all of the logic for the User model.
@@ -23,13 +23,15 @@ func NewServices() (Service, error) {
 		nfs=&nfservice{}
 	)
 
-	log.Println("Configuring server Start...")
+	//log.Println("Configuring server Start...")
 	nfs.cfg=config.NewConfig()
-	log.Println("Configuring server End...")
+	//log.Println("Configuring server End...")
+	log.Println("NewServices:call NewServices, set nfs.cfg")
 
-	log.Println("CreateDatabaseConnection Start...")
+	//log.Println("CreateDatabaseConnection Start...")
 	nfs.db, err =nfs.createDatabaseConnection()
-	log.Println("CreateDatabaseConnection End...")
+	//log.Println("CreateDatabaseConnection End...")
+	log.Println("NewServices:call NewServices, nfs.db")
 
 	if err != nil {
 		return nil, err
@@ -88,7 +90,8 @@ func (nfs *nfservice) GetDataFromDB4Test() () {
 }
 
 func (nfs *nfservice) SayHello(str string) (string, error) {
-	log.Println("Test SayHello..")
+	log.Println("Test SayHello in service..")
+	log.Print(str)
 	return "ss",nil
 }
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"notification/pkg/apigateway"
+	"openpitrix.io/notification/pkg/apigateway"
 )
 
 func main() {

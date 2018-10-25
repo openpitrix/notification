@@ -26,8 +26,8 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
-	"notification/pkg/pb"
-	"notification/pkg/services/nf"
+	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/notification/pkg/services/nf"
 )
 
 const (
@@ -45,10 +45,9 @@ func NewServer() (*Server, error) {
 	var (
 		server = &Server{}
 	)
-	log.Println("set nfs start")
+
 	server.nfservice, _ =nf.NewServices()
-	server.nfservice.SayHello("test hj")
-	log.Println("set nfs end")
+	server.nfservice.SayHello("server: call  server.nfservice.SayHello ")
 
 	return server, nil
 }
@@ -60,7 +59,9 @@ func (s *Server) Serve() error {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	ss := grpc.NewServer()
-	pb.RegisterNotificationServer(ss, &Server{})
+	nfserver, _ :=NewServer()
+	//pb.RegisterNotificationServer(ss, &Server{})
+	pb.RegisterNotificationServer(ss,nfserver)
 	// Register reflection service on gRPC server.
 	reflection.Register(ss)
 	if err := ss.Serve(lis); err != nil {

@@ -24,7 +24,7 @@ import (
 	"time"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	pb "notification/pkg/pb"
+	pb "openpitrix.io/notification/pkg/pb"
 )
 
 const (

@@ -3,8 +3,8 @@ package services
 import (
 	"golang.org/x/net/context"
 	"log"
-	"notification/pkg/pb"
-	"notification/pkg/services/nf"
+	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/notification/pkg/services/nf"
 )
 
 
@@ -12,7 +12,10 @@ import (
 func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	log.Println("Hello,use function SayHello at server end.")
 	ss:=in.GetName();
-	s.nfservice.SayHello("hhhhhhhh:"+ss)
+	log.Println("1="+ss)
+	log.Println("2="+ss)
+
+	s.nfservice.SayHello("nf_handler:call nfservice.SayHello")
 	return &pb.HelloReply{Message: "Hello,use function SayHello at server end. " + in.Name}, nil
 }
 
@@ -35,8 +38,6 @@ func (s *Server) DescribeUserNfs(ctx context.Context, in *pb.DescribeNfsRequest)
 	log.Println("Hello,use function DescribeUserNfs at server end.")
 	return &pb.DescribeNfsResponse{Message: "Hello,use function DescribeUserNfs at server end. " }, nil
 }
-
-
 
 func (s *Server) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (*pb.CreateNfResponse, error) {
 	log.Println("Hello,use function CreateNfWaddrs at server end.")

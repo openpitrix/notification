@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"notification/pkg/services"
+	"openpitrix.io/notification/pkg/services"
 )
 
 func main() {

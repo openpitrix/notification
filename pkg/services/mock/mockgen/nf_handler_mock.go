@@ -8,7 +8,7 @@ import (
 	gomock "github.com/golang/mock/gomock"
 	context "golang.org/x/net/context"
 	grpc "google.golang.org/grpc"
-	pb "notification/pkg/pb"
+	pb "openpitrix.io/notification/pkg/pb"
 	reflect "reflect"
 )
 
