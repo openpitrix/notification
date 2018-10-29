@@ -91,6 +91,7 @@ func (s *Server) Serve() error {
 	ss := grpc.NewServer()
 	nfserver, _ :=NewServer()
 	pb.RegisterNotificationServer(ss,nfserver)
+
 	// Register reflection service on gRPC server.
 	reflection.Register(ss)
 	if err := ss.Serve(lis); err != nil {
@@ -114,7 +115,6 @@ func (s *Server) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsReques
 	s.nfhandler.CreateNfWaddrs(ctx,in)
 	return &pb.CreateNfResponse{Message: "Hello,use function CreateNfWaddrs at server end. " }, nil
 }
-
 
 func (s *Server) CreateNfWUserFilter(ctx context.Context, in *pb.CreateNfWUserFilterRequest) (*pb.CreateNfResponse, error) {
 	log.Println("Hello,use function CreateNfWUserFilter at server end.")

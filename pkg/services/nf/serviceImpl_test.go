@@ -32,6 +32,7 @@ func TestSayHello(t *testing.T) {
 	nfservice.SayHello("ssss")
 }
 
+
 func TestCreateNfWaddrs(t *testing.T) {
 	log.Println("Test CreateNfWaddrs")
 
