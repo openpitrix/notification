@@ -1,11 +1,11 @@
 #! /bin/bash
 #1.nf.pb.go
 
-cd  /root/goworkspace/src/notification/pkg/pb
+cd  /root/notification/pkg/pb
 rm notification.pb.go notification.pb.gw.go notification.swagger.json
 #nf.swagger.go
 
-cd  /root/goworkspace/src/notification/pkg/
+cd  /root/notification/pkg/
 protoc -I/usr/local/include -I. \
 -I$GOPATH/src \
 -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
@@ -28,18 +28,6 @@ protoc -I/usr/local/include -I. \
 -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway \
 --swagger_out=logtostderr=true:. \
 pb/notification.proto
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -13,13 +13,13 @@ type NfHandlerModelParser struct{
 const NfPostIDPrifix = "nf-"
 
 
-func createnfPostID() string {
+func CreatenfPostID() string {
 	return idutil.GetUuid(NfPostIDPrifix)
 }
 
 func  (parser *NfHandlerModelParser)CreateNfWaddrs(in *pb.CreateNfWaddrsRequest) (*models.NotificationCenterPost, error) {
 	nf := &models.NotificationCenterPost{
-		NfPostID:        createnfPostID(),
+		NfPostID:        CreatenfPostID(),
 		NfPostType:  in.GetNfPostType().GetValue(),
 		AddrsStr:in.GetAddrsStr().GetValue(),
 		Title:  in.GetTitle().GetValue(),

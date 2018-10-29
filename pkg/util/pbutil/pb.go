@@ -30,7 +30,7 @@ const (
 //	if n == 0 {
 //		return DefaultOffset
 //	}
-//	return db.GetOffset(uint64(n))
+//	return dbutil.GetOffset(uint64(n))
 //}
 //
 //func GetLimitFromRequest(req RequestHadLimit) uint64 {
@@ -38,7 +38,7 @@ const (
 //	if n == 0 {
 //		return DefaultLimit
 //	}
-//	return db.GetLimit(uint64(n))
+//	return dbutil.GetLimit(uint64(n))
 //}
 
 func FromProtoTimestamp(t *timestamp.Timestamp) (tt time.Time) {
