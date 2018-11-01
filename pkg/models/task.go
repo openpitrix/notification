@@ -9,8 +9,8 @@ type Task struct {
 	AddrsStr string `gorm:"column:addrs_str"`
 	TaskAction string `gorm:"column:task_action"`
 	Result string `gorm:"column:result"`
-	ErrorCode string `gorm:"column:error_code"`
-	Status int64 `gorm:"column:status"`
+	ErrorCode int64 `gorm:"column:error_code"`
+	Status string `gorm:"column:status"`
 	//NFModel
 	CreatedAt time.Time `gorm:"column:created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at"`

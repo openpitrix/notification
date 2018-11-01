@@ -54,7 +54,7 @@ func run() error {
 	mux.Handle("/", gwmux)
 	serveSwagger(mux)
 
-	log.Print("Greeter gRPC Server gateway start at port 8080...")
+	log.Print("Notification gRPC Server gateway start at port 8080...")
 	http.ListenAndServe(":8080", mux)
 	return nil
 }

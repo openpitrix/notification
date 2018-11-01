@@ -6,6 +6,7 @@ import "time"
 type NotificationCenterPost struct {
 	NfPostID string `gorm:"column:nf_post_id"`
 	NfPostType string `gorm:"column:nf_post_type"`
+	NotifyType string `gorm:"column:notify_type"`
 	AddrsStr string `gorm:"column:addrs_str"`
 	Title string `gorm:"column:title"`
 	Content string `gorm:"column:content"`

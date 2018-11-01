@@ -7,39 +7,33 @@ import (
 )
 
 type handler struct {
-	 nfservice   Service
+	nfsc Service
 }
 
 func NewHandler(nfService Service) Handler {
 	return &handler{
-		nfservice: nfService,
+		nfsc: nfService,
 	}
 }
 
-func (h * handler) SayHello(ctx context.Context, in *pb.HelloRequest) (error) {
+func (h *handler) SayHello(ctx context.Context, in *pb.HelloRequest) (error) {
 	log.Println("Step6:call h.nfservice.SayHello")
-	h.nfservice.SayHello("222")
-	return  nil
+	h.nfsc.SayHello("222")
+	return nil
 }
 
-
-func (h handler) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (error) {
+func (h *handler) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (error) {
 	log.Println("Call handlerImpl.CreateNfWaddrs")
 	var (
 		parser = &NfHandlerModelParser{}
 	)
-	nf, _ :=parser.CreateNfWaddrs(in)
+	nf, _ := parser.CreateNfWaddrs(in)
 
 	log.Print(nf.AddrsStr)
-	err:=h.nfservice.CreateNfWaddrs(nf)
+	err := h.nfsc.CreateNfWaddrs(nf)
 	if err != nil {
 		log.Println("something is wrong")
 	}
 	return nil
 }
-
-
-
-
-
 

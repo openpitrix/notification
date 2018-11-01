@@ -6,18 +6,9 @@ import (
 )
 
 func main() {
-
-	var (
-		err error
-		s   *services.Server
-	)
-
 	log.Println("Starting server...")
 
-	s, _ = services.NewServer()
-	log.Println("Serveing ...")
-
-	err = s.Serve()
+	err := services.Serve()
 	if err != nil {
 		log.Fatalln(err)
 	}

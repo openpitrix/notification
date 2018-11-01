@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"github.com/mcuadros/go-defaults"
 )
 
 
@@ -26,7 +27,11 @@ type Config struct {
 		User     string `default:"root"`
 		Password string `default:"password"`
 		DatabaseName string `default:"notification"`
-		Disable  bool   `default:"false"`
+		Disable  bool   `default:"true"`
+	}
+
+	etcd struct{
+		Endpoints string `default:"192.168.0.7:2379,192.168.0.8:2379,192.168.0.6:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"  or default:"openpitrix-etcd:2379
 	}
 }
 
@@ -35,29 +40,17 @@ type Config struct {
 // NewConfig intializes a new Config structure.
 func NewConfig() *Config {
 	log.Print("start NewConfig")
-	var (
-		cfg = &Config{
-			DBLogMode:true,
-			SessionLifeTime: time.Minute * 30,
-		}
-	)
 
-	cfg.App.AppName="Notication"
-	cfg.App.HostURL="http://192.168.0.3/"
-	cfg.App.Port=":50051"
-	cfg.App.Env="DEV"
+	//var (
+	//	cfg = &Config{
+	//		DBLogMode:true,
+	//		SessionLifeTime: time.Minute * 30,
+	//	}
+	//)
 
-	cfg.Db.Host="192.168.0.10"
-	cfg.Db.Port="13306"
-	cfg.Db.User="root"
-	cfg.Db.Password="password"
-	cfg.Db.DatabaseName="notification"
-	cfg.Db.Disable=true
+	cfg := new(Config)
 
-	log.Print("cfg.Db.DatabaseName:"+cfg.Db.DatabaseName)
-	//if err != nil {
-	//	log.Fatalln(err)
-	//}
+	defaults.SetDefaults(cfg) //<-- This set the defaults values
 	return cfg
 }
 

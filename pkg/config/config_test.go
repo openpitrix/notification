@@ -7,13 +7,14 @@ import (
 
 func TestNewConfig(t *testing.T){
 	cfg := NewConfig()
-	println("test NewConfig:"+cfg.SessionLifeTime.String())
+	println("cfg.SessionLifeTime.String():"+cfg.SessionLifeTime.String())
+	println("cfg.App.AppName:"+cfg.App.AppName)
+	println("cfg.Db.Host："+cfg.Db.Host)
 }
 
 func TestSayHello(t *testing.T){
 	cfg := NewConfig()
 	cfg.SayHello("test say hello")
-
 }
 
 
