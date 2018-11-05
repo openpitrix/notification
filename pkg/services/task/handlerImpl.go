@@ -4,6 +4,7 @@ import "log"
 
 type handler struct {
 	tasksc Service
+
 }
 
 func NewHandler(tasksc Service) Handler {
@@ -17,8 +18,8 @@ func (h *handler) ExtractTasks() (error) {
 	return nil
 }
 
-func (h *handler) HandleTasks() (error) {
-	h.tasksc.HandleTasks()
+func (h *handler) HandleTask(handlerNum string) (error) {
+	h.tasksc.HandleTask(handlerNum)
 	return nil
 }
 
@@ -26,7 +27,11 @@ func (h *handler) HandleTasks() (error) {
 func (h *handler) ServeTask() (error) {
 	log.Println("Call handlerImpl.ServeTask")
 	go h.ExtractTasks()
-	go h.HandleTasks()
+
+
+	for i := 0; i < 10; i++ {
+	go h.HandleTask("A")
+	}
 
 	return nil
 }

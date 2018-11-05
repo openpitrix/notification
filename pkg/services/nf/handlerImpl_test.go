@@ -4,9 +4,8 @@ import (
 	"golang.org/x/net/context"
 	"log"
 	notification "openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/notification/pkg/util/dbutil"
+	"openpitrix.io/notification/pkg/services/test"
 	"openpitrix.io/notification/pkg/util/pbutil"
-	"os"
 	"testing"
 	"time"
 )
@@ -14,13 +13,9 @@ import (
 func TestNewHandler(t *testing.T) {
 	log.Println("Test func NewHandler")
 
-	issucc := dbutil.GetInstance().InitDataPool()
-	if !issucc {
-		log.Println("init database pool failure...")
-		os.Exit(1)
-	}
-	db := dbutil.GetInstance().GetMysqlDB()
-	nfservice := NewService(db)
+	db := test.GetTestDB()
+	q := test.GetEtcdQueue()
+	nfservice := NewService(db,q)
 
 	handler := NewHandler(nfservice)
 
@@ -31,17 +26,13 @@ func TestNewHandler(t *testing.T) {
 	handler.SayHello(ctx, req)
 }
 
-func TestSayHello2(t *testing.T) {
+func TestSayHello4handler(t *testing.T) {
 
 	log.Println("Test func NewHandler")
 
-	issucc := dbutil.GetInstance().InitDataPool()
-	if !issucc {
-		log.Println("init database pool failure...")
-		os.Exit(1)
-	}
-	db := dbutil.GetInstance().GetMysqlDB()
-	nfservice := NewService(db)
+	db := test.GetTestDB()
+	q := test.GetEtcdQueue()
+	nfservice := NewService(db,q)
 
 	handler := NewHandler(nfservice)
 
@@ -52,17 +43,12 @@ func TestSayHello2(t *testing.T) {
 	handler.SayHello(ctx, req)
 }
 
-func TestCreateNfWaddrs2(t *testing.T) {
+func TestCreateNfWaddrs4handler(t *testing.T) {
 	log.Println("Test func NewHandler")
 
-	issucc := dbutil.GetInstance().InitDataPool()
-	if !issucc {
-		log.Println("init database pool failure...")
-		os.Exit(1)
-	}
-
-	db := dbutil.GetInstance().GetMysqlDB()
-	nfservice := NewService(db)
+	db := test.GetTestDB()
+	q := test.GetEtcdQueue()
+	nfservice := NewService(db,q)
 
 	handler := NewHandler(nfservice)
 
@@ -82,4 +68,10 @@ func TestCreateNfWaddrs2(t *testing.T) {
 	}
 
 	handler.CreateNfWaddrs(ctx, req)
+}
+
+
+func TestDescribeNfs4handler(t *testing.T) {
+
+
 }

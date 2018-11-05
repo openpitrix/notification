@@ -42,7 +42,6 @@ func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWaddrsRequest)
 		Status:       "New",
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
-		DeletedAt:    time.Now(),
 	}
 	return nf, nil
 }
@@ -67,7 +66,6 @@ func (parser *NfHandlerModelParser) GenJobfromNf(nf *models.NotificationCenterPo
 		Status:         "Ready",
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
-		DeletedAt:      time.Now(),
 	}
 	return job, nil
 }
@@ -88,7 +86,6 @@ func (parser *NfHandlerModelParser) GenTasksfromJob(job *models.Job) ([]*models.
 			Status:     "New",
 			CreatedAt:  time.Now(),
 			UpdatedAt:  time.Now(),
-			DeletedAt:  time.Now(),
 		})
 	}
 	return tasks, nil

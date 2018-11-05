@@ -1,6 +1,8 @@
 package nf
 
-import "openpitrix.io/notification/pkg/models"
+import (
+	"openpitrix.io/notification/pkg/models"
+)
 
 //import "nf/pkg/nf/models"
 
@@ -18,6 +20,8 @@ type Service interface {
 	//CreateNfWaddrs(nfPostID string, nfPostType string, title string, content string, shortContent string, exporedDays int64,owner string ) (error)
 	CreateNfWaddrs(*models.NotificationCenterPost) error
 	//CreateNfWaddrs3(nf *models.NotificationCenterPost,job *models.Job,task *models.Task) error
+
+	DescribeNfs(nfID string) (*models.NotificationCenterPost, error)
 }
 
 

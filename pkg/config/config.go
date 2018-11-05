@@ -31,7 +31,8 @@ type Config struct {
 	}
 
 	etcd struct{
-		Endpoints string `default:"192.168.0.7:2379,192.168.0.8:2379,192.168.0.6:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"  or default:"openpitrix-etcd:2379
+		//Endpoints string `default:"192.168.0.7:2379,192.168.0.8:2379,192.168.0.6:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"  or default:"openpitrix-etcd:2379
+		Endpoints string `default:"192.168.0.7:2379"`
 	}
 }
 
@@ -40,25 +41,17 @@ type Config struct {
 // NewConfig intializes a new Config structure.
 func NewConfig() *Config {
 	log.Print("start NewConfig")
-
 	//var (
 	//	cfg = &Config{
 	//		DBLogMode:true,
 	//		SessionLifeTime: time.Minute * 30,
 	//	}
 	//)
-
 	cfg := new(Config)
-
 	defaults.SetDefaults(cfg) //<-- This set the defaults values
 	return cfg
 }
 
-
-func (c *Config)SayHello(str string) (string, error) {
-	println("Hello "+str)
-	return str, nil
-}
 
 // Validate checks if the most important fields are set and are not empty
 // values.
@@ -117,6 +110,5 @@ func (c *Config) Print() {
 	log.Println("   Database Password:", c.Db.Password)
 	log.Println("   Database Database:", c.Db.DatabaseName)
 	log.Println("   Database Disable:", c.Db.Disable)
-
 	log.Println("----------------------------------")
 }

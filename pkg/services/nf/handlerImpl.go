@@ -10,6 +10,8 @@ type handler struct {
 	nfsc Service
 }
 
+
+
 func NewHandler(nfService Service) Handler {
 	return &handler{
 		nfsc: nfService,
@@ -27,13 +29,24 @@ func (h *handler) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsReque
 	var (
 		parser = &NfHandlerModelParser{}
 	)
-	nf, _ := parser.CreateNfWaddrs(in)
+	nf, err := parser.CreateNfWaddrs(in)
 
 	log.Print(nf.AddrsStr)
-	err := h.nfsc.CreateNfWaddrs(nf)
+	err = h.nfsc.CreateNfWaddrs(nf)
 	if err != nil {
 		log.Println("something is wrong")
 	}
 	return nil
 }
 
+func (h *handler) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
+	nfId:=""
+	nf,err := h.nfsc.DescribeNfs(nfId)
+	if err != nil {
+		log.Println("something is wrong")
+	}
+	if err != nil {
+		log.Println(nf)
+	}
+	return nil, nil
+}

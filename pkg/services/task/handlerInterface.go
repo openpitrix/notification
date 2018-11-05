@@ -2,7 +2,7 @@ package task
 
 type Handler interface {
 	ExtractTasks() (error)
-	HandleTasks() (error)
+	HandleTask(handlerNum string) (error)
 
 	ServeTask() (error)
 }

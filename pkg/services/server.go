@@ -111,7 +111,6 @@ func Serve() error {
 	}
 	nfserver, _ := NewServer()
 
-	//	go nfserver.nfhandler.ServeTask()
 	go nfserver.taskhandler.ServeTask()
 
 	s := grpc.NewServer()

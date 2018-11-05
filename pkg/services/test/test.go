@@ -16,6 +16,7 @@ func GetTestDB()  *gorm.DB {
 		os.Exit(1)
 	}
 	db := dbutil.GetInstance().GetMysqlDB()
+	db.LogMode(true)
 	return db
 }
 
@@ -24,7 +25,6 @@ func GetEtcdQueue()   *etcdutil.Queue {
 	endpoints := []string{"192.168.0.7:2379"}
 	prefix := "test"
 	nfetcd, err := etcdutil.Connect(endpoints, prefix)
-	log.Println(nfetcd)
 	if err != nil {
 		log.Fatal(err)
 	}

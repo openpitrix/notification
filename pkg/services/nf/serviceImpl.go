@@ -15,6 +15,8 @@ type nfService struct {
 	queue *etcdutil.Queue
 }
 
+
+
 func NewService(db *gorm.DB,q *etcdutil.Queue) Service {
 	//endpoints := []string{"192.168.0.7:2379"}
 	//prefix := "test"
@@ -62,8 +64,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost) error {
 			tx.Rollback()
 			return err
 		}
-		//emailutil.SendMail(task.AddrsStr)
-		err = sc.queue.Enqueue(task.TaskID)
+		err = sc.queue.Enqueue(task.TaskID+":"+task.AddrsStr)
 	}
 
 	tx.Commit()
@@ -77,4 +78,22 @@ func (sc *nfService) GetDataFromDB4Test() {
 	db.First(&product, 1) // 查询id为1的product
 	//db.First(&product, "code = ?", "L1212") // 查询code为l1212的product
 	fmt.Println(product)
+}
+
+func (sc *nfService) DescribeNfs(nfID string) (*models.NotificationCenterPost, error) {
+	nf := &models.NotificationCenterPost{}
+
+	err := sc.db.
+		Where("nf_post_id = ?", nfID).
+		First(nf).Error
+
+	if err != nil {
+		if err != gorm.ErrRecordNotFound {
+			return nil, err
+		}
+
+		return nil, nil
+	}
+
+	return nf, nil
 }

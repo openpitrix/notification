@@ -2,7 +2,6 @@ package models
 
 import "time"
 
-// User NotificationCenterPost.
 type NotificationCenterPost struct {
 	NfPostID string `gorm:"column:nf_post_id"`
 	NfPostType string `gorm:"column:nf_post_type"`
@@ -14,10 +13,8 @@ type NotificationCenterPost struct {
 	ExporedDays int64 `gorm:"column:expired_days"`
 	Owner string `gorm:"column:owner"`
 	Status string `gorm:"column:status"`
-	//NFModel
 	CreatedAt time.Time `gorm:"column:created_at"`
 	UpdatedAt time.Time `gorm:"column:updated_at"`
-	DeletedAt time.Time `gorm:"column:deleted_at"`
+	DeletedAt time.Time `gorm:"column:deleted_at;default:null"`
 }
-
 

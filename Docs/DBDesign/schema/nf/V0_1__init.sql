@@ -1,19 +1,17 @@
 SET SESSION FOREIGN_KEY_CHECKS=0;
 
 /* Drop Tables */
-
-DROP TABLE IF EXISTS task;
-DROP TABLE IF EXISTS job;
-DROP TABLE IF EXISTS notfication_user_filter;
-DROP TABLE IF EXISTS notification_appuser_filter;
-DROP TABLE IF EXISTS notification_center_post_user;
+DROP TABLE IF EXISTS job; 
+DROP TABLE IF EXISTS task; 
 DROP TABLE IF EXISTS notification_center_post;
 
 
+DROP TABLE IF EXISTS notfication_user_filter;
+DROP TABLE IF EXISTS notification_appuser_filter;
+DROP TABLE IF EXISTS notification_center_post_user;
 
 
-/* Create Tables */
-
+  
 CREATE TABLE job
 (
 	job_id varchar(50) NOT NULL,
@@ -32,29 +30,25 @@ CREATE TABLE job
 	status varchar(50) NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	deleted_at TIMESTAMP  DEFAULT NULL,
 	PRIMARY KEY (job_id)
 );
-
-
-CREATE TABLE notfication_user_filter
+ 
+CREATE TABLE task
 (
-	nf_post_id varchar(50) NOT NULL,
-	user_filter_type varchar(50) DEFAULT 'specified' NOT NULL,
-	user_filter_condition text NOT NULL,
-	userids_str text
+	task_id varchar(50) NOT NULL,
+	job_id varbinary(50) NOT NULL,
+	addrs_str text,
+	task_action varchar(50) DEFAULT '' NOT NULL,
+	result varchar(50),
+	error_code int(11),
+	status varchar(50),
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	deleted_at TIMESTAMP  DEFAULT NULL,
+	PRIMARY KEY (task_id)
 );
-
-
-CREATE TABLE notification_appuser_filter
-(
-	nf_post_id varchar(50) NOT NULL,
-	app_id text,
-	app_versions_str text,
-	cluster_status text
-);
-
-
+ 
 CREATE TABLE notification_center_post
 (
 	nf_post_id varchar(50) NOT NULL,
@@ -78,9 +72,28 @@ CREATE TABLE notification_center_post
 	status varchar(50) NOT NULL COMMENT '-- new / sending / finished',
 	created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	updated_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	deleted_at TIMESTAMP  DEFAULT NULL,
 	PRIMARY KEY (nf_post_id)
 );
+ 
+
+CREATE TABLE notfication_user_filter
+(
+	nf_post_id varchar(50) NOT NULL,
+	user_filter_type varchar(50) DEFAULT 'specified' NOT NULL,
+	user_filter_condition text NOT NULL,
+	userids_str text
+);
+
+
+CREATE TABLE notification_appuser_filter
+(
+	nf_post_id varchar(50) NOT NULL,
+	app_id text,
+	app_versions_str text,
+	cluster_status text
+);
+
 
 
 CREATE TABLE notification_center_post_user
@@ -92,26 +105,9 @@ CREATE TABLE notification_center_post_user
 	status varchar(50) COMMENT '已读 未读',
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	deleted_at TIMESTAMP DEFAULT   NULL,
 	PRIMARY KEY (nf_post_user_id)
 );
-
-
-CREATE TABLE task
-(
-	task_id varchar(50) NOT NULL,
-	job_id varbinary(50) NOT NULL,
-	addrs_str text,
-	task_action varchar(50) DEFAULT '' NOT NULL,
-	result varchar(50),
-	error_code int(11),
-	status varchar(50),
-	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	PRIMARY KEY (task_id)
-);
-
 
 
 /* Create Foreign Keys */

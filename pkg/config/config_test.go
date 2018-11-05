@@ -12,12 +12,6 @@ func TestNewConfig(t *testing.T){
 	println("cfg.Db.Host："+cfg.Db.Host)
 }
 
-func TestSayHello(t *testing.T){
-	cfg := NewConfig()
-	cfg.SayHello("test say hello")
-}
-
-
 func TestValidate(t *testing.T) {
 	cfg := NewConfig()
 	cfg.Validate()
