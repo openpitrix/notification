@@ -15,7 +15,7 @@ func TestNewHandler(t *testing.T) {
 
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
-	nfservice := NewService(db,q)
+	nfservice := NewService(db, q)
 
 	handler := NewHandler(nfservice)
 
@@ -32,7 +32,7 @@ func TestSayHello4handler(t *testing.T) {
 
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
-	nfservice := NewService(db,q)
+	nfservice := NewService(db, q)
 
 	handler := NewHandler(nfservice)
 
@@ -48,7 +48,7 @@ func TestCreateNfWaddrs4handler(t *testing.T) {
 
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
-	nfservice := NewService(db,q)
+	nfservice := NewService(db, q)
 
 	handler := NewHandler(nfservice)
 
@@ -70,8 +70,6 @@ func TestCreateNfWaddrs4handler(t *testing.T) {
 	handler.CreateNfWaddrs(ctx, req)
 }
 
-
 func TestDescribeNfs4handler(t *testing.T) {
-
 
 }

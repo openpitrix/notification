@@ -3,8 +3,10 @@ package nf
 import (
 	"fmt"
 	"log"
+	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/services/test"
+	"openpitrix.io/notification/pkg/util/idutil"
 	"testing"
 	"time"
 )
@@ -13,7 +15,7 @@ func TestNewService(t *testing.T) {
 	log.Println("Test NewServices")
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
-	nfservice := NewService(db,q)
+	nfservice := NewService(db, q)
 	nfservice.SayHello("ssss")
 }
 
@@ -22,7 +24,7 @@ func TestSayHello(t *testing.T) {
 
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
-	nfservice := NewService(db,q)
+	nfservice := NewService(db, q)
 	nfservice.SayHello("ssss")
 }
 
@@ -31,12 +33,13 @@ func TestCreateNfWaddrs(t *testing.T) {
 
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
-	nfservice := NewService(db,q)
+	nfservice := NewService(db, q)
 
 	nf := &models.NotificationCenterPost{
-		NfPostID:     CreatenfPostID(),
+		NfPostID:     idutil.GetUuid(constants.NfPostIDPrifix),
 		NfPostType:   "Email",
-		AddrsStr:     "johuo@yunify.com;danma@yunify.com",
+		//AddrsStr:     "johuo@yunify.com;danma@yunify.com",
+		AddrsStr:     "johuo@yunify.com;johuo@yunify.com;johuo@yunify.com;johuo@yunify.com;johuo@yunify.com;huojiao2006@163.com;huojiao2006@163.com;huojiao2006@163.com;huojiao2006@163.com;huojiao2006@163.com",
 		Title:        "Title Test2",
 		Content:      "Content2",
 		ShortContent: "ShortContent2",
@@ -52,14 +55,13 @@ func TestCreateNfWaddrs(t *testing.T) {
 	}
 }
 
-
-func TestDescribeNfs(t *testing.T){
-	nfID:="nf-KV4oN8ROJqPE"
+func TestDescribeNfs(t *testing.T) {
+	nfID := "nf-KV4oN8ROJqPE"
 	log.Println("TestDescribeNfs")
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
-	nfservice := NewService(db,q)
-	nf,err:=nfservice.DescribeNfs(nfID)
+	nfservice := NewService(db, q)
+	nf, err := nfservice.DescribeNfs(nfID)
 	if err != nil {
 		fmt.Println(nf)
 	}

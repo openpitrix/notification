@@ -10,21 +10,19 @@ type handler struct {
 	nfsc Service
 }
 
-
-
 func NewHandler(nfService Service) Handler {
 	return &handler{
 		nfsc: nfService,
 	}
 }
 
-func (h *handler) SayHello(ctx context.Context, in *pb.HelloRequest) (error) {
+func (h *handler) SayHello(ctx context.Context, in *pb.HelloRequest) error {
 	log.Println("Step6:call h.nfservice.SayHello")
 	h.nfsc.SayHello("222")
 	return nil
 }
 
-func (h *handler) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (error) {
+func (h *handler) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) error {
 	log.Println("Call handlerImpl.CreateNfWaddrs")
 	var (
 		parser = &NfHandlerModelParser{}
@@ -40,8 +38,8 @@ func (h *handler) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsReque
 }
 
 func (h *handler) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
-	nfId:=""
-	nf,err := h.nfsc.DescribeNfs(nfId)
+	nfId := ""
+	nf, err := h.nfsc.DescribeNfs(nfId)
 	if err != nil {
 		log.Println("something is wrong")
 	}

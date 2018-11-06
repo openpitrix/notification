@@ -7,30 +7,17 @@ import (
 	"openpitrix.io/notification/pkg/util/idutil"
 	"strings"
 	"time"
+	"openpitrix.io/notification/pkg/constants"
 )
 
 type NfHandlerModelParser struct {
 }
 
-const NfPostIDPrifix = "nf-"
-const JobPostIDPrifix = "job-"
-const TaskPostIDPrifix = "task-"
 
-func CreatenfPostID() string {
-	return idutil.GetUuid(NfPostIDPrifix)
-}
-
-func CreatenfJobID() string {
-	return idutil.GetUuid(JobPostIDPrifix)
-}
-
-func CreatenfTaskID() string {
-	return idutil.GetUuid(TaskPostIDPrifix)
-}
 
 func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWaddrsRequest) (*models.NotificationCenterPost, error) {
 	nf := &models.NotificationCenterPost{
-		NfPostID:     CreatenfPostID(),
+		NfPostID:     idutil.GetUuid(constants.NfPostIDPrifix),
 		NfPostType:   in.GetNfPostType().GetValue(),
 		NotifyType:   in.GetNotifyType().GetValue(),
 		AddrsStr:     in.GetAddrsStr().GetValue(),
@@ -53,7 +40,7 @@ func (parser *NfHandlerModelParser) GenJobfromNf(nf *models.NotificationCenterPo
 	taskcnt := int64(len(emailsArray))
 
 	job := &models.Job{
-		JobID:          CreatenfJobID(),
+		JobID:         idutil.GetUuid(constants.JobPostIDPrifix),
 		NfPostID:       nf.NfPostID,
 		JobType:        nf.NotifyType,
 		AddrsStr:       nf.AddrsStr,
@@ -77,7 +64,7 @@ func (parser *NfHandlerModelParser) GenTasksfromJob(job *models.Job) ([]*models.
 	for _, email := range emailsArray {
 		println(email)
 		tasks = append(tasks, &models.Task{
-			TaskID:     CreatenfTaskID(),
+			TaskID:     idutil.GetUuid(constants.TaskPostIDPrifix),
 			JobID:      job.JobID,
 			AddrsStr:   email,
 			TaskAction: "task actions Test",

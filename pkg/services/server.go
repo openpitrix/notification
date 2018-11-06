@@ -21,7 +21,6 @@
 package services
 
 import (
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -38,73 +37,75 @@ import (
 
 // Server is used to implement nf.RegisterNotificationServer.
 type Server struct {
-	cfg       *config.Config
-	db        *gorm.DB
-	nfhandler nf.Handler
+	nfhandler   nf.Handler
 	taskhandler task.Handler
 }
 
 // NewServer initializes a new Server instance.
 func NewServer() (*Server, error) {
-	log.Println("step1:Set cfg***********")
+	log.Println("step0:start********************************************")
+
 	var (
 		err    error
 		server = &Server{}
 	)
-	server.cfg = config.NewConfig()
 
-	//set mysql db,init database pool
-	log.Println("step2:Set db**********************")
-	log.Println("step2.1:get db")
+	log.Println("step1:set server.nfhandler**********************")
+	log.Println("step1.1:create nfservice")
+	log.Println("step1.1.1:create queue")
+	cfg := config.GetInstance()
+	endpoints := []string{cfg.Etcd.Endpoints}
+
+	prefix := "test"
+	nfetcd, err := etcdutil.Connect(endpoints, prefix)
+	if err != nil {
+		log.Fatal(err)
+	}
+	q := nfetcd.NewQueue("nf_task")
+
+	log.Println("step1.1.2:get db")
+	db := dbutil.GetInstance().GetMysqlDB()
+
+	log.Println("step1.1:create new nfservice")
+	nfservice := nf.NewService(db, q)
+	log.Println("step1.2:create nfhandler")
+	nfhandler := nf.NewHandler(nfservice)
+	log.Println("step1.3:set server.nfhandler")
+	server.nfhandler = nfhandler
+
+	log.Println("step2:set server.taskhandler**********************")
+	log.Println("step2.1:create taskservice")
+	taskservice := task.NewService(db, q)
+	log.Println("step2.2:create taskhandler")
+	taskhandler := task.NewHandler(taskservice)
+	log.Println("step2.3:set server.taskhandler")
+	server.taskhandler = taskhandler
+
+	if err != nil {
+		return nil, err
+	}
+	log.Println("step0:end********************************************")
+	return server, nil
+}
+
+func InitGlobelSetting() {
+	log.Println("step0.1:初始化配置参数")
+	config.GetInstance().InitCfg()
+
+	log.Println("step0.2:初始化DB connection pool")
 	issucc := dbutil.GetInstance().InitDataPool()
 	if !issucc {
 		log.Println("init database pool failure...")
 		os.Exit(1)
 	}
-	server.db = dbutil.GetInstance().GetMysqlDB()
 
-	log.Println("step3:set nfhandler**********************")
-	log.Println("step3.1:create nfservice")
-	log.Println("step3.1.1:create queue")
-	endpoints := []string{"192.168.0.7:2379"}
-	prefix := "test"
-	nfetcd, err := etcdutil.Connect(endpoints, prefix)
-	log.Println(nfetcd)
-	if err != nil {
-		log.Fatal(err)
-	}
-	q := nfetcd.NewQueue("nf_task")
-	log.Println("step3.1.2:create new nfservice")
-	nfservice := nf.NewService(server.db,q)
-
-	log.Println("step3.2:create server.nfhandler")
-	nfhandler := nf.NewHandler(nfservice)
-	log.Println("step3.3:set server.nfhandler")
-	server.nfhandler = nfhandler
-
-
-	log.Println("step4:set taskhandler**********************")
-
-	log.Println("step4.1:create taskservice")
-	taskservice := task.NewService(server.db,q)
-	log.Println("step4.2:create taskhandler")
-	taskhandler := task.NewHandler(taskservice)
-	log.Println("step4.3:set server.taskhandler")
-	server.taskhandler=taskhandler
-
-	if err != nil {
-		return nil, err
-	}
-
-	return server, nil
 }
-
 //**************************************************************************************************
-const (
-	port = ":50051"
-)
 
 func Serve() error {
+	InitGlobelSetting()
+
+	port := config.GetInstance().App.Port
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -123,5 +124,7 @@ func Serve() error {
 	}
 	return nil
 }
+
+
 
 //**************************************************************************************************

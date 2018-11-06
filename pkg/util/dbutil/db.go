@@ -38,8 +38,7 @@ func GetInstance() *MysqlConnPool {
 func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 	//db, err_db = gorm.Open("mysql", "root:password@tcp(192.168.0.10:13306)/notification?charset=utf8&parseTime=True&loc=Local")
 	//fmt.Println(err_db)
-
-	cfg:=config.NewConfig()
+	cfg:=config.GetInstance()
 
 	var (
 		dbCfg            = cfg.Db
@@ -52,8 +51,15 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 			dbCfg.DatabaseName,
 		)
 	)
+	//
+	//log.Print(dbCfg.User)
+	//log.Print(dbCfg.Password)
+	//log.Print(dbCfg.Host)
+	//log.Print(dbCfg.Port)
+	//log.Print(dbCfg.DatabaseName)
 
 	db, err_db = gorm.Open("mysql", connectionString)
+	log.Print(connectionString)
 	if err_db != nil {
 		log.Print(err_db)
 		return false
@@ -82,9 +88,9 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 }
 
 /*
-* @fuc  对外获取数据库连接对象db
+* 对外获取数据库连接对象db
 */
-func (m *MysqlConnPool) GetMysqlDB() (db_con *gorm.DB) {
+func (m *MysqlConnPool) GetMysqlDB() (*gorm.DB) {
 	return db
 }
 

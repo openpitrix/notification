@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
-	"log"
-	"time"
 	"github.com/mcuadros/go-defaults"
+	"log"
+	"sync"
+	"time"
 )
 
 
@@ -19,6 +20,7 @@ type Config struct {
 		HostURL string `default:"http://192.168.0.3/"`
 		Port    string    `default:":50051"`
 		Env     string `default:"DEV"`
+		MaxWorkingTasks int `default:"20"`
 	}
 
 	Db struct {
@@ -30,26 +32,27 @@ type Config struct {
 		Disable  bool   `default:"true"`
 	}
 
-	etcd struct{
+	Etcd struct{
 		//Endpoints string `default:"192.168.0.7:2379,192.168.0.8:2379,192.168.0.6:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"  or default:"openpitrix-etcd:2379
 		Endpoints string `default:"192.168.0.7:2379"`
 	}
 }
 
+var instance *Config
+var once sync.Once
 
 
-// NewConfig intializes a new Config structure.
-func NewConfig() *Config {
-	log.Print("start NewConfig")
-	//var (
-	//	cfg = &Config{
-	//		DBLogMode:true,
-	//		SessionLifeTime: time.Minute * 30,
-	//	}
-	//)
-	cfg := new(Config)
-	defaults.SetDefaults(cfg) //<-- This set the defaults values
-	return cfg
+
+func GetInstance() *Config {
+	once.Do(func() {
+		instance = &Config{}
+	})
+	return instance
+}
+
+
+func (c *Config) InitCfg()   {
+	defaults.SetDefaults(instance)
 }
 
 

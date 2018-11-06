@@ -4,22 +4,23 @@ import (
 	"log"
 	"openpitrix.io/notification/pkg/services/test"
 	"testing"
+	"time"
 )
 
 func TestNewService(t *testing.T) {
 	log.Println("Test NewServices")
 	db := test.GetTestDB()
-
 	q := test.GetEtcdQueue()
 	taskservice := NewService(db, q)
 
 	go taskservice.ExtractTasks()
-	//go taskservice.HandleTask("A")
+	go taskservice.HandleTask("A")
+	go taskservice.HandleTask("B")
 	//
-	//for{
-	//	//println("...")
-	//	time.Sleep(2 * time.Second)
-	//}
+	for{
+		//println("...")
+		time.Sleep(2 * time.Second)
+	}
 }
 
 func TestGetTaskbyID(t *testing.T) {
@@ -31,7 +32,6 @@ func TestGetTaskbyID(t *testing.T) {
 	log.Println(task.AddrsStr)
 }
 
-
 func TestGetTaskwithNfContentbyID(t *testing.T) {
 	log.Println("Test TestGetTaskwithNfContentbyID")
 	db := test.GetTestDB()
@@ -41,3 +41,5 @@ func TestGetTaskwithNfContentbyID(t *testing.T) {
 	log.Println(task.AddrsStr)
 	log.Println(task)
 }
+
+

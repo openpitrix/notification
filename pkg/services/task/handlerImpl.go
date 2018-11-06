@@ -1,10 +1,12 @@
 package task
 
-import "log"
+import (
+	"log"
+	"openpitrix.io/notification/pkg/config"
+)
 
 type handler struct {
 	tasksc Service
-
 }
 
 func NewHandler(tasksc Service) Handler {
@@ -13,24 +15,24 @@ func NewHandler(tasksc Service) Handler {
 	}
 }
 
-func (h *handler) ExtractTasks() (error) {
+func (h *handler) ExtractTasks() error {
 	h.tasksc.ExtractTasks()
 	return nil
 }
 
-func (h *handler) HandleTask(handlerNum string) (error) {
+func (h *handler) HandleTask(handlerNum string) error {
 	h.tasksc.HandleTask(handlerNum)
 	return nil
 }
 
-
-func (h *handler) ServeTask() (error) {
+func (h *handler) ServeTask() error {
 	log.Println("Call handlerImpl.ServeTask")
 	go h.ExtractTasks()
 
+	MaxWorkingTasks:=config.GetInstance().App.MaxWorkingTasks
 
-	for i := 0; i < 10; i++ {
-	go h.HandleTask("A")
+	for i := 0; i < MaxWorkingTasks; i++ {
+		go h.HandleTask(string(i))
 	}
 
 	return nil

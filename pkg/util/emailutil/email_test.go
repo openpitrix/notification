@@ -8,6 +8,4 @@ func TestSendMail(t *testing.T) {
 	header:="Subject-hello from Openpitrix notication"
 	body:="Body-hello from Openpitrix notication"
 	SendMail(emailaddr,header,body)
-
-	//SendMail("huojiao2006@163.com;513590612@qq.com")
 }

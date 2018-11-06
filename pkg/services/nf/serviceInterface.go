@@ -23,6 +23,3 @@ type Service interface {
 
 	DescribeNfs(nfID string) (*models.NotificationCenterPost, error)
 }
-
-
-

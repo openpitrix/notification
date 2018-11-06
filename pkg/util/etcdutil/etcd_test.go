@@ -60,5 +60,32 @@ func TestEnqueue(t *testing.T) {
 		}
 		t.Logf("Got message [%s] from queue, worker number [%d]", n, i)
 	}
+}
 
+
+func TestEnqueue2(t *testing.T) {
+	endpoints := []string{"192.168.0.7:2379"}
+	prefix := "test"
+	e, err := etcd.Connect(endpoints, prefix)
+	if err != nil {
+		t.Fatal(err)
+	}
+	queue := e.NewQueue("test")
+	//go func() {
+	//	for i := 0; i < 100; i++ {
+	//		err := queue.Enqueue(fmt.Sprintf("%d", i))
+	//		if err != nil {
+	//			t.Fatal(err)
+	//		}
+	//		t.Logf("Push message to queue, worker number [%d]", i)
+	//	}
+	//
+	//}()
+	for i := 0; i < 100; i++ {
+		n, err := queue.Dequeue()
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf("Got message [%s] from queue, worker number [%d]", n, i)
+	}
 }
