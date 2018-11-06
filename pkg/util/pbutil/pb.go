@@ -5,6 +5,7 @@
 package pbutil
 
 import (
+	"openpitrix.io/logger"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
@@ -25,27 +26,11 @@ const (
 	DefaultLimit  = uint64(20)
 )
 
-//func GetOffsetFromRequest(req RequestHadOffset) uint64 {
-//	n := req.GetOffset()
-//	if n == 0 {
-//		return DefaultOffset
-//	}
-//	return dbutil.GetOffset(uint64(n))
-//}
-//
-//func GetLimitFromRequest(req RequestHadLimit) uint64 {
-//	n := req.GetLimit()
-//	if n == 0 {
-//		return DefaultLimit
-//	}
-//	return dbutil.GetLimit(uint64(n))
-//}
 
 func FromProtoTimestamp(t *timestamp.Timestamp) (tt time.Time) {
 	tt, err := ptypes.Timestamp(t)
 	if err != nil {
-		//&log.Critical(nil, "Cannot convert timestamp [T] to time.Time [%+v]: %+v", t, err)
-		panic(err)
+		logger.Criticalf(nil, "Cannot convert timestamp [T] to time.Time [%+v]: %+v", t, err)
 	}
 	return
 }
@@ -56,8 +41,7 @@ func ToProtoTimestamp(t time.Time) (tt *timestamp.Timestamp) {
 	}
 	tt, err := ptypes.TimestampProto(t)
 	if err != nil {
-		//logger.Critical(nil, "Cannot convert time.Time [%+v] to ToProtoTimestamp[T]: %+v", t, err)
-		panic(err)
+		logger.Criticalf(nil, "Cannot convert time.Time [%+v] to ToProtoTimestamp[T]: %+v", t, err)
 	}
 	return
 }

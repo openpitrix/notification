@@ -2,15 +2,16 @@ package services
 
 import (
 	"golang.org/x/net/context"
+	"openpitrix.io/logger"
 	notification "openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/notification/pkg/services/test"
 	"openpitrix.io/notification/pkg/util/pbutil"
 	"testing"
 	"time"
 )
 
 func TestNewServer(t *testing.T) {
-	test.InitGlobelSetting()
+	logger.SetLevelByString("debug")
+	InitGlobelSetting()
 	s, _ := NewServer()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -18,7 +19,7 @@ func TestNewServer(t *testing.T) {
 }
 
 func TestSayHello(t *testing.T) {
-	test.InitGlobelSetting()
+	InitGlobelSetting()
 	s, _ := NewServer()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -26,7 +27,7 @@ func TestSayHello(t *testing.T) {
 }
 
 func TestCreateNfWaddrs(t *testing.T) {
-	test.InitGlobelSetting()
+	InitGlobelSetting()
 	s, _ := NewServer()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

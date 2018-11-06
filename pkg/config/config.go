@@ -3,15 +3,16 @@ package config
 import (
 	"fmt"
 	"github.com/mcuadros/go-defaults"
-	"log"
 	"sync"
 	"time"
+	"openpitrix.io/logger"
 )
 
 
 // Config that contains all of the configuration variables
 // that are set up in the environment.
 type Config struct {
+	AppLogMode        string `default:"debug"`
 	DBLogMode         bool   `default:"False"`
 	SessionLifeTime   time.Duration
 
@@ -20,7 +21,7 @@ type Config struct {
 		HostURL string `default:"http://192.168.0.3/"`
 		Port    string    `default:":50051"`
 		Env     string `default:"DEV"`
-		MaxWorkingTasks int `default:"20"`
+		MaxWorkingTasks int `default:"5"`    //default:"20
 	}
 
 	Db struct {
@@ -59,11 +60,9 @@ func (c *Config) InitCfg()   {
 // Validate checks if the most important fields are set and are not empty
 // values.
 func (c *Config) Validate() error {
-	println("Test Validate start")
 	var errorMsg = "config: required field [%v] was not configured!"
 
 	if c.App.HostURL == "" {
-		println("Test c.App.HostURL is blank")
 		return fmt.Errorf(errorMsg, "App.HostURL")
 	}
 
@@ -90,28 +89,26 @@ func (c *Config) Validate() error {
 	if c.Db.Disable == false {
 		return fmt.Errorf(errorMsg, "Db.Disable")
 	}
-	println("Test Validate end")
 	return nil
 }
 
 // Print configuration values to the log. Some user and password fields
 // are omitted for security reasons.
 func (c *Config) Print() {
-	log.Println("----------------------------------")
-	log.Println("   Notication Configuration")
-	log.Println("----------------------------------")
-	log.Println("   DBLogMode:", c.DBLogMode)
-	log.Println("   SessionLifeTime:", c.SessionLifeTime)
-	log.Println(" ")
-	log.Println("   Application HostURL:", c.App.HostURL)
-	log.Println("   Application Port:", c.App.Port)
-	log.Println("   Application Environment:", c.App.Env)
-	log.Println(" ")
-	log.Println("   Database Host:", c.Db.Host)
-	log.Println("   Database Port:", c.Db.Port)
-	log.Println("   Database User:", c.Db.User)
-	log.Println("   Database Password:", c.Db.Password)
-	log.Println("   Database Database:", c.Db.DatabaseName)
-	log.Println("   Database Disable:", c.Db.Disable)
-	log.Println("----------------------------------")
+	logger.Infof(nil,"%+v","----------------------------------")
+	logger.Infof(nil,"%+v","   Notication Configuration")
+	logger.Infof(nil,"%+v","----------------------------------")
+	logger.Infof(nil, "DBLogMode: %+v", c.DBLogMode )
+	logger.Infof(nil, "SessionLifeTime: %+v", c.SessionLifeTime )
+	logger.Infof(nil,"%+v"," ")
+	logger.Infof(nil, "Application HostURL: %+v", c.App.HostURL )
+	logger.Infof(nil, "Application Port: %+v", c.App.Port )
+	logger.Infof(nil, "Application Environment: %+v", c.App.Env )
+	logger.Infof(nil, "---" )
+	logger.Infof(nil, "Database Host: %+v",  c.Db.Host )
+	logger.Infof(nil, "Database User: %+v",  c.Db.User )
+	logger.Infof(nil, "Database Password: %+v",   c.Db.Password )
+	logger.Infof(nil, "Database Database: %+v",  c.Db.DatabaseName )
+	logger.Infof(nil, "Database Disable:%+v",  c.Db.Disable)
+	logger.Infof(nil,"----------------------------------")
 }

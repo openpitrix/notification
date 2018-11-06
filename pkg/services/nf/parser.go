@@ -62,7 +62,6 @@ func (parser *NfHandlerModelParser) GenTasksfromJob(job *models.Job) ([]*models.
 	emailsArray := strings.Split(job.AddrsStr, ";")
 	tasks := make([]*models.Task, 0, len(emailsArray))
 	for _, email := range emailsArray {
-		println(email)
 		tasks = append(tasks, &models.Task{
 			TaskID:     idutil.GetUuid(constants.TaskPostIDPrifix),
 			JobID:      job.JobID,

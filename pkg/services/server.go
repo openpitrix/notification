@@ -26,6 +26,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
+	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/services/nf"
@@ -43,16 +44,16 @@ type Server struct {
 
 // NewServer initializes a new Server instance.
 func NewServer() (*Server, error) {
-	log.Println("step0:start********************************************")
-
+	logger.Debugf(nil,"step0:start********************************************")
+	 
 	var (
 		err    error
 		server = &Server{}
 	)
 
-	log.Println("step1:set server.nfhandler**********************")
-	log.Println("step1.1:create nfservice")
-	log.Println("step1.1.1:create queue")
+	logger.Debugf(nil,"step1:set server.nfhandler**********************")
+	logger.Debugf(nil,"step1.1:create nfservice")
+	logger.Debugf(nil,"step1.1.1:create queue")
 	cfg := config.GetInstance()
 	endpoints := []string{cfg.Etcd.Endpoints}
 
@@ -63,42 +64,44 @@ func NewServer() (*Server, error) {
 	}
 	q := nfetcd.NewQueue("nf_task")
 
-	log.Println("step1.1.2:get db")
+	logger.Debugf(nil,"step1.1.2:get db")
 	db := dbutil.GetInstance().GetMysqlDB()
 
-	log.Println("step1.1:create new nfservice")
+	logger.Debugf(nil,"step1.1:create new nfservice")
 	nfservice := nf.NewService(db, q)
-	log.Println("step1.2:create nfhandler")
+	logger.Debugf(nil,"step1.2:create nfhandler")
 	nfhandler := nf.NewHandler(nfservice)
-	log.Println("step1.3:set server.nfhandler")
+	logger.Debugf(nil,"step1.3:set server.nfhandler")
 	server.nfhandler = nfhandler
 
-	log.Println("step2:set server.taskhandler**********************")
-	log.Println("step2.1:create taskservice")
+	logger.Debugf(nil,"step2:set server.taskhandler**********************")
+	logger.Debugf(nil,"step2.1:create taskservice")
 	taskservice := task.NewService(db, q)
-	log.Println("step2.2:create taskhandler")
+	logger.Debugf(nil,"step2.2:create taskhandler")
 	taskhandler := task.NewHandler(taskservice)
-	log.Println("step2.3:set server.taskhandler")
+	logger.Debugf(nil,"step2.3:set server.taskhandler")
 	server.taskhandler = taskhandler
 
 	if err != nil {
 		return nil, err
 	}
-	log.Println("step0:end********************************************")
+	logger.Debugf(nil,"step0:end********************************************")
 	return server, nil
 }
 
 func InitGlobelSetting() {
-	log.Println("step0.1:初始化配置参数")
+	logger.Debugf(nil,"step0.1:初始化配置参数11111")
 	config.GetInstance().InitCfg()
 
-	log.Println("step0.2:初始化DB connection pool")
+	logger.Debugf(nil,"step0.2:初始化DB connection pool")
 	issucc := dbutil.GetInstance().InitDataPool()
 	if !issucc {
-		log.Println("init database pool failure...")
+		logger.Debugf(nil,"init database pool failure...")
 		os.Exit(1)
 	}
 
+	AppLogMode:=config.GetInstance().AppLogMode
+	logger.SetLevelByString(AppLogMode)
 }
 //**************************************************************************************************
 

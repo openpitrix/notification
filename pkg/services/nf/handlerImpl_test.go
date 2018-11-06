@@ -2,7 +2,7 @@ package nf
 
 import (
 	"golang.org/x/net/context"
-	"log"
+	"openpitrix.io/logger"
 	notification "openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/services/test"
 	"openpitrix.io/notification/pkg/util/pbutil"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestNewHandler(t *testing.T) {
-	log.Println("Test func NewHandler")
+	logger.Debugf(nil, "Test func NewHandler")
 
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
@@ -27,8 +27,7 @@ func TestNewHandler(t *testing.T) {
 }
 
 func TestSayHello4handler(t *testing.T) {
-
-	log.Println("Test func NewHandler")
+	logger.Debugf(nil, "Test func NewHandler")
 
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
@@ -44,7 +43,7 @@ func TestSayHello4handler(t *testing.T) {
 }
 
 func TestCreateNfWaddrs4handler(t *testing.T) {
-	log.Println("Test func NewHandler")
+	logger.Debugf(nil, "Test func NewHandler")
 
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()

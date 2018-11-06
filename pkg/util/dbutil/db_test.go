@@ -7,7 +7,7 @@ package dbutil
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	"log"
+	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 	"os"
 	"testing"
@@ -22,13 +22,13 @@ type Product struct {
 
 func TestGetMysqlDB(t *testing.T) {
 
-	log.Println("step0.1:初始化配置参数")
+	logger.Debugf(nil,"step0.1:初始化配置参数")
 	config.GetInstance().InitCfg()
 
-	log.Println("step0.2:初始化DB connection pool")
+	logger.Debugf(nil,"step0.2:初始化DB connection pool")
 	issucc := GetInstance().InitDataPool()
 	if !issucc {
-		log.Println("init database pool failure...")
+		logger.Criticalf(nil,"init database pool failure...")
 		os.Exit(1)
 	}
 

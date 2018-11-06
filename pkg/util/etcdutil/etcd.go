@@ -9,6 +9,7 @@ import (
 	"github.com/coreos/etcd/clientv3/concurrency"
 	"github.com/coreos/etcd/clientv3/namespace"
 	"github.com/coreos/etcd/contrib/recipes"
+	"openpitrix.io/logger"
 	"time"
 )
 
@@ -23,6 +24,7 @@ func Connect(endpoints []string, prefix string) (*Etcd, error) {
 		DialTimeout: 5 * time.Second,
 	})
 	if err != nil {
+		logger.Warnf(nil, "%+v", err)
 		return nil, err
 	}
 	cli.KV = namespace.NewKV(cli.KV, prefix)
@@ -38,6 +40,7 @@ func (etcd *Etcd) NewQueue(topic string) *Queue {
 func (etcd *Etcd) NewMutex(key string) (*Mutex, error) {
 	session, err := concurrency.NewSession(etcd.Client)
 	if err != nil {
+		logger.Warnf(nil, "%+v", err)
 		return nil, err
 	}
 	return &Mutex{concurrency.NewMutex(session, key)}, nil

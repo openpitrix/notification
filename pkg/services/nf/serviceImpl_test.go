@@ -1,8 +1,8 @@
 package nf
 
 import (
-	"fmt"
 	"log"
+	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/services/test"
@@ -12,7 +12,7 @@ import (
 )
 
 func TestNewService(t *testing.T) {
-	log.Println("Test NewServices")
+	test.InitGlobelSetting()
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
 	nfservice := NewService(db, q)
@@ -20,8 +20,6 @@ func TestNewService(t *testing.T) {
 }
 
 func TestSayHello(t *testing.T) {
-	log.Println("Test NewServices")
-
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
 	nfservice := NewService(db, q)
@@ -29,8 +27,6 @@ func TestSayHello(t *testing.T) {
 }
 
 func TestCreateNfWaddrs(t *testing.T) {
-	log.Println("Test CreateNfWaddrs")
-
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
 	nfservice := NewService(db, q)
@@ -51,7 +47,7 @@ func TestCreateNfWaddrs(t *testing.T) {
 	}
 	err := nfservice.CreateNfWaddrs(nf)
 	if err != nil {
-		log.Println("something is wrong")
+		logger.Criticalf(nil, "Cannot create NfWaddrs:%+v", err)
 	}
 }
 
@@ -62,7 +58,9 @@ func TestDescribeNfs(t *testing.T) {
 	q := test.GetEtcdQueue()
 	nfservice := NewService(db, q)
 	nf, err := nfservice.DescribeNfs(nfID)
+	logger.Infof(nil,"%+v",nf)
+
 	if err != nil {
-		fmt.Println(nf)
+		logger.Warnf(nil, "%+v", err)
 	}
 }

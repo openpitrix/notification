@@ -3,6 +3,7 @@ package test
 import (
 	"github.com/jinzhu/gorm"
 	"log"
+	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/util/dbutil"
 	"openpitrix.io/notification/pkg/util/etcdutil"
@@ -27,17 +28,19 @@ func GetEtcdQueue() *etcdutil.Queue {
 	return q
 }
 
+
 func InitGlobelSetting() {
-	log.Println("step0.1:初始化配置参数")
+	logger.Debugf(nil,"step0.1:初始化配置参数11111")
 	config.GetInstance().InitCfg()
 
-	log.Println("step0.2:初始化DB connection pool")
+	logger.Debugf(nil,"step0.2:初始化DB connection pool")
 	issucc := dbutil.GetInstance().InitDataPool()
 	if !issucc {
-		log.Println("init database pool failure...")
+		logger.Debugf(nil,"init database pool failure...")
 		os.Exit(1)
 	}
+
+	AppLogMode:=config.GetInstance().AppLogMode
+	logger.SetLevelByString(AppLogMode)
+
 }
-
-
-

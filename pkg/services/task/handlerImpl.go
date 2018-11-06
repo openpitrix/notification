@@ -30,10 +30,8 @@ func (h *handler) ServeTask() error {
 	go h.ExtractTasks()
 
 	MaxWorkingTasks:=config.GetInstance().App.MaxWorkingTasks
-
 	for i := 0; i < MaxWorkingTasks; i++ {
 		go h.HandleTask(string(i))
 	}
-
 	return nil
 }
