@@ -1,7 +1,7 @@
 package task
 
 import (
-	"log"
+	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 )
 
@@ -16,17 +16,23 @@ func NewHandler(tasksc Service) Handler {
 }
 
 func (h *handler) ExtractTasks() error {
+	logger.Infof(nil, "ExtractTasks Starts....")
 	h.tasksc.ExtractTasks()
 	return nil
 }
 
 func (h *handler) HandleTask(handlerNum string) error {
-	h.tasksc.HandleTask(handlerNum)
+	logger.Infof(nil, "HandleTask Starts,Num："+handlerNum+"....")
+	err:=h.tasksc.HandleTask(handlerNum)
+	if err != nil {
+		logger.Warnf(nil, "%+v", err)
+		return  err
+	}
 	return nil
 }
 
 func (h *handler) ServeTask() error {
-	log.Println("Call handlerImpl.ServeTask")
+	logger.Infof(nil, "Call handlerImpl.ServeTask")
 	go h.ExtractTasks()
 
 	MaxWorkingTasks:=config.GetInstance().App.MaxWorkingTasks

@@ -18,19 +18,22 @@ func GetTestDB() *gorm.DB {
 }
 
 func GetEtcdQueue() *etcdutil.Queue {
-	endpoints := []string{"192.168.0.7:2379"}
-	prefix := "test"
+	cfg := config.GetInstance()
+	endpoints := []string{cfg.Etcd.Endpoints}
+	prefix:=cfg.Etcd.Etcdprefix
+	topic:=cfg.Etcd.Etcdtopic
+
 	nfetcd, err := etcdutil.Connect(endpoints, prefix)
 	if err != nil {
 		log.Fatal(err)
 	}
-	q := nfetcd.NewQueue("nf_task")
+	q := nfetcd.NewQueue(topic)
 	return q
 }
 
 
 func InitGlobelSetting() {
-	logger.Debugf(nil,"step0.1:初始化配置参数11111")
+	logger.Debugf(nil,"step0.1:初始化配置参数")
 	config.GetInstance().InitCfg()
 
 	logger.Debugf(nil,"step0.2:初始化DB connection pool")

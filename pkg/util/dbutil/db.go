@@ -59,7 +59,6 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 	//log.Print(dbCfg.DatabaseName)
 
 	db, err_db = gorm.Open("mysql", connectionString)
-	log.Print(connectionString)
 	if err_db != nil {
 		log.Print(err_db)
 		return false

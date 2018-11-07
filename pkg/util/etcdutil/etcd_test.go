@@ -38,7 +38,6 @@ func TestEnqueue(t *testing.T) {
 	endpoints := []string{"192.168.0.7:2379"}
 	prefix := "test"
 	e, err := etcd.Connect(endpoints, prefix)
-	log.Println(e)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -65,12 +64,12 @@ func TestEnqueue(t *testing.T) {
 
 func TestEnqueue2(t *testing.T) {
 	endpoints := []string{"192.168.0.7:2379"}
-	prefix := "test"
+	prefix := "nf_"
 	e, err := etcd.Connect(endpoints, prefix)
 	if err != nil {
 		t.Fatal(err)
 	}
-	queue := e.NewQueue("test")
+	queue := e.NewQueue("nf_")
 	//go func() {
 	//	for i := 0; i < 100; i++ {
 	//		err := queue.Enqueue(fmt.Sprintf("%d", i))

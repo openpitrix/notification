@@ -3,6 +3,7 @@ package task
 import (
 	"openpitrix.io/notification/pkg/services/test"
 	"testing"
+	"time"
 )
 
 func TestNewHandler(t *testing.T) {
@@ -12,5 +13,12 @@ func TestNewHandler(t *testing.T) {
 	taskservice := NewService(db, q)
 	handler := NewHandler(taskservice)
 
-	handler.ExtractTasks()
+//	go handler.ExtractTasks()
+//	go handler.HandleTask("1")
+	go handler.ServeTask()
+
+	for{
+		//println("...")
+		time.Sleep(2 * time.Second)
+	}
 }

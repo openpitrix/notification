@@ -1,16 +1,18 @@
 package task
 
 import (
-	"log"
+	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/services/test"
 	"testing"
 	"time"
 )
 
 func TestNewService(t *testing.T) {
-	log.Println("Test NewServices")
+
+	test.InitGlobelSetting()
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
+
 	taskservice := NewService(db, q)
 
 	go taskservice.ExtractTasks()
@@ -24,22 +26,19 @@ func TestNewService(t *testing.T) {
 }
 
 func TestGetTaskbyID(t *testing.T) {
-	log.Println("Test TestgetTaskfromDBbyID")
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
 	tasksc := &taskService{db: db, queue: q}
 	task, _ := tasksc.getTaskbyID("task-LBx4k82RMZOo")
-	log.Println(task.AddrsStr)
+	logger.Infof(nil,task.AddrsStr)
 }
 
 func TestGetTaskwithNfContentbyID(t *testing.T) {
-	log.Println("Test TestGetTaskwithNfContentbyID")
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
 	tasksc := &taskService{db: db, queue: q}
 	task, _ := tasksc.getTaskwithNfContentbyID("task-LBx4k82RMZOo")
-	log.Println(task.AddrsStr)
-	log.Println(task)
+	logger.Infof(nil,task.AddrsStr)
 }
 
 

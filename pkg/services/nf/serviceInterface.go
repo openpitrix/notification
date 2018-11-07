@@ -19,7 +19,6 @@ type Service interface {
 	//GetDataFromDB4Test()
 	//CreateNfWaddrs(nfPostID string, nfPostType string, title string, content string, shortContent string, exporedDays int64,owner string ) (error)
 	CreateNfWaddrs(*models.NotificationCenterPost) error
-	//CreateNfWaddrs3(nf *models.NotificationCenterPost,job *models.Job,task *models.Task) error
 
 	DescribeNfs(nfID string) (*models.NotificationCenterPost, error)
 }

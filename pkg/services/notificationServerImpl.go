@@ -3,18 +3,18 @@ package services
 import (
 	"golang.org/x/net/context"
 	"log"
+	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/pb"
 )
 
 // SayHello implements nf.RegisterNotificationServer
 func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	log.Print("step5:call s.nfhandler.SayHello")
+	logger.Debugf(nil,"step5:call s.nfhandler.SayHello")
 	s.nfhandler.SayHello(ctx, in)
 	return &pb.HelloReply{Message: "Hello,use function SayHello at server end. " + in.Name}, nil
 }
 
 func (s *Server) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (*pb.CreateNfResponse, error) {
-	log.Println("Hello,use function CreateNfWaddrs at server end.")
 	s.nfhandler.CreateNfWaddrs(ctx, in)
 	return &pb.CreateNfResponse{Message: "Hello,use function CreateNfWaddrs at server end. "}, nil
 }

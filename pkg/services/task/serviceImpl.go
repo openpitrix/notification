@@ -38,7 +38,7 @@ func (sc *taskService) ExtractTasks() error {
 		//taskId := time.Now().Format("2006-01-02 15:04:05")
 		//time.Sleep(1 * time.Second)
 		if err != nil {
-			logger.Criticalf(nil, "Failed to dequeue job from etcd queue: %+v", err)
+			logger.Errorf(nil, "Failed to dequeue job from etcd queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
@@ -56,7 +56,7 @@ func (sc *taskService) HandleTask(handlerNum string) error {
 
 		taskWNfInfo, err := sc.getTaskwithNfContentbyID(taskId)
 		if err != nil {
-			logger.Criticalf(nil, "Error-Get Task from DB withNfContent byID : %+v", err)
+			logger.Errorf(nil, "Error-Get Task from DB withNfContent byID : %+v", err)
 			return err
 		}
 		addrsStr := taskWNfInfo.AddrsStr
@@ -77,15 +77,15 @@ func (sc *taskService) getTaskbyID(taskID string) (*models.Task, error) {
 		if err != gorm.ErrRecordNotFound {
 			return nil, err
 		}
-		return nil, nil
+		return nil, err
 	}
 	return task, nil
 }
 
 func (sc *taskService) getTaskwithNfContentbyID(taskID string) (*models.TaskWNfInfo, error) {
-	task := &models.TaskWNfInfo{}
+	taskWNfInfo := &models.TaskWNfInfo{}
 	sc.db.Raw("SELECT  t3.title,t3.short_content,  t3.content,t1.task_id,t1.addrs_str "+
-		"	FROM task t1,job t2,notification_center_post t3 where t1.job_id=t2.job_id and t2.nf_post_id=t3.nf_post_id  and t1.task_id=? ", taskID).Scan(&task)
+		"	FROM task t1,job t2,notification_center_post t3 where t1.job_id=t2.job_id and t2.nf_post_id=t3.nf_post_id  and t1.task_id=? ", taskID).Scan(&taskWNfInfo)
 
-	return task, nil
+	return taskWNfInfo, nil
 }

@@ -31,7 +31,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost) error {
 
 	if err = tx.Create(&nf).Error; err != nil {
 		tx.Rollback()
-		logger.Criticalf(nil, "Cannot insert data to db:%+v", err)
+		logger.Errorf(nil, "Cannot insert data to db:%+v", err)
 		return err
 	}
 
@@ -39,21 +39,24 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost) error {
 	job, err = parser.GenJobfromNf(nf)
 	if err := tx.Create(&job).Error; err != nil {
 		tx.Rollback()
-		logger.Criticalf(nil, "Cannot insert data to db:%+v", err)
+		logger.Errorf(nil, "Cannot insert data to db:%+v", err)
 		return err
 	}
 
 	tasks, err := parser.GenTasksfromJob(job)
-
 	for _, task := range tasks {
 		if err := tx.Create(&task).Error; err != nil {
 			tx.Rollback()
-			logger.Criticalf(nil, "Cannot insert data to db:%+v", err)
+			logger.Errorf(nil, "Cannot insert data to db:%+v", err)
 			return err
 		}
 		err = sc.queue.Enqueue(task.TaskID)
 	}
 
+	if err != nil {
+		logger.Errorf(nil, "%+v", err)
+		return  err
+	}
 	tx.Commit()
 	return nil
 }
@@ -76,7 +79,6 @@ func (sc *nfService) GetDataFromDB4Test() {
 
 func (sc *nfService) DescribeNfs(nfID string) (*models.NotificationCenterPost, error) {
 	nf := &models.NotificationCenterPost{}
-
 	err := sc.db.
 		Where("nf_post_id = ?", nfID).
 		First(nf).Error
@@ -85,8 +87,7 @@ func (sc *nfService) DescribeNfs(nfID string) (*models.NotificationCenterPost, e
 		if err != gorm.ErrRecordNotFound {
 			return nil, err
 		}
-
-		return nil, nil
+		return nil, err
 	}
 
 	return nf, nil

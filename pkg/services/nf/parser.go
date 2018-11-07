@@ -1,13 +1,12 @@
 package nf
 
 import (
-	"fmt"
+	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/idutil"
 	"strings"
 	"time"
-	"openpitrix.io/notification/pkg/constants"
 )
 
 type NfHandlerModelParser struct {
@@ -34,11 +33,9 @@ func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWaddrsRequest)
 }
 
 func (parser *NfHandlerModelParser) GenJobfromNf(nf *models.NotificationCenterPost) (*models.Job, error) {
-
-	emailsArray := strings.Split(nf.AddrsStr, "")
-	fmt.Println(emailsArray, len(emailsArray))
+	//todo check eamil string
+	emailsArray := strings.Split(nf.AddrsStr, ";")
 	taskcnt := int64(len(emailsArray))
-
 	job := &models.Job{
 		JobID:         idutil.GetUuid(constants.JobPostIDPrifix),
 		NfPostID:       nf.NfPostID,
@@ -66,7 +63,7 @@ func (parser *NfHandlerModelParser) GenTasksfromJob(job *models.Job) ([]*models.
 			TaskID:     idutil.GetUuid(constants.TaskPostIDPrifix),
 			JobID:      job.JobID,
 			AddrsStr:   email,
-			TaskAction: "task actions Test",
+			TaskAction: "",
 			Result:     "Ready",
 			ErrorCode:  0,
 			Status:     "New",

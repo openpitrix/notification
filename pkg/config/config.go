@@ -36,6 +36,9 @@ type Config struct {
 	Etcd struct{
 		//Endpoints string `default:"192.168.0.7:2379,192.168.0.8:2379,192.168.0.6:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"  or default:"openpitrix-etcd:2379
 		Endpoints string `default:"192.168.0.7:2379"`
+		Etcdprefix string `default:"nf_"`
+		Etcdtopic string `default:"task"`
+
 	}
 }
 

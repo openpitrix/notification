@@ -27,7 +27,13 @@ func (h *handler) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsReque
 	var (
 		parser = &NfHandlerModelParser{}
 	)
+
 	nf, err := parser.CreateNfWaddrs(in)
+	if err != nil {
+		logger.Warnf(nil, "%+v", err)
+		return  err
+	}
+	logger.Debugf(nil, "%+v", nf.NfPostID)
 
 	err = h.nfsc.CreateNfWaddrs(nf)
 	if err != nil {
@@ -43,7 +49,7 @@ func (h *handler) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*
 	logger.Debugf(nil, "%+v",nf)
 	if err != nil {
 		logger.Warnf(nil, "%+v", err)
-		return  nil, nil
+		return  nil, err
 	}
 	return nil, nil
 }

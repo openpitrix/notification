@@ -24,7 +24,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"log"
 	"net"
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
@@ -57,12 +56,14 @@ func NewServer() (*Server, error) {
 	cfg := config.GetInstance()
 	endpoints := []string{cfg.Etcd.Endpoints}
 
-	prefix := "test"
+	prefix:=cfg.Etcd.Etcdprefix
 	nfetcd, err := etcdutil.Connect(endpoints, prefix)
 	if err != nil {
-		log.Fatal(err)
+		logger.Criticalf(nil,"%+v",err)
 	}
-	q := nfetcd.NewQueue("nf_task")
+
+	topic:=cfg.Etcd.Etcdtopic
+	q := nfetcd.NewQueue(topic)
 
 	logger.Debugf(nil,"step1.1.2:get db")
 	db := dbutil.GetInstance().GetMysqlDB()
@@ -83,6 +84,7 @@ func NewServer() (*Server, error) {
 	server.taskhandler = taskhandler
 
 	if err != nil {
+		logger.Criticalf(nil,"%+v",err)
 		return nil, err
 	}
 	logger.Debugf(nil,"step0:end********************************************")
@@ -90,13 +92,13 @@ func NewServer() (*Server, error) {
 }
 
 func InitGlobelSetting() {
-	logger.Debugf(nil,"step0.1:初始化配置参数11111")
+	logger.Debugf(nil,"step0.1:初始化配置参数")
 	config.GetInstance().InitCfg()
 
 	logger.Debugf(nil,"step0.2:初始化DB connection pool")
 	issucc := dbutil.GetInstance().InitDataPool()
 	if !issucc {
-		logger.Debugf(nil,"init database pool failure...")
+		logger.Criticalf(nil,"init database pool failure...")
 		os.Exit(1)
 	}
 
@@ -111,7 +113,7 @@ func Serve() error {
 	port := config.GetInstance().App.Port
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		logger.Criticalf(nil,"failed to listen: %v", err)
 	}
 	nfserver, _ := NewServer()
 
@@ -122,7 +124,7 @@ func Serve() error {
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+		logger.Criticalf(nil,"failed to serve: %v", err)
 		return err
 	}
 	return nil
