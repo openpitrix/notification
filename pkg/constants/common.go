@@ -1,8 +1,7 @@
 package constants
 
 const (
-  NfPostIDPrifix = "nf-"
-  JobPostIDPrifix = "job-"
-  TaskPostIDPrifix = "task-"
+	NfPostIDPrifix   = "nf-"
+	JobPostIDPrifix  = "job-"
+	TaskPostIDPrifix = "task-"
 )
-

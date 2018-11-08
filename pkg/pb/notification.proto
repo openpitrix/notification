@@ -29,12 +29,47 @@ import "google/protobuf/timestamp.proto";
 
 // The nf service definition.
 service notification {
-  // Sends a greeting
+
+  //API 1.SayHello: Sends a greeting
+//  rpc SayHello (HelloRequest) returns (HelloReply) {
+//      option (google.api.http) = {
+//        post: "/v1/hello"
+//        body: "*"
+//    };
+//  }
+
+  //#API 0.SayHello
   rpc SayHello (HelloRequest) returns (HelloReply) {
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "#API 0.SayHello:gRPC testing,Sends a greeting."
+		};
       option (google.api.http) = {
-        post: "/v1/hello"
-        body: "*"
-    };
+			post: "/v1/hello"
+			body: "*"
+		};
+  }
+
+  //#API 1.CreateNfWaddrs
+  rpc CreateNfWaddrs (CreateNfWaddrsRequest) returns (CreateNfResponse) {
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "#API 1.CreateNfWaddrs：create nf with addrs(email addrs, phone numbers)."
+		};
+      option (google.api.http) = {
+			post: "/v1/nf/CreateNfWaddrs"
+			body: "*"
+		};
+  }
+
+  //#API 2.DescribeNfs
+  rpc DescribeNfs (DescribeNfsRequest) returns (DescribeNfsResponse) {
+      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "#API 2.DescribeNfs:describe single Notification with filter."
+		};
+      option (google.api.http) = {
+			//get: "/v1/nf/DescribeNfs"
+			post: "/v1/nf/DescribeNfs"
+			body: "*"
+		};
   }
 
 
@@ -54,28 +89,6 @@ service notification {
 		};
       option (google.api.http) = {
 			post: "/v1/nf/CreateNfWAppFilter"
-			body: "*"
-		};
-  }
-
-  rpc CreateNfWaddrs (CreateNfWaddrsRequest) returns (CreateNfResponse) {
-      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create nf with addrs(email addrs, phone numbers)"
-		};
-      option (google.api.http) = {
-			post: "/v1/nf/CreateNfWaddrs"
-			body: "*"
-		};
-  }
-
-
-  rpc DescribeNfs (DescribeNfsRequest) returns (DescribeNfsResponse) {
-      option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe Notification with filter"
-		};
-      option (google.api.http) = {
-			//get: "/v1/nf/DescribeNfs"
-			post: "/v1/nf/DescribeNfs"
 			body: "*"
 		};
   }
@@ -103,6 +116,25 @@ message HelloReply {
   string message = 1;
 }
 
+
+message CreateNfWaddrsRequest {
+    google.protobuf.StringValue nf_post_type = 1;
+    google.protobuf.StringValue notify_type = 2;
+    google.protobuf.StringValue addrs_str = 3;
+    google.protobuf.StringValue title = 4;
+    google.protobuf.StringValue content = 5;
+    google.protobuf.StringValue short_content = 6;
+    google.protobuf.StringValue expired_days = 7;
+    google.protobuf.StringValue owner = 8;
+    google.protobuf.StringValue status = 9;
+}
+
+
+message CreateNfResponse {
+    google.protobuf.StringValue nf_post_id = 1;
+}
+
+
 message CreateNfWUserFilterRequest {
     google.protobuf.StringValue nf_post_type = 1;
     google.protobuf.StringValue notify_type = 2;
@@ -117,12 +149,6 @@ message CreateNfWUserFilterRequest {
 }
 
 
-message CreateNfResponse {
-    //google.protobuf.StringValue nf_post_id = 1;
-    string message = 1;
-}
-
-
 message CreateNfWAppFilterRequest {
     google.protobuf.StringValue nf_post_type = 1;
     google.protobuf.StringValue notify_type = 2;
@@ -134,19 +160,6 @@ message CreateNfWAppFilterRequest {
     google.protobuf.StringValue app_id = 8;
     google.protobuf.StringValue app_versions = 9;
     google.protobuf.StringValue cluster_status = 10;
-}
-
-
-message CreateNfWaddrsRequest {
-    google.protobuf.StringValue nf_post_type = 1;
-    google.protobuf.StringValue notify_type = 2;
-    google.protobuf.StringValue addrs_str = 3;
-    google.protobuf.StringValue title = 4;
-    google.protobuf.StringValue content = 5;
-    google.protobuf.StringValue short_content = 6;
-    google.protobuf.StringValue expired_days = 7;
-    google.protobuf.StringValue owner = 8;
-    google.protobuf.StringValue status = 9;
 }
 
 
@@ -184,4 +197,5 @@ message Notification {
     google.protobuf.Timestamp status_time = 10;
     google.protobuf.StringValue owner = 11;
 }
+
 

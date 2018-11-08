@@ -21,7 +21,7 @@ const (
   "paths": {
     "/v1/hello": {
       "post": {
-        "summary": "Sends a greeting",
+        "summary": "#API 0.SayHello:gRPC testing,Sends a greeting.",
         "operationId": "SayHello",
         "responses": {
           "200": {
@@ -102,7 +102,7 @@ const (
     },
     "/v1/nf/CreateNfWaddrs": {
       "post": {
-        "summary": "create nf with addrs(email addrs, phone numbers)",
+        "summary": "#API 1.CreateNfWaddrs：create nf with addrs(email addrs, phone numbers).",
         "operationId": "CreateNfWaddrs",
         "responses": {
           "200": {
@@ -129,7 +129,7 @@ const (
     },
     "/v1/nf/DescribeNfs": {
       "post": {
-        "summary": "describe Notification with filter",
+        "summary": "#API 2.DescribeNfs:describe single Notification with filter.",
         "operationId": "DescribeNfs",
         "responses": {
           "200": {
@@ -186,9 +186,8 @@ const (
     "pbCreateNfResponse": {
       "type": "object",
       "properties": {
-        "message": {
-          "type": "string",
-          "title": "google.protobuf.StringValue nf_post_id = 1;"
+        "nf_post_id": {
+          "type": "string"
         }
       }
     },
@@ -368,7 +367,6 @@ const (
     }
   }
 }
-
 
 `
 )

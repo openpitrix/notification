@@ -5,6 +5,7 @@ import (
 	"log"
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/notification/pkg/util/pbutil"
 )
 
 // SayHello implements nf.RegisterNotificationServer
@@ -15,18 +16,18 @@ func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 }
 
 func (s *Server) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (*pb.CreateNfResponse, error) {
-	s.nfhandler.CreateNfWaddrs(ctx, in)
-	return &pb.CreateNfResponse{Message: "Hello,use function CreateNfWaddrs at server end. "}, nil
+	res,err:= s.nfhandler.CreateNfWaddrs(ctx, in)
+	return res, err
 }
 
 func (s *Server) CreateNfWUserFilter(ctx context.Context, in *pb.CreateNfWUserFilterRequest) (*pb.CreateNfResponse, error) {
-	log.Println("Hello,use function CreateNfWUserFilter at server end.")
-	return &pb.CreateNfResponse{Message: "1111 "}, nil
+	logger.Debugf(nil,"Hello,use function CreateNfWUserFilter at server end.")
+	return &pb.CreateNfResponse{NfPostId: pbutil.ToProtoString("testID4CreateNfWUserFilter")}, nil
 }
 
 func (s *Server) CreateNfWAppFilter(ctx context.Context, in *pb.CreateNfWAppFilterRequest) (*pb.CreateNfResponse, error) {
-	log.Println("Hello,use function CreateNfWAppFilter at server end.")
-	return &pb.CreateNfResponse{Message: "Hello,use function CreateNfWAppFilter at server end. "}, nil
+	logger.Debugf(nil,"Hello,use function CreateNfWAppFilter at server end.")
+	return &pb.CreateNfResponse{NfPostId: pbutil.ToProtoString("testID4CreateNfWAppFilter")}, nil
 }
 
 func (s *Server) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {

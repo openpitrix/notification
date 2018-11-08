@@ -23,7 +23,7 @@ func (sc *nfService) SayHello(str string) (string, error) {
 	return str, nil
 }
 
-func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost) error {
+func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost)  ( string,  error) {
 	var err error
 	var job *models.Job
 
@@ -32,7 +32,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost) error {
 	if err = tx.Create(&nf).Error; err != nil {
 		tx.Rollback()
 		logger.Errorf(nil, "Cannot insert data to db:%+v", err)
-		return err
+		return "",err
 	}
 
 	parser := &NfHandlerModelParser{}
@@ -40,7 +40,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost) error {
 	if err := tx.Create(&job).Error; err != nil {
 		tx.Rollback()
 		logger.Errorf(nil, "Cannot insert data to db:%+v", err)
-		return err
+		return "",err
 	}
 
 	tasks, err := parser.GenTasksfromJob(job)
@@ -48,17 +48,22 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost) error {
 		if err := tx.Create(&task).Error; err != nil {
 			tx.Rollback()
 			logger.Errorf(nil, "Cannot insert data to db:%+v", err)
-			return err
+			return "",err
 		}
-		err = sc.queue.Enqueue(task.TaskID)
 	}
 
 	if err != nil {
 		logger.Errorf(nil, "%+v", err)
-		return  err
+		return  "",err
 	}
+
 	tx.Commit()
-	return nil
+
+	for _, task := range tasks {
+		err = sc.queue.Enqueue(task.TaskID)
+	}
+
+	return nf.NfPostID,nil
 }
 
 func (sc *nfService) GetDataFromDB4Test() {

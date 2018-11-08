@@ -31,6 +31,8 @@ pb/notification.proto
 
 
 
+#将step3生成的swagger.json文件的值替换到swagger.go文件中的const值中去
+
 
 
 

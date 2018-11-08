@@ -54,10 +54,12 @@ func TestCreateNfWaddrs4handler(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
+	testAddrsStr:="johuo@yunify.com;huojiao2006@163.com"
+
 	var req = &notification.CreateNfWaddrsRequest{
 		NfPostType:   pbutil.ToProtoString("Information"),
 		NotifyType:   pbutil.ToProtoString("email"),
-		AddrsStr:     pbutil.ToProtoString("johuo@yunify.com;danma@yunify.com"),
+		AddrsStr:     pbutil.ToProtoString(testAddrsStr),
 		Title:        pbutil.ToProtoString("Title Test"),
 		Content:      pbutil.ToProtoString("Content"),
 		ShortContent: pbutil.ToProtoString("ShortContent"),

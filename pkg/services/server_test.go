@@ -31,11 +31,11 @@ func TestCreateNfWaddrs(t *testing.T) {
 	s, _ := NewServer()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-
+	testAddrsStr:="johuo@yunify.com;johuo@yunify.com;huojiao2006@163.com;huojiao2006@163.com"
 	var req = &notification.CreateNfWaddrsRequest{
 		NfPostType:   pbutil.ToProtoString("Information"),
 		NotifyType:   pbutil.ToProtoString("Email"),
-		AddrsStr:     pbutil.ToProtoString("johuo@yunify.com;johuo@yunify.com;johuo@yunify.com;huojiao2006@163.com;huojiao2006@163.com;huojiao2006@163.com"),
+		AddrsStr:     pbutil.ToProtoString(testAddrsStr),
 		Title:        pbutil.ToProtoString("Title Test"),
 		Content:      pbutil.ToProtoString("Content"),
 		ShortContent: pbutil.ToProtoString("ShortContent"),

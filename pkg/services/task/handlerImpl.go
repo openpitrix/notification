@@ -3,6 +3,7 @@ package task
 import (
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
+	"strconv"
 )
 
 type handler struct {
@@ -22,7 +23,7 @@ func (h *handler) ExtractTasks() error {
 }
 
 func (h *handler) HandleTask(handlerNum string) error {
-	logger.Infof(nil, "HandleTask Starts,Num："+handlerNum+"....")
+	logger.Infof(nil, "*******HandleTask Starts,Num："+handlerNum+"....")
 	err:=h.tasksc.HandleTask(handlerNum)
 	if err != nil {
 		logger.Warnf(nil, "%+v", err)
@@ -34,10 +35,11 @@ func (h *handler) HandleTask(handlerNum string) error {
 func (h *handler) ServeTask() error {
 	logger.Infof(nil, "Call handlerImpl.ServeTask")
 	go h.ExtractTasks()
-
+  
 	MaxWorkingTasks:=config.GetInstance().App.MaxWorkingTasks
+
 	for i := 0; i < MaxWorkingTasks; i++ {
-		go h.HandleTask(string(i))
+		go h.HandleTask(strconv.Itoa(i))
 	}
 	return nil
 }

@@ -30,12 +30,12 @@ func TestCreateNfWaddrs(t *testing.T) {
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
 	nfservice := NewService(db, q)
+	testAddrsStr:="johuo@yunify.com;huojiao2006@163.com"
 
 	nf := &models.NotificationCenterPost{
 		NfPostID:     idutil.GetUuid(constants.NfPostIDPrifix),
 		NfPostType:   "Email",
-		//AddrsStr:     "johuo@yunify.com;danma@yunify.com",
-		AddrsStr:     "johuo@yunify.com;johuo@yunify.com;johuo@yunify.com;johuo@yunify.com;johuo@yunify.com;huojiao2006@163.com;huojiao2006@163.com;huojiao2006@163.com;huojiao2006@163.com;huojiao2006@163.com",
+		AddrsStr:     testAddrsStr,
 		Title:        "Title Test2",
 		Content:      "Content2",
 		ShortContent: "ShortContent2",
@@ -45,10 +45,11 @@ func TestCreateNfWaddrs(t *testing.T) {
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
-	err := nfservice.CreateNfWaddrs(nf)
+	nfPostID,err := nfservice.CreateNfWaddrs(nf)
 	if err != nil {
 		logger.Criticalf(nil, "Cannot create NfWaddrs:%+v", err)
 	}
+	logger.Debugf(nil,nfPostID)
 }
 
 func TestDescribeNfs(t *testing.T) {

@@ -51,12 +51,6 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 			dbCfg.DatabaseName,
 		)
 	)
-	//
-	//log.Print(dbCfg.User)
-	//log.Print(dbCfg.Password)
-	//log.Print(dbCfg.Host)
-	//log.Print(dbCfg.Port)
-	//log.Print(dbCfg.DatabaseName)
 
 	db, err_db = gorm.Open("mysql", connectionString)
 	if err_db != nil {
@@ -71,7 +65,7 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 	}
 
 	db.DB().SetMaxIdleConns(10)
-	db.LogMode(cfg.DBLogMode)
+	db.LogMode(cfg.Db.DBLogMode)
 
 	// 全局禁用表名复数
 	db.SingularTable(true)

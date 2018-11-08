@@ -7,6 +7,6 @@ import (
 
 type Handler interface {
 	SayHello(ctx context.Context, in *pb.HelloRequest) error
-	CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) error
+	CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (*pb.CreateNfResponse, error)
 	DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error)
 }
