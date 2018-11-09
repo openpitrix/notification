@@ -20,6 +20,7 @@ package client
 
 import (
 	"log"
+	"openpitrix.io/notification/pkg/config"
 	"os"
 	"time"
 	"golang.org/x/net/context"
@@ -28,13 +29,17 @@ import (
 )
 
 const (
-	address     = "localhost:50051"
 	defaultName = "world"
 )
 
 func Serve() {
 	log.Println("Start to run client. Step 1")
-	// Set up a connection to the server.
+
+	config.GetInstance().LoadConf()
+	host:=config.GetInstance().App.Host
+	port:=config.GetInstance().App.Port
+	address:=host+port
+
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

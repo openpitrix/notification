@@ -5,6 +5,8 @@ import (
 	"log"
 	"mime"
 	"net/http"
+	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/config"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/philips/go-bindata-assetfs"
@@ -16,10 +18,12 @@ import (
 	"openpitrix.io/notification/pkg/apigateway/pkg/ui/data/swagger"
 
 )
+
+
 var (
-	//greeterEndpoint = flag.String("helloworld_endpoint", "localhost:50051", "endpoint of Greeter gRPC Service")
-	notificationEndpoint = flag.String("notification_endpoint", "localhost:50051", "endpoint of Notification gRPC Service")
+	notificationEndpoint *string
 )
+
 
 func serveSwagger(mux *http.ServeMux) {
 	mime.AddExtensionType(".svg", "image/svg+xml")
@@ -54,12 +58,23 @@ func run() error {
 	mux.Handle("/", gwmux)
 	serveSwagger(mux)
 
-	log.Print("Notification gRPC Server gateway start at port 8080...")
+//	log.Print("Notification gRPC Server gateway start at port 8080...")
+	logger.Infof(nil,"Gateway Service Started:%+v",*notificationEndpoint)
+
+
 	http.ListenAndServe(":8080", mux)
 	return nil
 }
 
 func Serve() {
+
+	config.GetInstance().LoadConf()
+	host:=config.GetInstance().App.Host
+	port:=config.GetInstance().App.Port
+	address:=host+port
+
+	notificationEndpoint = flag.String("notification_endpoint", address, "endpoint of Notification gRPC Service")
+
 	flag.Parse()
 
 	if err := run(); err != nil {

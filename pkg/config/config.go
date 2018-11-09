@@ -1,9 +1,12 @@
 package config
 
 import (
+	"flag"
 	"fmt"
+	"github.com/koding/multiconfig"
 	"github.com/mcuadros/go-defaults"
 	"openpitrix.io/logger"
+	"os"
 	"sync"
 )
 
@@ -12,10 +15,10 @@ import (
 type Config struct {
 	//AppLogMode string `default:"info"`
 	AppLogMode string `default:"debug"`
-
 	App struct {
 		AppName         string `default:"Notification"`
-		HostURL         string `default:"http://192.168.0.3/"`
+		Host         string `default:"192.168.0.3"`
+		//Host         string `default:"localhost"`
 		Port            string `default:":50051"`
 		Env             string `default:"DEV"`
 		MaxWorkingTasks int    `default:"5"` //default:"20
@@ -60,6 +63,7 @@ func (c *Config) InitCfg() {
 	defaults.SetDefaults(instance)
 }
 
+
 // Validate checks if the most important fields are set and are not empty
 // values.
 func (c *Config) Validate() error {
@@ -80,14 +84,11 @@ func (c *Config) Validate() error {
 	if c.App.Env == "" {
 		return fmt.Errorf(errorMsg, "App.Env")
 	}
-	if c.App.HostURL == "" {
-		return fmt.Errorf(errorMsg, "App.HostURL")
+	if c.App.Host == "" {
+		return fmt.Errorf(errorMsg, "App.Host")
 	}
 	if c.App.MaxWorkingTasks == 0 {
 		return fmt.Errorf(errorMsg, "App.MaxWorkingTasks")
-	}
-	if c.App.HostURL == "" {
-		return fmt.Errorf(errorMsg, "App.HostURL")
 	}
 
 	logger.Infof(nil, "%+v", "-------------Db cfg---------------------")
@@ -138,7 +139,7 @@ func (c *Config) Print() {
 	logger.Infof(nil, "%+v", "-------------App cfg---------------------")
 	logger.Infof(nil, "c.App.Port:%+v", c.App.Port)
 	logger.Infof(nil, "c.App.MaxWorkingTasks:%+v", c.App.MaxWorkingTasks)
-	logger.Infof(nil, "c.App.HostURL:%+v", c.App.HostURL)
+	logger.Infof(nil, "c.App.Host:%+v", c.App.Host)
 	logger.Infof(nil, "c.App.Env:%+v", c.App.Env)
 	logger.Infof(nil, "c.App.AppName:%+v", c.App.AppName)
 
@@ -157,4 +158,39 @@ func (c *Config) Print() {
 	logger.Infof(nil, "c.Etcd.Endpoints:%+v", c.Etcd.Endpoints)
 
 	logger.Infof(nil, "%+v", "===============Print End==================================")
+}
+
+
+func PrintUsage() {
+	fmt.Fprintf(os.Stdout, "Usage of %s:\n", os.Args[0])
+	flag.PrintDefaults()
+	fmt.Fprint(os.Stdout, "\nSupported environment variables:\n")
+	e := newLoader("notification")
+	e.PrintEnvs(new(Config))
+	fmt.Println("")
+}
+
+func GetFlagSet() *flag.FlagSet {
+	flag.CommandLine.Usage = PrintUsage
+	return flag.CommandLine
+}
+
+func ParseFlag() {
+	GetFlagSet().Parse(os.Args[1:])
+}
+
+func  (c *Config)LoadConf()   {
+	ParseFlag()
+	config:=instance
+	m := &multiconfig.DefaultLoader{}
+	m.Loader = multiconfig.MultiLoader(newLoader("notification"))
+	m.Validator = multiconfig.MultiValidator(
+		&multiconfig.RequiredValidator{},
+	)
+	err := m.Load(config)
+	if err != nil {
+		logger.Criticalf(nil, "Failed to load config: %+v", err)
+		panic(err)
+	}
+	logger.Debugf(nil, "LoadConf: %+v", config)
 }

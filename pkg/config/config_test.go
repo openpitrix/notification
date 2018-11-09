@@ -12,3 +12,12 @@ func TestGetCfg(t *testing.T) {
 	cfg.Print()
 	cfg.Validate()
 }
+
+
+func TestLoadConf(t *testing.T) {
+	logger.SetLevelByString("debug")
+	cfg := GetInstance()
+ 	cfg.LoadConf()
+	cfg.Print()
+
+}

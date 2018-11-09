@@ -93,7 +93,7 @@ func NewServer() (*Server, error) {
 
 func InitGlobelSetting() {
 	logger.Debugf(nil,"step0.1:初始化配置参数")
-	config.GetInstance().InitCfg()
+	config.GetInstance().LoadConf()
 
 	logger.Debugf(nil,"step0.2:初始化DB connection pool")
 	issucc := dbutil.GetInstance().InitDataPool()
@@ -110,7 +110,7 @@ func InitGlobelSetting() {
 func Serve() error {
 	InitGlobelSetting()
 
-	port := config.GetInstance().App.Port
+	port := config.GetInstance().App.Port 
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		logger.Criticalf(nil,"failed to listen: %v", err)
