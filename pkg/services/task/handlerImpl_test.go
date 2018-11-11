@@ -32,7 +32,7 @@ func TestNewHandler(t *testing.T) {
 func TestDescribeNfs(t *testing.T){
 	test.InitGlobelSetting()
 
-	MaxWorkingTasks:=config.GetInstance().App.MaxWorkingTasks
+	MaxWorkingTasks:=config.GetInstance().App.Maxtasks
 	for a := 0; a < MaxWorkingTasks; a++ {
 		fmt.Printf("a 的值为: %d\n", a)
 		ss := strconv.Itoa(a)

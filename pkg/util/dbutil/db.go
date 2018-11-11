@@ -48,7 +48,7 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 			dbCfg.Password,
 			dbCfg.Host,
 			dbCfg.Port,
-			dbCfg.DatabaseName,
+			dbCfg.Dbname,
 		)
 	)
 
@@ -65,7 +65,7 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 	}
 
 	db.DB().SetMaxIdleConns(10)
-	db.LogMode(cfg.Db.DBLogMode)
+	db.LogMode(cfg.Db.Logmode)
 
 	// 全局禁用表名复数
 	db.SingularTable(true)

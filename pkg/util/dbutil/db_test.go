@@ -23,7 +23,7 @@ type Product struct {
 func TestGetMysqlDB(t *testing.T) {
 
 	logger.Debugf(nil,"step0.1:初始化配置参数")
-	config.GetInstance().InitCfg()
+	config.GetInstance().LoadConf()
 
 	logger.Debugf(nil,"step0.2:初始化DB connection pool")
 	issucc := GetInstance().InitDataPool()

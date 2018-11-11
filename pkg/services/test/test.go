@@ -20,8 +20,8 @@ func GetTestDB() *gorm.DB {
 func GetEtcdQueue() *etcdutil.Queue {
 	cfg := config.GetInstance()
 	endpoints := []string{cfg.Etcd.Endpoints}
-	prefix:=cfg.Etcd.Etcdprefix
-	topic:=cfg.Etcd.Etcdtopic
+	prefix:=cfg.Etcd.Prefix
+	topic:=cfg.Etcd.Topic
 
 	nfetcd, err := etcdutil.Connect(endpoints, prefix)
 	if err != nil {
@@ -34,7 +34,9 @@ func GetEtcdQueue() *etcdutil.Queue {
 
 func InitGlobelSetting() {
 	logger.Debugf(nil,"step0.1:初始化配置参数")
-	config.GetInstance().InitCfg()
+//	config.GetInstance().InitCfg()
+	mycfg:=config.GetInstance()
+	mycfg.LoadConf()
 
 	logger.Debugf(nil,"step0.2:初始化DB connection pool")
 	issucc := dbutil.GetInstance().InitDataPool()
@@ -43,7 +45,7 @@ func InitGlobelSetting() {
 		os.Exit(1)
 	}
 
-	AppLogMode:=config.GetInstance().AppLogMode
+	AppLogMode:=mycfg.App.Applogmode
 	logger.SetLevelByString(AppLogMode)
 
 }

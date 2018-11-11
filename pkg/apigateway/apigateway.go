@@ -61,13 +61,11 @@ func run() error {
 //	log.Print("Notification gRPC Server gateway start at port 8080...")
 	logger.Infof(nil,"Gateway Service Started:%+v",*notificationEndpoint)
 
-
 	http.ListenAndServe(":8080", mux)
 	return nil
 }
 
 func Serve() {
-
 	config.GetInstance().LoadConf()
 	host:=config.GetInstance().App.Host
 	port:=config.GetInstance().App.Port

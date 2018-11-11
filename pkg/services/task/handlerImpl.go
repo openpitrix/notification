@@ -36,7 +36,7 @@ func (h *handler) ServeTask() error {
 	logger.Infof(nil, "Call handlerImpl.ServeTask")
 	go h.ExtractTasks()
 
-	MaxWorkingTasks:=config.GetInstance().App.MaxWorkingTasks
+	MaxWorkingTasks:=config.GetInstance().App.Maxtasks
 
 	for i := 0; i < MaxWorkingTasks; i++ {
 		go h.HandleTask(strconv.Itoa(i))

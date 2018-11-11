@@ -56,13 +56,13 @@ func NewServer() (*Server, error) {
 	cfg := config.GetInstance()
 	endpoints := []string{cfg.Etcd.Endpoints}
 
-	prefix:=cfg.Etcd.Etcdprefix
+	prefix:=cfg.Etcd.Prefix
 	nfetcd, err := etcdutil.Connect(endpoints, prefix)
 	if err != nil {
 		logger.Criticalf(nil,"%+v",err)
 	}
 
-	topic:=cfg.Etcd.Etcdtopic
+	topic:=cfg.Etcd.Topic
 	q := nfetcd.NewQueue(topic)
 
 	logger.Debugf(nil,"step1.1.2:get db")
@@ -102,15 +102,16 @@ func InitGlobelSetting() {
 		os.Exit(1)
 	}
 
-	AppLogMode:=config.GetInstance().AppLogMode
+	AppLogMode:=config.GetInstance().App.Applogmode
 	logger.SetLevelByString(AppLogMode)
 }
 //**************************************************************************************************
 
 func Serve() error {
 	InitGlobelSetting()
+	config.GetInstance().PrintUsage()
 
-	port := config.GetInstance().App.Port 
+	port := config.GetInstance().App.Port
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		logger.Criticalf(nil,"failed to listen: %v", err)

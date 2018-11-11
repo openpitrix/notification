@@ -27,7 +27,7 @@ type taskService struct {
 
 func NewService(db *gorm.DB, queue *etcdutil.Queue) Service {
 	tasksc := &taskService{db: db, queue: queue}
-	MaxTasks:=config.GetInstance().App.MaxWorkingTasks
+	MaxTasks:=config.GetInstance().App.Maxtasks
 	tasksc.runningTaskIds = make(chan string, MaxTasks)
 	return tasksc
 }
