@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kube-node-nf-service
+  labels:
+    name: kube-node-nf-service
+spec:
+  type: NodePort      #这里代表是NodePort类型的
+  ports:
+  - port: 8080          #这里的端口和clusterIP(10.97.114.36)对应，即10.97.114.36:80,供内部访问。
+    targetPort: 8080  #端口一定要和container暴露出来的端口对应，nodejs暴露出来的端口是8081，所以这里也应是8081
+    protocol: TCP
+    nodePort: 31111   # 所有的节点都会开放此端口，此端口供外部调用。
+  selector:
+    app: op_notification          #这里选择器一定要选择容器的标签，之前写name:kube-node是错的
