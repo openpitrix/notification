@@ -13,12 +13,9 @@ type Handler interface {
 	DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error)
 }
 
-
 type handler struct {
 	nfsc Service
 }
-
-
 
 func NewHandler(nfService Service) Handler {
 	return &handler{
@@ -42,7 +39,7 @@ func (h *handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddr
 		logger.Warnf(nil, "%+v", err)
 		return nil, err
 	}
-	logger.Debugf(nil, "%+v", nf.NfPostID)
+	logger.Debugf(nil, "%+v", nf.NotificationId)
 
 	nfPostID, err := h.nfsc.CreateNfWaddrs(nf)
 	if err != nil {
@@ -51,7 +48,7 @@ func (h *handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddr
 	}
 
 	res := &pb.CreateNfResponse{
-		NfPostId: pbutil.ToProtoString(nfPostID),
+		NotificationId: pbutil.ToProtoString(nfPostID),
 	}
 	return res, nil
 }

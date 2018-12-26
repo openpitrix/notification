@@ -31,10 +31,10 @@ func TestCreateNfWaddrs(t *testing.T) {
 	s, _ := NewServer()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	testAddrsStr:="huojiao2006@163.com;513590612@qq.com"
-	var req = &notification.CreateNfWaddrsRequest{
-		NfPostType:   pbutil.ToProtoString("Information"),
-		NotifyType:   pbutil.ToProtoString("Email"),
+	testAddrsStr := "huojiao2006@163.com;513590612@qq.com"
+	var req = &notification.CreateNfWithAddrsRequest{
+		ContentType:  pbutil.ToProtoString("Information"),
+		SentType:     pbutil.ToProtoString("Email"),
 		AddrsStr:     pbutil.ToProtoString(testAddrsStr),
 		Title:        pbutil.ToProtoString("Run case"),
 		Content:      pbutil.ToProtoString("Run case content"),
@@ -43,5 +43,5 @@ func TestCreateNfWaddrs(t *testing.T) {
 		Owner:        pbutil.ToProtoString("HuoJiao"),
 		Status:       pbutil.ToProtoString("New"),
 	}
-	s.CreateNfWaddrs(ctx, req)
+	s.CreateNfWithAddrs(ctx, req)
 }

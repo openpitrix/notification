@@ -182,7 +182,7 @@
     "pbCreateNfResponse": {
       "type": "object",
       "properties": {
-        "nf_post_id": {
+        "notification_id": {
           "type": "string"
         }
       }
@@ -190,10 +190,10 @@
     "pbCreateNfWAppFilterRequest": {
       "type": "object",
       "properties": {
-        "nf_post_type": {
+        "content_type": {
           "type": "string"
         },
-        "notify_type": {
+        "sent_type": {
           "type": "string"
         },
         "title": {
@@ -225,10 +225,10 @@
     "pbCreateNfWUserFilterRequest": {
       "type": "object",
       "properties": {
-        "nf_post_type": {
+        "content_type": {
           "type": "string"
         },
-        "notify_type": {
+        "sent_type": {
           "type": "string"
         },
         "title": {
@@ -260,10 +260,10 @@
     "pbCreateNfWithAddrsRequest": {
       "type": "object",
       "properties": {
-        "nf_post_type": {
+        "content_type": {
           "type": "string"
         },
-        "notify_type": {
+        "sent_type": {
           "type": "string"
         },
         "addrs_str": {
@@ -292,13 +292,13 @@
     "pbDescribeNfsRequest": {
       "type": "object",
       "properties": {
-        "nf_post_type": {
+        "content_type": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "notify_type": {
+        "sent_type": {
           "type": "array",
           "items": {
             "type": "string"

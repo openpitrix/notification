@@ -111,8 +111,8 @@ message HelloReply {
 
 
 message CreateNfWithAddrsRequest {
-    google.protobuf.StringValue nf_post_type = 1;
-    google.protobuf.StringValue notify_type = 2;
+    google.protobuf.StringValue content_type = 1;
+    google.protobuf.StringValue sent_type = 2;
     google.protobuf.StringValue addrs_str = 3;
     google.protobuf.StringValue title = 4;
     google.protobuf.StringValue content = 5;
@@ -124,13 +124,13 @@ message CreateNfWithAddrsRequest {
 
 
 message CreateNfResponse {
-    google.protobuf.StringValue nf_post_id = 1;
+    google.protobuf.StringValue notification_id = 1;
 }
 
 
 message CreateNfWUserFilterRequest {
-    google.protobuf.StringValue nf_post_type = 1;
-    google.protobuf.StringValue notify_type = 2;
+    google.protobuf.StringValue content_type = 1;
+    google.protobuf.StringValue sent_type = 2;
     google.protobuf.StringValue title = 3;
     google.protobuf.StringValue content = 4;
     google.protobuf.StringValue short_content = 5;
@@ -143,8 +143,8 @@ message CreateNfWUserFilterRequest {
 
 
 message CreateNfWAppFilterRequest {
-    google.protobuf.StringValue nf_post_type = 1;
-    google.protobuf.StringValue notify_type = 2;
+    google.protobuf.StringValue content_type = 1;
+    google.protobuf.StringValue sent_type = 2;
     google.protobuf.StringValue title = 3;
     google.protobuf.StringValue content = 4;
     google.protobuf.StringValue short_content = 5;
@@ -157,8 +157,8 @@ message CreateNfWAppFilterRequest {
 
 
 message DescribeNfsRequest {
-    repeated string nf_post_type = 1;
-    repeated string notify_type = 2;
+    repeated string content_type = 1;
+    repeated string sent_type = 2;
     google.protobuf.StringValue title = 3;
     google.protobuf.StringValue content = 4;
     google.protobuf.StringValue owner = 5;
@@ -178,9 +178,9 @@ message DescribeNfsResponse {
 
 
 message Notification {
-    google.protobuf.StringValue nf_post_id = 1;
-    google.protobuf.StringValue nf_post_type = 2;
-    google.protobuf.StringValue notify_type = 3;
+    google.protobuf.StringValue notification_id = 1;
+    google.protobuf.StringValue content_type = 2;
+    google.protobuf.StringValue sent_type = 3;
     google.protobuf.StringValue title = 4;
     google.protobuf.StringValue content = 5;
     google.protobuf.StringValue short_content = 6;

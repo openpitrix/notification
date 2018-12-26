@@ -31,7 +31,7 @@ func GetEtcdQueue() *etcdutil.Queue {
 	return q
 }
 
-func InitGlobelSetting4Test() {
+func InitGlobelSetting() {
 	logger.Debugf(nil, "step0.1:初始化配置参数")
 	//	config.GetInstance().InitCfg()
 	mycfg := config.GetInstance()

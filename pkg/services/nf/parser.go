@@ -12,40 +12,37 @@ import (
 type NfHandlerModelParser struct {
 }
 
-
-
-func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWithAddrsRequest) (*models.NotificationCenterPost, error) {
-	nf := &models.NotificationCenterPost{
-		NfPostID:     idutil.GetUuid(constants.NfPostIDPrifix),
-		NfPostType:   in.GetNfPostType().GetValue(),
-		NotifyType:   in.GetNotifyType().GetValue(),
-		AddrsStr:     in.GetAddrsStr().GetValue(),
-		Title:        in.GetTitle().GetValue(),
-		Content:      in.GetContent().GetValue(),
-		ShortContent: in.GetShortContent().GetValue(),
-		ExporedDays:  2,
-		Owner:        in.GetOwner().GetValue(),
-		Status:       "New",
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWithAddrsRequest) (*models.Notification, error) {
+	nf := &models.Notification{
+		NotificationId: idutil.GetUuid(constants.NfPostIDPrifix),
+		ContentType:    in.GetContentType().GetValue(),
+		SentType:       in.GetSentType().GetValue(),
+		AddrsStr:       in.GetAddrsStr().GetValue(),
+		Title:          in.GetTitle().GetValue(),
+		Content:        in.GetContent().GetValue(),
+		ShortContent:   in.GetShortContent().GetValue(),
+		ExporedDays:    2,
+		Owner:          in.GetOwner().GetValue(),
+		Status:         "New",
+		CreatedAt:      time.Now(),
+		UpdatedAt:      time.Now(),
 	}
 	return nf, nil
 }
 
-func (parser *NfHandlerModelParser) GenJobfromNf(nf *models.NotificationCenterPost) (*models.Job, error) {
+func (parser *NfHandlerModelParser) GenJobfromNf(nf *models.Notification) (*models.Job, error) {
 	//todo check eamil string
 	emailsArray := strings.Split(nf.AddrsStr, ";")
 	taskcnt := int64(len(emailsArray))
 	job := &models.Job{
-		JobID:         idutil.GetUuid(constants.JobPostIDPrifix),
-		NfPostID:       nf.NfPostID,
-		JobType:        nf.NotifyType,
+		JobID:          idutil.GetUuid(constants.JobPostIDPrifix),
+		NotificationId: nf.NotificationId,
+		JobType:        nf.SentType,
 		AddrsStr:       nf.AddrsStr,
 		JobAction:      "Job Action Test",
 		ExeCondition:   "Job Action Test",
 		TotalTaskCount: taskcnt,
 		TaskSuccCount:  0,
-		Result:         "N",
 		ErrorCode:      0,
 		Status:         "Ready",
 		CreatedAt:      time.Now(),
@@ -62,9 +59,8 @@ func (parser *NfHandlerModelParser) GenTasksfromJob(job *models.Job) ([]*models.
 		tasks = append(tasks, &models.Task{
 			TaskID:     idutil.GetUuid(constants.TaskPostIDPrifix),
 			JobID:      job.JobID,
-			AddrsStr:   email,
+			EmailAddr:  email,
 			TaskAction: "",
-			Result:     "Ready",
 			ErrorCode:  0,
 			Status:     "New",
 			CreatedAt:  time.Now(),

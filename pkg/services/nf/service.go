@@ -8,14 +8,12 @@ import (
 	"openpitrix.io/notification/pkg/util/etcdutil"
 )
 
-
 // Service interface describes all functions that must be implemented.
 type Service interface {
 	SayHello(str string) (string, error)
-	CreateNfWaddrs(*models.NotificationCenterPost) (nfPostID string, err error)
-	DescribeNfs(nfID string) (*models.NotificationCenterPost, error)
+	CreateNfWaddrs(*models.Notification) (nfPostID string, err error)
+	DescribeNfs(nfID string) (*models.Notification, error)
 }
-
 
 type nfService struct {
 	db    *gorm.DB
@@ -27,12 +25,12 @@ func NewService(db *gorm.DB, q *etcdutil.Queue) Service {
 }
 
 func (sc *nfService) SayHello(str string) (string, error) {
-	logger.Debugf(nil,"Step 7: deep func" + str)
+	logger.Debugf(nil, "Step 7: deep func"+str)
 	sc.GetDataFromDB4Test()
 	return str, nil
 }
 
-func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost)  ( string,  error) {
+func (sc *nfService) CreateNfWaddrs(nf *models.Notification) (string, error) {
 	var err error
 	var job *models.Job
 
@@ -41,7 +39,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost)  ( string
 	if err = tx.Create(&nf).Error; err != nil {
 		tx.Rollback()
 		logger.Errorf(nil, "Cannot insert data to db:%+v", err)
-		return "",err
+		return "", err
 	}
 
 	parser := &NfHandlerModelParser{}
@@ -49,7 +47,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost)  ( string
 	if err := tx.Create(&job).Error; err != nil {
 		tx.Rollback()
 		logger.Errorf(nil, "Cannot insert data to db:%+v", err)
-		return "",err
+		return "", err
 	}
 
 	tasks, err := parser.GenTasksfromJob(job)
@@ -57,13 +55,13 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost)  ( string
 		if err := tx.Create(&task).Error; err != nil {
 			tx.Rollback()
 			logger.Errorf(nil, "Cannot insert data to db:%+v", err)
-			return "",err
+			return "", err
 		}
 	}
 
 	if err != nil {
 		logger.Errorf(nil, "%+v", err)
-		return  "",err
+		return "", err
 	}
 
 	tx.Commit()
@@ -72,7 +70,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.NotificationCenterPost)  ( string
 		err = sc.queue.Enqueue(task.TaskID)
 	}
 
-	return nf.NfPostID,nil
+	return nf.NotificationId, nil
 }
 
 func (sc *nfService) GetDataFromDB4Test() {
@@ -91,8 +89,8 @@ func (sc *nfService) GetDataFromDB4Test() {
 	logger.Infof(nil, "%+v", product)
 }
 
-func (sc *nfService) DescribeNfs(nfID string) (*models.NotificationCenterPost, error) {
-	nf := &models.NotificationCenterPost{}
+func (sc *nfService) DescribeNfs(nfID string) (*models.Notification, error) {
+	nf := &models.Notification{}
 	err := sc.db.
 		Where("nf_post_id = ?", nfID).
 		First(nf).Error

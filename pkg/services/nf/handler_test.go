@@ -42,7 +42,7 @@ func TestSayHello4handler(t *testing.T) {
 	handler.SayHello(ctx, req)
 }
 
-func TestCreateNfWaddrs4handler(t *testing.T) {
+func TestCreateNfWithAddrs4handler(t *testing.T) {
 	logger.Debugf(nil, "Test func NewHandler")
 
 	db := test.GetTestDB()
@@ -54,11 +54,11 @@ func TestCreateNfWaddrs4handler(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	testAddrsStr:="johuo@yunify.com;huojiao2006@163.com"
+	testAddrsStr := "johuo@yunify.com;huojiao2006@163.com;513590162@qq.com"
 
 	var req = &notification.CreateNfWithAddrsRequest{
-		NfPostType:   pbutil.ToProtoString("Information"),
-		NotifyType:   pbutil.ToProtoString("email"),
+		ContentType:  pbutil.ToProtoString("Information"),
+		SentType:     pbutil.ToProtoString("email"),
 		AddrsStr:     pbutil.ToProtoString(testAddrsStr),
 		Title:        pbutil.ToProtoString("Title Test"),
 		Content:      pbutil.ToProtoString("Content"),
@@ -70,4 +70,3 @@ func TestCreateNfWaddrs4handler(t *testing.T) {
 
 	handler.CreateNfWithAddrs(ctx, req)
 }
-

@@ -19,7 +19,7 @@ const (
     "application/json"
   ],
   "paths": {
-    "/v1/SayHello": {
+    "/v1/hello": {
       "post": {
         "summary": "#API 0.SayHello:gRPC testing,Sends a greeting.",
         "operationId": "SayHello",
@@ -100,10 +100,10 @@ const (
         ]
       }
     },
-    "/v1/nf/CreateNfWithAddrs": {
+    "/v1/nf/CreateNfWaddrs": {
       "post": {
-        "summary": "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers).",
-        "operationId": "CreateNfWithAddrs",
+        "summary": "#API 1.CreateNfWaddrs：create nf with addrs(email addrs, phone numbers).",
+        "operationId": "CreateNfWaddrs",
         "responses": {
           "200": {
             "description": "",
@@ -118,7 +118,7 @@ const (
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateNfWithAddrsRequest"
+              "$ref": "#/definitions/pbCreateNfWaddrsRequest"
             }
           }
         ],
@@ -261,7 +261,7 @@ const (
         }
       }
     },
-    "pbCreateNfWithAddrsRequest": {
+    "pbCreateNfWaddrsRequest": {
       "type": "object",
       "properties": {
         "nf_post_type": {
