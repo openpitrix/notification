@@ -56,7 +56,7 @@ func TestCreateNfWaddrs4handler(t *testing.T) {
 
 	testAddrsStr:="johuo@yunify.com;huojiao2006@163.com"
 
-	var req = &notification.CreateNfWaddrsRequest{
+	var req = &notification.CreateNfWithAddrsRequest{
 		NfPostType:   pbutil.ToProtoString("Information"),
 		NotifyType:   pbutil.ToProtoString("email"),
 		AddrsStr:     pbutil.ToProtoString(testAddrsStr),
@@ -68,9 +68,6 @@ func TestCreateNfWaddrs4handler(t *testing.T) {
 		Status:       pbutil.ToProtoString("New"),
 	}
 
-	handler.CreateNfWaddrs(ctx, req)
+	handler.CreateNfWithAddrs(ctx, req)
 }
 
-func TestDescribeNfs4handler(t *testing.T) {
-
-}

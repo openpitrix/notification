@@ -12,37 +12,37 @@ import (
 // Config that contains all of the configuration variables
 // that are set up in the environment.
 type Config struct {
-	App        Appcfg
-	Db         Dbcfg
-	Etcd       Etcdcfg
+	App   Appcfg
+	Db    Dbcfg
+	Etcd  Etcdcfg
 	Email Emailcfg
 }
 
 type Appcfg struct {
 	Name string `default:"Notification"`
-	Host    string `default:"192.168.0.3"`
-	//Host    string `default:"127.0.0.1"`
-	Port            string `default:":50051"`
-	Env             string `default:"DEV"`
-	Maxtasks int `default:"5"`
+	//Host    string `default:"192.168.0.3"`
+	Host       string `default:"127.0.0.1"`
+	Port       string `default:":50051"`
+	Env        string `default:"DEV"`
+	Maxtasks   int    `default:"5"`
 	Applogmode string `default:"debug"`
 }
 
 type Dbcfg struct {
-	Host         string `default:"192.168.0.10"`
-	Port         string `default:"13306"`
-	User         string `default:"root"`
-	Password     string `default:"password"`
-	Dbname string `default:"notification"`
-	Disable      bool   `default:"true"`
-	Logmode    bool   `default:"true"`
+	Host     string `default:"192.168.0.10"`
+	Port     string `default:"13306"`
+	User     string `default:"root"`
+	Password string `default:"password"`
+	Dbname   string `default:"notification"`
+	Disable  bool   `default:"true"`
+	Logmode  bool   `default:"true"`
 }
 
 type Etcdcfg struct {
 	//Endpoints string `default:"192.168.0.7:2379,192.168.0.8:2379,192.168.0.6:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"  or default:"openpitrix-etcd:2379
-	Endpoints  string `default:"192.168.0.7:2379"`
-	Prefix string `default:"nf_"`
-	Topic  string `default:"task"`
+	Endpoints string `default:"192.168.0.7:2379"`
+	Prefix    string `default:"nf_"`
+	Topic     string `default:"task"`
 }
 
 type Emailcfg struct {
@@ -62,7 +62,7 @@ func GetInstance() *Config {
 	return instance
 }
 
-func  (c *Config) PrintUsage() {
+func (c *Config) PrintUsage() {
 	flag.PrintDefaults()
 	fmt.Fprint(os.Stdout, "\nSupported environment variables:\n")
 	e := newLoader("nf")
@@ -70,20 +70,20 @@ func  (c *Config) PrintUsage() {
 	fmt.Println("")
 }
 
-func (c *Config)GetFlagSet() *flag.FlagSet {
+func (c *Config) GetFlagSet() *flag.FlagSet {
 	flag.CommandLine.Usage = c.PrintUsage
 	return flag.CommandLine
 }
 
-func (c *Config)ParseFlag() {
+func (c *Config) ParseFlag() {
 	c.GetFlagSet().Parse(os.Args[1:])
 }
 
 var profilingServerStarted = false
 
-func  (c *Config)LoadConf() *Config {
+func (c *Config) LoadConf() *Config {
 	c.ParseFlag()
-	config:=instance
+	config := instance
 	//config := new(Config)
 	m := &multiconfig.DefaultLoader{}
 	m.Loader = multiconfig.MultiLoader(newLoader("nf"))
@@ -99,5 +99,3 @@ func  (c *Config)LoadConf() *Config {
 
 	return config
 }
-
-

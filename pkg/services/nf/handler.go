@@ -7,9 +7,18 @@ import (
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
 
+type Handler interface {
+	SayHello(ctx context.Context, in *pb.HelloRequest) error
+	CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error)
+	DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error)
+}
+
+
 type handler struct {
 	nfsc Service
 }
+
+
 
 func NewHandler(nfService Service) Handler {
 	return &handler{
@@ -23,7 +32,7 @@ func (h *handler) SayHello(ctx context.Context, in *pb.HelloRequest) error {
 	return nil
 }
 
-func (h *handler) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (*pb.CreateNfResponse, error) {
+func (h *handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error) {
 	var (
 		parser = &NfHandlerModelParser{}
 	)

@@ -8,6 +8,15 @@ import (
 	"openpitrix.io/notification/pkg/util/etcdutil"
 )
 
+
+// Service interface describes all functions that must be implemented.
+type Service interface {
+	SayHello(str string) (string, error)
+	CreateNfWaddrs(*models.NotificationCenterPost) (nfPostID string, err error)
+	DescribeNfs(nfID string) (*models.NotificationCenterPost, error)
+}
+
+
 type nfService struct {
 	db    *gorm.DB
 	queue *etcdutil.Queue

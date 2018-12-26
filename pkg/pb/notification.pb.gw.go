@@ -41,15 +41,15 @@ func request_Notification_SayHello_0(ctx context.Context, marshaler runtime.Mars
 
 }
 
-func request_Notification_CreateNfWaddrs_0(ctx context.Context, marshaler runtime.Marshaler, client NotificationClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreateNfWaddrsRequest
+func request_Notification_CreateNfWithAddrs_0(ctx context.Context, marshaler runtime.Marshaler, client NotificationClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreateNfWithAddrsRequest
 	var metadata runtime.ServerMetadata
 
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && err != io.EOF {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.CreateNfWaddrs(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.CreateNfWithAddrs(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
@@ -173,7 +173,7 @@ func RegisterNotificationHandlerClient(ctx context.Context, mux *runtime.ServeMu
 
 	})
 
-	mux.Handle("POST", pattern_Notification_CreateNfWaddrs_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("POST", pattern_Notification_CreateNfWithAddrs_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		if cn, ok := w.(http.CloseNotifier); ok {
@@ -191,14 +191,14 @@ func RegisterNotificationHandlerClient(ctx context.Context, mux *runtime.ServeMu
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_Notification_CreateNfWaddrs_0(rctx, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_Notification_CreateNfWithAddrs_0(rctx, inboundMarshaler, client, req, pathParams)
 		ctx = runtime.NewServerMetadataContext(ctx, md)
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_Notification_CreateNfWaddrs_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_Notification_CreateNfWithAddrs_0(ctx, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -322,9 +322,9 @@ func RegisterNotificationHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
-	pattern_Notification_SayHello_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "hello"}, ""))
+	pattern_Notification_SayHello_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "SayHello"}, ""))
 
-	pattern_Notification_CreateNfWaddrs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "nf", "CreateNfWaddrs"}, ""))
+	pattern_Notification_CreateNfWithAddrs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "nf", "CreateNfWithAddrs"}, ""))
 
 	pattern_Notification_DescribeNfs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "nf", "DescribeNfs"}, ""))
 
@@ -338,7 +338,7 @@ var (
 var (
 	forward_Notification_SayHello_0 = runtime.ForwardResponseMessage
 
-	forward_Notification_CreateNfWaddrs_0 = runtime.ForwardResponseMessage
+	forward_Notification_CreateNfWithAddrs_0 = runtime.ForwardResponseMessage
 
 	forward_Notification_DescribeNfs_0 = runtime.ForwardResponseMessage
 

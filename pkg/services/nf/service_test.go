@@ -30,7 +30,7 @@ func TestCreateNfWaddrs(t *testing.T) {
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
 	nfservice := NewService(db, q)
-	testAddrsStr:="johuo@yunify.com;huojiao2006@163.com"
+	testAddrsStr:="johuo@yunify.com;513590612@qq.com"
 
 	nf := &models.NotificationCenterPost{
 		NfPostID:     idutil.GetUuid(constants.NfPostIDPrifix),

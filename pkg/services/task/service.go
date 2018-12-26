@@ -18,6 +18,12 @@ import (
 	"time"
 )
 
+// Service interface describes all functions that must be implemented.
+type Service interface {
+	ExtractTasks() error
+	HandleTask(handlerNum string) error
+}
+
 //Contains all of the logic for the User model.
 type taskService struct {
 	db             *gorm.DB
@@ -27,7 +33,7 @@ type taskService struct {
 
 func NewService(db *gorm.DB, queue *etcdutil.Queue) Service {
 	tasksc := &taskService{db: db, queue: queue}
-	MaxTasks:=config.GetInstance().App.Maxtasks
+	MaxTasks := config.GetInstance().App.Maxtasks
 	tasksc.runningTaskIds = make(chan string, MaxTasks)
 	return tasksc
 }
@@ -43,7 +49,7 @@ func (sc *taskService) ExtractTasks() error {
 			continue
 		}
 
-		logger.Infof(nil,"%+v","Dequeue from etcd queue success  " + taskId)
+		logger.Infof(nil, "%+v", "Dequeue from etcd queue success  "+taskId)
 		sc.runningTaskIds <- taskId
 	}
 	return nil
@@ -52,15 +58,15 @@ func (sc *taskService) ExtractTasks() error {
 func (sc *taskService) HandleTask(handlerNum string) error {
 	for {
 		taskId := <-sc.runningTaskIds
-		logger.Debugf(nil,time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:", taskId)
-		logger.Debugf(nil,"******handlerNum:"+handlerNum )
+		logger.Debugf(nil, time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:", taskId)
+		logger.Debugf(nil, "******handlerNum:"+handlerNum)
 		taskWNfInfo, err := sc.getTaskwithNfContentbyID(taskId)
 		if err != nil {
 			logger.Errorf(nil, "Error, Task from DB withNfContent byID : %+v", err)
 			return err
 		}
 
-		logger.Debugf(nil,"******emailaddr="+taskWNfInfo.AddrsStr)
+		logger.Debugf(nil, "******emailaddr="+taskWNfInfo.AddrsStr)
 
 		addrsStr := taskWNfInfo.AddrsStr
 		titel := taskWNfInfo.Title
@@ -86,10 +92,10 @@ func (sc *taskService) getTaskbyID(taskID string) (*models.Task, error) {
 }
 
 func (sc *taskService) getTaskwithNfContentbyID(taskID string) (*models.TaskWNfInfo, error) {
-	logger.Debugf(nil,"%+v",taskID)
+	logger.Debugf(nil, "%+v", taskID)
 	taskWNfInfo := &models.TaskWNfInfo{}
 	sc.db.Raw("SELECT  t3.title,t3.short_content,  t3.content,t1.task_id,t1.addrs_str "+
 		"	FROM task t1,job t2,notification_center_post t3 where t1.job_id=t2.job_id and t2.nf_post_id=t3.nf_post_id  and t1.task_id=? ", taskID).Scan(&taskWNfInfo)
-	logger.Debugf(nil,"******%+v",taskWNfInfo.TaskID)
+	logger.Debugf(nil, "******%+v", taskWNfInfo.TaskID)
 	return taskWNfInfo, nil
 }

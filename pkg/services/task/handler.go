@@ -6,6 +6,13 @@ import (
 	"strconv"
 )
 
+type Handler interface {
+	ExtractTasks() error
+	HandleTask(handlerNum string) error
+	ServeTask() error
+}
+
+
 type handler struct {
 	tasksc Service
 }

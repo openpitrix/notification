@@ -14,7 +14,7 @@ type NfHandlerModelParser struct {
 
 
 
-func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWaddrsRequest) (*models.NotificationCenterPost, error) {
+func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWithAddrsRequest) (*models.NotificationCenterPost, error) {
 	nf := &models.NotificationCenterPost{
 		NfPostID:     idutil.GetUuid(constants.NfPostIDPrifix),
 		NfPostType:   in.GetNfPostType().GetValue(),

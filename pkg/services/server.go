@@ -22,6 +22,8 @@ type Server struct {
 	taskhandler task.Handler
 }
 
+
+
 // NewServer initializes a new Server instance.
 func NewServer() (*Server, error) {
 	logger.Debugf(nil,"step0:start********************************************")
@@ -95,11 +97,6 @@ func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 	return &pb.HelloReply{Message: "Hello,use function SayHello at server end. " + in.Name}, nil
 }
 
-func (s *Server) CreateNfWaddrs(ctx context.Context, in *pb.CreateNfWaddrsRequest) (*pb.CreateNfResponse, error) {
-	res,err:= s.nfhandler.CreateNfWaddrs(ctx, in)
-	return res, err
-}
-
 func (s *Server) CreateNfWUserFilter(ctx context.Context, in *pb.CreateNfWUserFilterRequest) (*pb.CreateNfResponse, error) {
 	logger.Debugf(nil,"Hello,use function CreateNfWUserFilter at server end.")
 	return &pb.CreateNfResponse{NfPostId: pbutil.ToProtoString("testID4CreateNfWUserFilter")}, nil
@@ -118,4 +115,13 @@ func (s *Server) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*p
 func (s *Server) DescribeUserNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
 	log.Println("Hello,use function DescribeUserNfs at server end.")
 	return &pb.DescribeNfsResponse{Message: "Hello,use function DescribeUserNfs at server end. "}, nil
+}
+//func (s *Server) CreateNfWithAddrs(context.Context, *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error) {
+//	panic("implement me")
+//}
+
+
+func (s *Server) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error) {
+	res,err:= s.nfhandler.CreateNfWithAddrs(ctx, in)
+	return res, err
 }
