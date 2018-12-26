@@ -15,7 +15,7 @@ import (
 	gw "openpitrix.io/notification/pkg/pb"
 	"io"
 	"strings"
-	"openpitrix.io/notification/pkg/apigateway/pkg/ui/data/swagger"
+	swagger "openpitrix.io/notification/pkg/apigateway/third_party"
 
 )
 
