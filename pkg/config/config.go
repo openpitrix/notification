@@ -21,6 +21,7 @@ type Config struct {
 type Appcfg struct {
 	Name string `default:"Notification"`
 	Host    string `default:"192.168.0.3"`
+	//Host    string `default:"127.0.0.1"`
 	Port            string `default:":50051"`
 	Env             string `default:"DEV"`
 	Maxtasks int `default:"5"`

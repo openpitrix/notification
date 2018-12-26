@@ -30,13 +30,6 @@ import "google/protobuf/timestamp.proto";
 // The nf service definition.
 service notification {
 
-  //API 1.SayHello: Sends a greeting
-//  rpc SayHello (HelloRequest) returns (HelloReply) {
-//      option (google.api.http) = {
-//        post: "/v1/hello"
-//        body: "*"
-//    };
-//  }
 
   //#API 0.SayHello
   rpc SayHello (HelloRequest) returns (HelloReply) {
