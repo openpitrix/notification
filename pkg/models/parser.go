@@ -1,19 +1,18 @@
-package nf
+package models
 
 import (
 	"openpitrix.io/notification/pkg/constants"
-	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/idutil"
 	"strings"
 	"time"
 )
 
-type NfHandlerModelParser struct {
+type ModelParser struct {
 }
 
-func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWithAddrsRequest) (*models.Notification, error) {
-	nf := &models.Notification{
+func (parser *ModelParser) CreateNfWaddrs(in *pb.CreateNfWithAddrsRequest) (*Notification, error) {
+	nf := &Notification{
 		NotificationId: idutil.GetUuid(constants.NfPostIDPrifix),
 		ContentType:    in.GetContentType().GetValue(),
 		SentType:       in.GetSentType().GetValue(),
@@ -30,11 +29,11 @@ func (parser *NfHandlerModelParser) CreateNfWaddrs(in *pb.CreateNfWithAddrsReque
 	return nf, nil
 }
 
-func (parser *NfHandlerModelParser) GenJobfromNf(nf *models.Notification) (*models.Job, error) {
+func (parser *ModelParser) GenJobfromNf(nf *Notification) (*Job, error) {
 	//todo check eamil string
 	emailsArray := strings.Split(nf.AddrsStr, ";")
 	taskcnt := int64(len(emailsArray))
-	job := &models.Job{
+	job := &Job{
 		JobID:          idutil.GetUuid(constants.JobPostIDPrifix),
 		NotificationId: nf.NotificationId,
 		JobType:        nf.SentType,
@@ -52,11 +51,11 @@ func (parser *NfHandlerModelParser) GenJobfromNf(nf *models.Notification) (*mode
 }
 
 //GenTaskfromJob
-func (parser *NfHandlerModelParser) GenTasksfromJob(job *models.Job) ([]*models.Task, error) {
+func (parser *ModelParser) GenTasksfromJob(job *Job) ([]*Task, error) {
 	emailsArray := strings.Split(job.AddrsStr, ";")
-	tasks := make([]*models.Task, 0, len(emailsArray))
+	tasks := make([]*Task, 0, len(emailsArray))
 	for _, email := range emailsArray {
-		tasks = append(tasks, &models.Task{
+		tasks = append(tasks, &Task{
 			TaskID:     idutil.GetUuid(constants.TaskPostIDPrifix),
 			JobID:      job.JobID,
 			EmailAddr:  email,

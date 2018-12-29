@@ -65,7 +65,7 @@ func GetInstance() *Config {
 func (c *Config) PrintUsage() {
 	flag.PrintDefaults()
 	fmt.Fprint(os.Stdout, "\nSupported environment variables:\n")
-	e := newLoader("nf")
+	e := newLoader("notification")
 	e.PrintEnvs(new(Config))
 	fmt.Println("")
 }
@@ -86,7 +86,7 @@ func (c *Config) LoadConf() *Config {
 	config := instance
 	//config := new(Config)
 	m := &multiconfig.DefaultLoader{}
-	m.Loader = multiconfig.MultiLoader(newLoader("nf"))
+	m.Loader = multiconfig.MultiLoader(newLoader("notification"))
 	m.Validator = multiconfig.MultiValidator(
 		&multiconfig.RequiredValidator{},
 	)

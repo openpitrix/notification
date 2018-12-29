@@ -1,4 +1,4 @@
-package nf
+package notification
 
 import (
 	"github.com/jinzhu/gorm"
@@ -42,7 +42,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.Notification) (string, error) {
 		return "", err
 	}
 
-	parser := &NfHandlerModelParser{}
+	parser := &models.ModelParser{}
 	job, err = parser.GenJobfromNf(nf)
 	if err := tx.Create(&job).Error; err != nil {
 		tx.Rollback()

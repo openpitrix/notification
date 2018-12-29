@@ -1,4 +1,4 @@
-package nf
+package models
 
 import (
 	"strings"

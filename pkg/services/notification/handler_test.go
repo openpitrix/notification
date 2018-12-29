@@ -1,4 +1,4 @@
-package nf
+package notification
 
 import (
 	"golang.org/x/net/context"

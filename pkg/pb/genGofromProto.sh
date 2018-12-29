@@ -1,9 +1,9 @@
 #! /bin/bash
-#1.nf.pb.go
+#1.notification.pb.go
 
 cd  /root/notification/pkg/pb
 rm notification.pb.go notification.pb.gw.go notification.swagger.json
-#nf.swagger.go
+#notification.swagger.go
 
 cd  /root/notification/pkg/
 protoc -I/usr/local/include -I. \
@@ -13,7 +13,7 @@ protoc -I/usr/local/include -I. \
 --go_out=plugins=grpc:. \
 pb/notification.proto
 
-#2.nf.pb.gw.go
+#2.notification.pb.gw.go
 protoc -I/usr/local/include -I. \
 -I$GOPATH/src \
 -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
@@ -22,7 +22,7 @@ protoc -I/usr/local/include -I. \
 pb/notification.proto
 
 
-#3.nf.swagger.json
+#3.notification.swagger.json
 protoc -I/usr/local/include -I. \
 -I$GOPATH/src  -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
 -I$GOPATH/src/github.com/grpc-ecosystem/grpc-gateway \

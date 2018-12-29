@@ -5,7 +5,7 @@ const (
 {
   "swagger": "2.0",
   "info": {
-    "title": "package nf;",
+    "title": "package notification;",
     "version": "version not set"
   },
   "schemes": [
@@ -46,9 +46,9 @@ const (
         ]
       }
     },
-    "/v1/nf/CreateNfWAppFilter": {
+    "/v1/notification/CreateNfWAppFilter": {
       "post": {
-        "summary": "create nf with App Filter",
+        "summary": "create notification with App Filter",
         "operationId": "CreateNfWAppFilter",
         "responses": {
           "200": {
@@ -73,9 +73,9 @@ const (
         ]
       }
     },
-    "/v1/nf/CreateNfWUserFilter": {
+    "/v1/notification/CreateNfWUserFilter": {
       "post": {
-        "summary": "create nf with User Filter",
+        "summary": "create notification with User Filter",
         "operationId": "CreateNfWUserFilter",
         "responses": {
           "200": {
@@ -100,9 +100,9 @@ const (
         ]
       }
     },
-    "/v1/nf/CreateNfWaddrs": {
+    "/v1/notification/CreateNfWaddrs": {
       "post": {
-        "summary": "#API 1.CreateNfWaddrs：create nf with addrs(email addrs, phone numbers).",
+        "summary": "#API 1.CreateNfWaddrs：create notification with addrs(email addrs, phone numbers).",
         "operationId": "CreateNfWaddrs",
         "responses": {
           "200": {
@@ -127,7 +127,7 @@ const (
         ]
       }
     },
-    "/v1/nf/DescribeNfs": {
+    "/v1/notification/DescribeNfs": {
       "post": {
         "summary": "#API 2.DescribeNfs:describe single Notification with filter.",
         "operationId": "DescribeNfs",
@@ -154,7 +154,7 @@ const (
         ]
       }
     },
-    "/v1/nf/DescribeUserNfs": {
+    "/v1/notification/DescribeUserNfs": {
       "post": {
         "summary": "describe User Notification with filter",
         "operationId": "DescribeUserNfs",

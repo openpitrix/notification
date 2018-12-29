@@ -15,10 +15,10 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.openpitrix.nf";
+option java_package = "io.openpitrix.notification";
 option java_outer_classname = "notificationProto";
 
-//package nf;
+//package notification;
 package pb;
 
 import "google/api/annotations.proto";
@@ -27,7 +27,7 @@ import "protoc-gen-swagger/options/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 
-// The nf service definition.
+// The notification service definition.
 service notification {
 
 
@@ -48,7 +48,7 @@ service notification {
 			summary: "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers)."
 		};
       option (google.api.http) = {
-			post: "/v1/nf/CreateNfWithAddrs"
+			post: "/v1/notification/CreateNfWithAddrs"
 			body: "*"
 		};
   }
@@ -59,8 +59,8 @@ service notification {
 			summary: "#API 2.DescribeNfs:describe single Notification with filter."
 		};
       option (google.api.http) = {
-			//get: "/v1/nf/DescribeNfs"
-			post: "/v1/nf/DescribeNfs"
+			//get: "/v1/notification/DescribeNfs"
+			post: "/v1/notification/DescribeNfs"
 			body: "*"
 		};
   }
@@ -68,20 +68,20 @@ service notification {
 
   rpc CreateNfWUserFilter (CreateNfWUserFilterRequest) returns (CreateNfResponse) {
       option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create nf with User Filter"
+			summary: "create notification with User Filter"
 		};
       option (google.api.http) = {
-			post: "/v1/nf/CreateNfWUserFilter"
+			post: "/v1/notification/CreateNfWUserFilter"
 			body: "*"
 		};
   }
 
   rpc CreateNfWAppFilter (CreateNfWAppFilterRequest) returns (CreateNfResponse) {
       option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create nf with App Filter"
+			summary: "create notification with App Filter"
 		};
       option (google.api.http) = {
-			post: "/v1/nf/CreateNfWAppFilter"
+			post: "/v1/notification/CreateNfWAppFilter"
 			body: "*"
 		};
   }
@@ -91,8 +91,8 @@ service notification {
 			summary: "describe User Notification with filter"
 		};
       option (google.api.http) = {
-			//get: "/v1/nf/DescribeUserNfs"
-			post: "/v1/nf/DescribeUserNfs"
+			//get: "/v1/notification/DescribeUserNfs"
+			post: "/v1/notification/DescribeUserNfs"
 			body: "*"
 		};
   }

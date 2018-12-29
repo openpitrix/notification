@@ -1,8 +1,9 @@
-package nf
+package notification
 
 import (
 	"golang.org/x/net/context"
 	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
@@ -31,7 +32,7 @@ func (h *handler) SayHello(ctx context.Context, in *pb.HelloRequest) error {
 
 func (h *handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error) {
 	var (
-		parser = &NfHandlerModelParser{}
+		parser = &models.ModelParser{}
 	)
 
 	nf, err := parser.CreateNfWaddrs(in)

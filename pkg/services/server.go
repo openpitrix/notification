@@ -6,7 +6,7 @@ import (
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/notification/pkg/services/nf"
+	"openpitrix.io/notification/pkg/services/notification"
 	"openpitrix.io/notification/pkg/services/task"
 	"openpitrix.io/notification/pkg/util/dbutil"
 	"openpitrix.io/notification/pkg/util/etcdutil"
@@ -14,9 +14,9 @@ import (
 	"os"
 )
 
-// Server is used to implement nf.RegisterNotificationServer.
+// Server is used to implement notification.RegisterNotificationServer.
 type Server struct {
-	nfhandler   nf.Handler
+	nfhandler   notification.Handler
 	taskhandler task.Handler
 }
 
@@ -48,9 +48,9 @@ func NewServer() (*Server, error) {
 	db := dbutil.GetInstance().GetMysqlDB()
 
 	logger.Debugf(nil, "step1.1:create new nfservice")
-	nfservice := nf.NewService(db, q)
+	nfservice := notification.NewService(db, q)
 	logger.Debugf(nil, "step1.2:create nfhandler")
-	nfhandler := nf.NewHandler(nfservice)
+	nfhandler := notification.NewHandler(nfservice)
 	logger.Debugf(nil, "step1.3:set server.nfhandler")
 	server.nfhandler = nfhandler
 
@@ -85,7 +85,7 @@ func InitGlobelSetting() {
 	logger.SetLevelByString(AppLogMode)
 }
 
-// SayHello implements nf.RegisterNotificationServer
+// SayHello implements notification.RegisterNotificationServer
 func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	logger.Debugf(nil, "step5:call s.nfhandler.SayHello")
 	s.nfhandler.SayHello(ctx, in)

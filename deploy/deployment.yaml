@@ -2,7 +2,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: kube-node-nf
+  name: kube-node-notification
 spec:
   replicas: 1
   template:
@@ -11,14 +11,14 @@ spec:
         app: op_notification
     spec:
       containers:
-      - name: kube-node-nf-server
+      - name: kube-node-notification-server
         image: openpitrix/notification:server
         ports:
         - containerPort: 50051
         env:
         - name: NF_APP_HOST
           value: "localhost"
-      - name: kube-node-nf-gateway
+      - name: kube-node-notification-gateway
         image: openpitrix/notification:gateway
         ports:
         - containerPort: 8080

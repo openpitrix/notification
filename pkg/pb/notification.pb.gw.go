@@ -324,15 +324,15 @@ func RegisterNotificationHandlerClient(ctx context.Context, mux *runtime.ServeMu
 var (
 	pattern_Notification_SayHello_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "SayHello"}, ""))
 
-	pattern_Notification_CreateNfWithAddrs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "nf", "CreateNfWithAddrs"}, ""))
+	pattern_Notification_CreateNfWithAddrs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "notification", "CreateNfWithAddrs"}, ""))
 
-	pattern_Notification_DescribeNfs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "nf", "DescribeNfs"}, ""))
+	pattern_Notification_DescribeNfs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "notification", "DescribeNfs"}, ""))
 
-	pattern_Notification_CreateNfWUserFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "nf", "CreateNfWUserFilter"}, ""))
+	pattern_Notification_CreateNfWUserFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "notification", "CreateNfWUserFilter"}, ""))
 
-	pattern_Notification_CreateNfWAppFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "nf", "CreateNfWAppFilter"}, ""))
+	pattern_Notification_CreateNfWAppFilter_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "notification", "CreateNfWAppFilter"}, ""))
 
-	pattern_Notification_DescribeUserNfs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "nf", "DescribeUserNfs"}, ""))
+	pattern_Notification_DescribeUserNfs_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "notification", "DescribeUserNfs"}, ""))
 )
 
 var (

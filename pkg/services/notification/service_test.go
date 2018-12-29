@@ -1,4 +1,4 @@
-package nf
+package notification
 
 import (
 	"log"
@@ -53,7 +53,7 @@ func TestCreateNfWaddrs(t *testing.T) {
 }
 
 func TestDescribeNfs(t *testing.T) {
-	nfID := "nf-KV4oN8ROJqPE"
+	nfID := "notification-KV4oN8ROJqPE"
 	log.Println("TestDescribeNfs")
 	db := test.GetTestDB()
 	q := test.GetEtcdQueue()
