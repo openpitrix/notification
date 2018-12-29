@@ -38,5 +38,5 @@ func TestGetTaskwithNfContentbyID(t *testing.T) {
 	q := test.GetEtcdQueue()
 	tasksc := &taskService{db: db, queue: q}
 	task, _ := tasksc.getTaskwithNfContentbyID("task-LBx4k82RMZOo")
-	logger.Infof(nil, task.AddrsStr)
+	logger.Infof(nil, task.EmailAddr)
 }

@@ -5,7 +5,7 @@ const (
 {
   "swagger": "2.0",
   "info": {
-    "title": "package notification;",
+    "title": "package nf;",
     "version": "version not set"
   },
   "schemes": [
@@ -19,7 +19,7 @@ const (
     "application/json"
   ],
   "paths": {
-    "/v1/hello": {
+    "/v1/SayHello": {
       "post": {
         "summary": "#API 0.SayHello:gRPC testing,Sends a greeting.",
         "operationId": "SayHello",
@@ -46,9 +46,9 @@ const (
         ]
       }
     },
-    "/v1/notification/CreateNfWAppFilter": {
+    "/v1/nf/CreateNfWAppFilter": {
       "post": {
-        "summary": "create notification with App Filter",
+        "summary": "create nf with App Filter",
         "operationId": "CreateNfWAppFilter",
         "responses": {
           "200": {
@@ -73,9 +73,9 @@ const (
         ]
       }
     },
-    "/v1/notification/CreateNfWUserFilter": {
+    "/v1/nf/CreateNfWUserFilter": {
       "post": {
-        "summary": "create notification with User Filter",
+        "summary": "create nf with User Filter",
         "operationId": "CreateNfWUserFilter",
         "responses": {
           "200": {
@@ -100,34 +100,7 @@ const (
         ]
       }
     },
-    "/v1/notification/CreateNfWaddrs": {
-      "post": {
-        "summary": "#API 1.CreateNfWaddrs：create notification with addrs(email addrs, phone numbers).",
-        "operationId": "CreateNfWaddrs",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/pbCreateNfResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbCreateNfWaddrsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
-    "/v1/notification/DescribeNfs": {
+    "/v1/nf/DescribeNfs": {
       "post": {
         "summary": "#API 2.DescribeNfs:describe single Notification with filter.",
         "operationId": "DescribeNfs",
@@ -154,7 +127,7 @@ const (
         ]
       }
     },
-    "/v1/notification/DescribeUserNfs": {
+    "/v1/nf/DescribeUserNfs": {
       "post": {
         "summary": "describe User Notification with filter",
         "operationId": "DescribeUserNfs",
@@ -180,13 +153,40 @@ const (
           "notification"
         ]
       }
+    },
+    "/v1/notification/CreateNfWithAddrs": {
+      "post": {
+        "summary": "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers).",
+        "operationId": "CreateNfWithAddrs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/pbCreateNfResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateNfWithAddrsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
     }
   },
   "definitions": {
     "pbCreateNfResponse": {
       "type": "object",
       "properties": {
-        "nf_post_id": {
+        "notification_id": {
           "type": "string"
         }
       }
@@ -194,10 +194,10 @@ const (
     "pbCreateNfWAppFilterRequest": {
       "type": "object",
       "properties": {
-        "nf_post_type": {
+        "content_type": {
           "type": "string"
         },
-        "notify_type": {
+        "sent_type": {
           "type": "string"
         },
         "title": {
@@ -229,10 +229,10 @@ const (
     "pbCreateNfWUserFilterRequest": {
       "type": "object",
       "properties": {
-        "nf_post_type": {
+        "content_type": {
           "type": "string"
         },
-        "notify_type": {
+        "sent_type": {
           "type": "string"
         },
         "title": {
@@ -261,13 +261,13 @@ const (
         }
       }
     },
-    "pbCreateNfWaddrsRequest": {
+    "pbCreateNfWithAddrsRequest": {
       "type": "object",
       "properties": {
-        "nf_post_type": {
+        "content_type": {
           "type": "string"
         },
-        "notify_type": {
+        "sent_type": {
           "type": "string"
         },
         "addrs_str": {
@@ -296,13 +296,13 @@ const (
     "pbDescribeNfsRequest": {
       "type": "object",
       "properties": {
-        "nf_post_type": {
+        "content_type": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "notify_type": {
+        "sent_type": {
           "type": "array",
           "items": {
             "type": "string"
@@ -367,6 +367,7 @@ const (
     }
   }
 }
+
 
 `
 )

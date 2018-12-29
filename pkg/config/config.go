@@ -33,7 +33,7 @@ type Dbcfg struct {
 	Port     string `default:"13306"`
 	User     string `default:"root"`
 	Password string `default:"password"`
-	Dbname   string `default:"notification2"`
+	Dbname   string `default:"notification"`
 	Disable  bool   `default:"true"`
 	Logmode  bool   `default:"true"`
 }

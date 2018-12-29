@@ -22,5 +22,5 @@ type TaskWNfInfo struct {
 	ShortContent string
 	Content      string
 	TaskID       string
-	AddrsStr     string
+	EmailAddr     string
 }

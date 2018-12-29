@@ -66,12 +66,12 @@ func (sc *taskService) HandleTask(handlerNum string) error {
 			return err
 		}
 
-		logger.Debugf(nil, "******emailaddr="+taskWNfInfo.AddrsStr)
+		logger.Debugf(nil, "******emailaddr="+taskWNfInfo.EmailAddr)
 
-		addrsStr := taskWNfInfo.AddrsStr
+		emailAddr := taskWNfInfo.EmailAddr
 		titel := taskWNfInfo.Title
 		content := taskWNfInfo.Content
-		emailutil.SendMail(addrsStr, titel, content)
+		emailutil.SendMail(emailAddr, titel, content)
 	}
 	return nil
 }
@@ -94,8 +94,8 @@ func (sc *taskService) getTaskbyID(taskID string) (*models.Task, error) {
 func (sc *taskService) getTaskwithNfContentbyID(taskID string) (*models.TaskWNfInfo, error) {
 	logger.Debugf(nil, "%+v", taskID)
 	taskWNfInfo := &models.TaskWNfInfo{}
-	sc.db.Raw("SELECT  t3.title,t3.short_content,  t3.content,t1.task_id,t1.addrs_str "+
-		"	FROM task t1,job t2,notification_center_post t3 where t1.job_id=t2.job_id and t2.nf_post_id=t3.nf_post_id  and t1.task_id=? ", taskID).Scan(&taskWNfInfo)
+	sc.db.Raw("SELECT  t3.title,t3.short_content,  t3.content,t1.task_id,t1.email_addr "+
+		"	FROM task t1,job t2,notification t3 where t1.job_id=t2.job_id and t2.notification_id=t3.notification_id  and t1.task_id=? ", taskID).Scan(&taskWNfInfo)
 	logger.Debugf(nil, "******%+v", taskWNfInfo.TaskID)
 	return taskWNfInfo, nil
 }

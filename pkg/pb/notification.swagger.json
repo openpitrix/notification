@@ -96,33 +96,6 @@
         ]
       }
     },
-    "/v1/nf/CreateNfWithAddrs": {
-      "post": {
-        "summary": "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers).",
-        "operationId": "CreateNfWithAddrs",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/pbCreateNfResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbCreateNfWithAddrsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
     "/v1/nf/DescribeNfs": {
       "post": {
         "summary": "#API 2.DescribeNfs:describe single Notification with filter.",
@@ -169,6 +142,33 @@
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbDescribeNfsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/notification/CreateNfWithAddrs": {
+      "post": {
+        "summary": "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers).",
+        "operationId": "CreateNfWithAddrs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/pbCreateNfResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateNfWithAddrsRequest"
             }
           }
         ],

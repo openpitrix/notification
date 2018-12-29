@@ -15,10 +15,10 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.openpitrix.notification";
+option java_package = "io.openpitrix.nf";
 option java_outer_classname = "notificationProto";
 
-//package notification;
+//package nf;
 package pb;
 
 import "google/api/annotations.proto";
@@ -59,8 +59,8 @@ service notification {
 			summary: "#API 2.DescribeNfs:describe single Notification with filter."
 		};
       option (google.api.http) = {
-			//get: "/v1/notification/DescribeNfs"
-			post: "/v1/notification/DescribeNfs"
+			//get: "/v1/nf/DescribeNfs"
+			post: "/v1/nf/DescribeNfs"
 			body: "*"
 		};
   }
@@ -68,20 +68,20 @@ service notification {
 
   rpc CreateNfWUserFilter (CreateNfWUserFilterRequest) returns (CreateNfResponse) {
       option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create notification with User Filter"
+			summary: "create nf with User Filter"
 		};
       option (google.api.http) = {
-			post: "/v1/notification/CreateNfWUserFilter"
+			post: "/v1/nf/CreateNfWUserFilter"
 			body: "*"
 		};
   }
 
   rpc CreateNfWAppFilter (CreateNfWAppFilterRequest) returns (CreateNfResponse) {
       option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create notification with App Filter"
+			summary: "create nf with App Filter"
 		};
       option (google.api.http) = {
-			post: "/v1/notification/CreateNfWAppFilter"
+			post: "/v1/nf/CreateNfWAppFilter"
 			body: "*"
 		};
   }
@@ -91,8 +91,8 @@ service notification {
 			summary: "describe User Notification with filter"
 		};
       option (google.api.http) = {
-			//get: "/v1/notification/DescribeUserNfs"
-			post: "/v1/notification/DescribeUserNfs"
+			//get: "/v1/nf/DescribeUserNfs"
+			post: "/v1/nf/DescribeUserNfs"
 			body: "*"
 		};
   }
