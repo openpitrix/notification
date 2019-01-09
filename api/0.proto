@@ -3,7 +3,7 @@
 // that can be found in the LICENSE file.
 
 syntax = "proto3";
-package openpitrix;
+package notification;
 
 // set go package name to pb
 option go_package = "pb";
@@ -13,11 +13,11 @@ import "protoc-gen-swagger/options/annotations.proto";
 // 0.pb.go define the swagger project metadata
 option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
 	info: {
-		title: "OpenPitrix Project";
+		title: "Notification Project";
 		version: "0.0.1";
 		contact: {
-			name: "OpenPitrix Project";
-			url: "https://openpitrix.io";
+			name: "Notification Project";
+			url: "https://github.com/openpitrix/notification";
 		};
 	};
 	schemes: HTTP;

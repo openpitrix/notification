@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "contact": {
       "name": "Notification Project",
-      "url": "https://github.com/openpitrix/notification"
+      "url": "https://openpitrix.io"
     }
   },
   "schemes": [
@@ -19,15 +19,15 @@
     "application/json"
   ],
   "paths": {
-    "/v1/SayHello": {
+    "/v1/nf/CreateNfWAppFilter": {
       "post": {
-        "summary": "#API 0.SayHello:gRPC testing,Sends a greeting.",
-        "operationId": "SayHello",
+        "summary": "create nf with App Filter",
+        "operationId": "CreateNfWAppFilter",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/pbHelloReply"
+              "$ref": "#/definitions/pbCreateNfResponse"
             }
           }
         },
@@ -37,7 +37,34 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbHelloRequest"
+              "$ref": "#/definitions/pbCreateNfWAppFilterRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/nf/CreateNfWUserFilter": {
+      "post": {
+        "summary": "create nf with User Filter",
+        "operationId": "CreateNfWUserFilter",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/pbCreateNfResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateNfWUserFilterRequest"
             }
           }
         ],
@@ -50,6 +77,33 @@
       "post": {
         "summary": "#API 2.DescribeNfs:describe single Notification with filter.",
         "operationId": "DescribeNfs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/pbDescribeNfsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDescribeNfsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/nf/DescribeUserNfs": {
+      "post": {
+        "summary": "describe User Notification with filter",
+        "operationId": "DescribeUserNfs",
         "responses": {
           "200": {
             "description": "",
@@ -106,6 +160,76 @@
       "type": "object",
       "properties": {
         "notification_id": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateNfWAppFilterRequest": {
+      "type": "object",
+      "properties": {
+        "content_type": {
+          "type": "string"
+        },
+        "sent_type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "short_content": {
+          "type": "string"
+        },
+        "expired_days": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "app_id": {
+          "type": "string"
+        },
+        "app_versions": {
+          "type": "string"
+        },
+        "cluster_status": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateNfWUserFilterRequest": {
+      "type": "object",
+      "properties": {
+        "content_type": {
+          "type": "string"
+        },
+        "sent_type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "short_content": {
+          "type": "string"
+        },
+        "expired_days": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "user_filter_type": {
+          "type": "string"
+        },
+        "user_filter_condition": {
+          "type": "string"
+        },
+        "userid_list": {
           "type": "string"
         }
       }
@@ -192,23 +316,6 @@
       "type": "object",
       "properties": {
         "message": {
-          "type": "string"
-        }
-      }
-    },
-    "pbHelloReply": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        }
-      },
-      "title": "The response message containing the greetings"
-    },
-    "pbHelloRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
           "type": "string"
         }
       }
