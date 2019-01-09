@@ -3,7 +3,7 @@ package notification
 import (
 	"golang.org/x/net/context"
 	"openpitrix.io/logger"
-	notification "openpitrix.io/notification/pkg/pb"
+	notification "openpitrix.io/notification/pkg/pb_bak"
 	"openpitrix.io/notification/pkg/services/test"
 	"openpitrix.io/notification/pkg/util/pbutil"
 	"testing"
@@ -13,40 +13,17 @@ import (
 func TestNewHandler(t *testing.T) {
 	logger.Debugf(nil, "Test func NewHandler")
 
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	db, q := test.GetTestDBAndEtcd4Test()
 	nfservice := NewService(db, q)
-
 	handler := NewHandler(nfservice)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	_, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	var req = &notification.HelloRequest{Name: "hello world."}
-
-	handler.SayHello(ctx, req)
-}
-
-func TestSayHello4handler(t *testing.T) {
-	logger.Debugf(nil, "Test func NewHandler")
-
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
-	nfservice := NewService(db, q)
-
-	handler := NewHandler(nfservice)
-
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	var req = &notification.HelloRequest{Name: "hello world."}
-
-	handler.SayHello(ctx, req)
+	logger.Infof(nil, "[%+v]", handler)
 }
 
 func TestCreateNfWithAddrs4handler(t *testing.T) {
 	logger.Debugf(nil, "Test func NewHandler")
-
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	db, q := test.GetTestDBAndEtcd4Test()
 	nfservice := NewService(db, q)
 
 	handler := NewHandler(nfservice)

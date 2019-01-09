@@ -11,9 +11,8 @@ import (
 )
 
 func TestNewHandler(t *testing.T) {
-	test.InitGlobelSetting()
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	test.InitGlobelSetting4Test()
+	db,q:=test.GetTestDBAndEtcd4Test()
 
 	taskservice := NewService(db, q)
 	handler := NewHandler(taskservice)
@@ -30,7 +29,7 @@ func TestNewHandler(t *testing.T) {
 
 
 func TestDescribeNfs(t *testing.T){
-	test.InitGlobelSetting()
+	test.InitGlobelSetting4Test()
 
 	MaxWorkingTasks:=config.GetInstance().App.Maxtasks
 	for a := 0; a < MaxWorkingTasks; a++ {

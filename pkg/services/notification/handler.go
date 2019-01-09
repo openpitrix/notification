@@ -9,7 +9,6 @@ import (
 )
 
 type Handler interface {
-	SayHello(ctx context.Context, in *pb.HelloRequest) error
 	CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error)
 	DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error)
 }
@@ -24,32 +23,23 @@ func NewHandler(nfService Service) Handler {
 	}
 }
 
-func (h *handler) SayHello(ctx context.Context, in *pb.HelloRequest) error {
-	logger.Debugf(nil, "Step6:call h.nfservice.SayHello")
-	h.nfsc.SayHello("222")
-	return nil
-}
-
 func (h *handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error) {
-	var (
-		parser = &models.ModelParser{}
-	)
-
-	nf, err := parser.CreateNfWaddrs(in)
+	parser := &models.ModelParser{}
+	nf, err := parser.CreateNfWithAddrs(in)
 	if err != nil {
 		logger.Warnf(nil, "%+v", err)
 		return nil, err
 	}
 	logger.Debugf(nil, "%+v", nf.NotificationId)
 
-	nfPostID, err := h.nfsc.CreateNfWaddrs(nf)
+	nfId, err := h.nfsc.CreateNfWithAddrs(nf)
 	if err != nil {
 		logger.Warnf(nil, "%+v", err)
 		return nil, err
 	}
 
 	res := &pb.CreateNfResponse{
-		NotificationId: pbutil.ToProtoString(nfPostID),
+		NotificationId: pbutil.ToProtoString(nfId),
 	}
 	return res, nil
 }

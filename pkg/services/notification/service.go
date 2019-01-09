@@ -4,15 +4,18 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"openpitrix.io/logger"
+	nfconstants "openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/models"
+	tasksc "openpitrix.io/notification/pkg/services/task"
 	"openpitrix.io/notification/pkg/util/etcdutil"
 )
 
 // Service interface describes all functions that must be implemented.
 type Service interface {
 	SayHello(str string) (string, error)
-	CreateNfWaddrs(*models.Notification) (nfPostID string, err error)
+	CreateNfWithAddrs(*models.Notification) (nfId string, err error)
 	DescribeNfs(nfID string) (*models.Notification, error)
+	UpdateStatus2FinishedById(nfId string) (bool, error)
 }
 
 type nfService struct {
@@ -30,7 +33,8 @@ func (sc *nfService) SayHello(str string) (string, error) {
 	return str, nil
 }
 
-func (sc *nfService) CreateNfWaddrs(nf *models.Notification) (string, error) {
+func (sc *nfService) CreateNfWithAddrs(nf *models.Notification) (string, error) {
+
 	var err error
 	var job *models.Job
 
@@ -38,7 +42,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.Notification) (string, error) {
 
 	if err = tx.Create(&nf).Error; err != nil {
 		tx.Rollback()
-		logger.Errorf(nil, "Cannot insert data to db:%+v", err)
+		logger.Errorf(nil, "Cannot insert notification data to db, [%+v]", err)
 		return "", err
 	}
 
@@ -46,7 +50,7 @@ func (sc *nfService) CreateNfWaddrs(nf *models.Notification) (string, error) {
 	job, err = parser.GenJobfromNf(nf)
 	if err := tx.Create(&job).Error; err != nil {
 		tx.Rollback()
-		logger.Errorf(nil, "Cannot insert data to db:%+v", err)
+		logger.Errorf(nil, "Cannot insert job data to db, [%+v]", err)
 		return "", err
 	}
 
@@ -54,20 +58,31 @@ func (sc *nfService) CreateNfWaddrs(nf *models.Notification) (string, error) {
 	for _, task := range tasks {
 		if err := tx.Create(&task).Error; err != nil {
 			tx.Rollback()
-			logger.Errorf(nil, "Cannot insert data to db:%+v", err)
+			logger.Errorf(nil, "Cannot insert task data to db, [%+v]", err)
 			return "", err
 		}
 	}
 
 	if err != nil {
-		logger.Errorf(nil, "%+v", err)
+		logger.Errorf(nil, "CreateNfWithAddrs failed, [%+v]", err)
 		return "", err
 	}
 
 	tx.Commit()
 
+	//After write DB,then write to Etcd.
+	//The information write to Etcd is nf.NotificationId + "," + task.TaskID.
+	tasksc := tasksc.NewService(sc.db, sc.queue)
 	for _, task := range tasks {
-		err = sc.queue.Enqueue(task.TaskID)
+		nfTaskIdStr := nf.NotificationId + "," + task.TaskID
+		err = sc.queue.Enqueue(nfTaskIdStr)
+		if err != nil {
+			logger.Errorf(nil, "push task ID into ETCD failed, [%+v]", err)
+		}
+
+		//update task status as sending
+		task, _ := tasksc.GetTaskwithNfContentbyID(task.TaskID)
+		tasksc.UpdateStatus2SendingByIds(*task)
 	}
 
 	return nf.NotificationId, nil
@@ -103,4 +118,20 @@ func (sc *nfService) DescribeNfs(nfID string) (*models.Notification, error) {
 	}
 
 	return nf, nil
+}
+
+func (sc *nfService) UpdateStatus2FinishedById(nfId string) (bool, error) {
+	nf := &models.Notification{
+		NotificationId: nfId,
+	}
+	tx := sc.db.Begin()
+	status := nfconstants.StatusFinished
+	err := sc.db.Model(&nf).Where("notification_id = ?", nfId).Update("status", status).Error
+	if err != nil {
+		logger.Errorf(nil, "%+v", err)
+		return false, err
+	}
+	tx.Commit()
+
+	return true, nil
 }

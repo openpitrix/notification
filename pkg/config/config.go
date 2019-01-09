@@ -1,3 +1,7 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package config
 
 import (
@@ -5,51 +9,19 @@ import (
 	"fmt"
 	"github.com/koding/multiconfig"
 	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/constants"
 	"os"
 	"sync"
 )
 
-// Config that contains all of the configuration variables
-// that are set up in the environment.
 type Config struct {
 	App   Appcfg
-	Db    Dbcfg
-	Etcd  Etcdcfg
+	Log   LogConfig
+	Grpc  GrpcConfig
+	Mysql MysqlConfig
+	Etcd  EtcdConfig
+	//IAM   IAMConfig
 	Email Emailcfg
-}
-
-type Appcfg struct {
-	Name string `default:"Notification"`
-	//Host    string `default:"192.168.0.3"`
-	Host       string `default:"127.0.0.1"`
-	Port       string `default:":50051"`
-	Env        string `default:"DEV"`
-	Maxtasks   int    `default:"5"`
-	Applogmode string `default:"debug"`
-}
-
-type Dbcfg struct {
-	Host     string `default:"192.168.0.10"`
-	Port     string `default:"13306"`
-	User     string `default:"root"`
-	Password string `default:"password"`
-	Dbname   string `default:"notification"`
-	Disable  bool   `default:"true"`
-	Logmode  bool   `default:"true"`
-}
-
-type Etcdcfg struct {
-	//Endpoints string `default:"192.168.0.7:2379,192.168.0.8:2379,192.168.0.6:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"  or default:"openpitrix-etcd:2379
-	Endpoints string `default:"192.168.0.7:2379"`
-	Prefix    string `default:"nf_"`
-	Topic     string `default:"task"`
-}
-
-type Emailcfg struct {
-	Host     string `default:"mail.app-center.cn"`
-	Port     int    `default:"25"`
-	Username string `default:"openpitrix@app-center.cn"`
-	Password string `default:"openpitrix"`
 }
 
 var instance *Config
@@ -62,10 +34,66 @@ func GetInstance() *Config {
 	return instance
 }
 
+/*===================================================================================================*/
+type Appcfg struct {
+	Name string `default:"Notification"`
+	//Host    string `default:"192.168.0.3"`
+	Host string `default:"127.0.0.1"`
+	//Port       string `default:":50051"`
+	Port       string `default:":9201"`
+	Env        string `default:"DEV"`
+	Maxtasks   int    `default:"5"`
+	Applogmode string `default:"debug"`
+}
+
+//type IAMConfig struct {
+//	SecretKey              string        `default:"OpenPitrix-lC4LipAXPYsuqw5F"`
+//	ExpireTime             time.Duration `default:"2h"`
+//	RefreshTokenExpireTime time.Duration `default:"336h"` // default is 2 week
+//}
+
+type LogConfig struct {
+	Level string `default:"debug"` // debug, info, warn, error, fatal
+}
+
+type GrpcConfig struct {
+	ShowErrorCause bool `default:"false"` // show grpc error cause to frontend
+}
+
+type EtcdConfig struct {
+	//	Endpoints string `default:"openpitrix-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
+	Endpoints string `default:"192.168.0.7:2379"`
+	Prefix    string `default:"nf_"`
+	Topic     string `default:"task"`
+}
+type MysqlConfig struct {
+	Host     string `default:"192.168.0.10"`
+	Port     string `default:"13306"`
+	User     string `default:"root"`
+	Password string `default:"password"`
+	Database string `default:"notification"`
+	Disable  bool   `default:"true"`
+	//Logmode  bool   `default:"true"`
+	Logmode bool `default:"false"`
+}
+
+func (m *MysqlConfig) GetUrl() string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", m.User, m.Password, m.Host, m.Port, m.Database)
+}
+
+type Emailcfg struct {
+	Host     string `default:"mail.app-center.cn"`
+	Port     int    `default:"25"`
+	Username string `default:"openpitrix@app-center.cn"`
+	Password string `default:"openpitrix"`
+}
+
+/*===================================================================================================*/
 func (c *Config) PrintUsage() {
+	fmt.Fprintf(os.Stdout, "Usage of %s:\n", os.Args[0])
 	flag.PrintDefaults()
 	fmt.Fprint(os.Stdout, "\nSupported environment variables:\n")
-	e := newLoader("notification")
+	e := newLoader(constants.ServiceName)
 	e.PrintEnvs(new(Config))
 	fmt.Println("")
 }
@@ -78,8 +106,6 @@ func (c *Config) GetFlagSet() *flag.FlagSet {
 func (c *Config) ParseFlag() {
 	c.GetFlagSet().Parse(os.Args[1:])
 }
-
-var profilingServerStarted = false
 
 func (c *Config) LoadConf() *Config {
 	c.ParseFlag()

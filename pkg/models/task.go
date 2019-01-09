@@ -17,10 +17,17 @@ type Task struct {
 //	return "task"
 //}
 
-type TaskWNfInfo struct {
-	Title        string
-	ShortContent string
-	Content      string
-	TaskID       string
-	EmailAddr     string
+type TaskWithNfInfo struct {
+	NotificationId string
+	JobID          string
+	TaskID         string
+	Title          string
+	ShortContent   string
+	Content        string
+	EmailAddr      string
 }
+
+const (
+	GetTaskwithNfContentbyIDSQL = "SELECT  t3.notification_id,t2.job_id,t1.task_id,t3.title,t3.short_content,  t3.content,t1.email_addr " +
+		"	FROM task t1,job t2,notification t3 where t1.job_id=t2.job_id and t2.notification_id=t3.notification_id  and t1.task_id=? "
+)

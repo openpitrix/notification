@@ -30,16 +30,14 @@ import (
 	"openpitrix.io/notification/pkg/pb"
 )
 
+func Serve(cfg *config.Config) {
 
-
-func Serve() error {
-	InitGlobelSetting()
 	config.GetInstance().PrintUsage()
 
 	port := config.GetInstance().App.Port
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
-		logger.Criticalf(nil,"failed to listen: %v", err)
+		logger.Criticalf(nil, "failed to listen: %v", err)
 	}
 	nfserver, _ := NewServer()
 
@@ -47,12 +45,10 @@ func Serve() error {
 
 	s := grpc.NewServer()
 	pb.RegisterNotificationServer(s, nfserver)
+
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {
-		logger.Criticalf(nil,"failed to serve: %v", err)
-		return err
+		logger.Criticalf(nil, "failed to serve: %v", err)
 	}
-	return nil
 }
-

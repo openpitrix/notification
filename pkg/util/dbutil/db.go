@@ -30,25 +30,23 @@ func GetInstance() *MysqlConnPool {
 	return instance
 }
 
-
-
 /*
 * @fuc 初始化数据库连接(可在mail()适当位置调用)
-*/
+ */
 func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 	//db, err_db = gorm.Open("mysql", "root:password@tcp(192.168.0.10:13306)/notification?charset=utf8&parseTime=True&loc=Local")
 	//fmt.Println(err_db)
-	cfg:=config.GetInstance()
+	cfg := config.GetInstance()
 
 	var (
-		dbCfg            = cfg.Db
+		dbCfg            = cfg.Mysql
 		connectionString = fmt.Sprintf(
 			"%v:%v@(%v:%v)/%v?charset=utf8&parseTime=True&loc=Local",
 			dbCfg.User,
 			dbCfg.Password,
 			dbCfg.Host,
 			dbCfg.Port,
-			dbCfg.Dbname,
+			dbCfg.Database,
 		)
 	)
 
@@ -65,11 +63,10 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 	}
 
 	db.DB().SetMaxIdleConns(10)
-	db.LogMode(cfg.Db.Logmode)
+	db.LogMode(cfg.Mysql.Logmode)
 
 	// 全局禁用表名复数
 	db.SingularTable(true)
-
 
 	if err_db != nil {
 		log.Fatal(err_db)
@@ -82,8 +79,7 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 
 /*
 * 对外获取数据库连接对象db
-*/
-func (m *MysqlConnPool) GetMysqlDB() (*gorm.DB) {
+ */
+func (m *MysqlConnPool) GetMysqlDB() *gorm.DB {
 	return db
 }
-

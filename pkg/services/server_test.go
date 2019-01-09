@@ -13,17 +13,9 @@ func TestNewServer(t *testing.T) {
 	logger.SetLevelByString("debug")
 	InitGlobelSetting()
 	s, _ := NewServer()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	_, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	s.SayHello(ctx, &notification.HelloRequest{Name: "unit_test2"})
-}
-
-func TestSayHello(t *testing.T) {
-	InitGlobelSetting()
-	s, _ := NewServer()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	s.SayHello(ctx, &notification.HelloRequest{Name: "unit_test2"})
+	logger.Infof(nil, "[%+v]", s)
 }
 
 func TestCreateNfWaddrs(t *testing.T) {

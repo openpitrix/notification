@@ -10,14 +10,14 @@ import (
 	"os"
 )
 
-func GetTestDB() *gorm.DB {
-	InitGlobelSetting()
+func GetTestDB4Test() *gorm.DB {
+	InitGlobelSetting4Test()
 	db := dbutil.GetInstance().GetMysqlDB()
 	db.LogMode(true)
 	return db
 }
 
-func GetEtcdQueue() *etcdutil.Queue {
+func GetEtcdQueue4Test() *etcdutil.Queue {
 	cfg := config.GetInstance()
 	endpoints := []string{cfg.Etcd.Endpoints}
 	prefix := cfg.Etcd.Prefix
@@ -31,7 +31,11 @@ func GetEtcdQueue() *etcdutil.Queue {
 	return q
 }
 
-func InitGlobelSetting() {
+func GetTestDBAndEtcd4Test()( *gorm.DB, *etcdutil.Queue) {
+	return GetTestDB4Test(),GetEtcdQueue4Test()
+}
+
+func InitGlobelSetting4Test() {
 	logger.Debugf(nil, "step0.1:初始化配置参数")
 	//	config.GetInstance().InitCfg()
 	mycfg := config.GetInstance()

@@ -19,13 +19,13 @@
 package client
 
 import (
-	"log"
-	"openpitrix.io/notification/pkg/config"
-	"os"
-	"time"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
+	"log"
+	"openpitrix.io/notification/pkg/config"
 	pb "openpitrix.io/notification/pkg/pb"
+	"os"
+	"time"
 )
 
 const (
@@ -36,9 +36,9 @@ func Serve() {
 	log.Println("Start to run client. Step 1")
 
 	config.GetInstance().LoadConf()
-	host:=config.GetInstance().App.Host
-	port:=config.GetInstance().App.Port
-	address:=host+port
+	host := config.GetInstance().App.Host
+	port := config.GetInstance().App.Port
+	address := host + port
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {

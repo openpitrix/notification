@@ -12,23 +12,20 @@ import (
 )
 
 func TestNewService(t *testing.T) {
-	test.InitGlobelSetting()
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	test.InitGlobelSetting4Test()
+	db, q := test.GetTestDBAndEtcd4Test()
 	nfservice := NewService(db, q)
 	nfservice.SayHello("ssss")
 }
 
 func TestSayHello(t *testing.T) {
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	db, q := test.GetTestDBAndEtcd4Test()
 	nfservice := NewService(db, q)
 	nfservice.SayHello("ssss")
 }
 
 func TestCreateNfWaddrs(t *testing.T) {
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	db, q := test.GetTestDBAndEtcd4Test()
 	nfservice := NewService(db, q)
 	testAddrsStr := "johuo@yunify.com;513590612@qq.com"
 
@@ -45,18 +42,17 @@ func TestCreateNfWaddrs(t *testing.T) {
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}
-	nfPostID, err := nfservice.CreateNfWaddrs(nf)
+	nfId, err := nfservice.CreateNfWithAddrs(nf)
 	if err != nil {
 		logger.Criticalf(nil, "Cannot create NfWaddrs:%+v", err)
 	}
-	logger.Debugf(nil, nfPostID)
+	logger.Debugf(nil, nfId)
 }
 
 func TestDescribeNfs(t *testing.T) {
-	nfID := "notification-KV4oN8ROJqPE"
+	nfID := "nf-KV4oN8ROJqPE"
 	log.Println("TestDescribeNfs")
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	db, q := test.GetTestDBAndEtcd4Test()
 	nfservice := NewService(db, q)
 	nf, err := nfservice.DescribeNfs(nfID)
 	logger.Infof(nil, "%+v", nf)

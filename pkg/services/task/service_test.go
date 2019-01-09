@@ -9,9 +9,8 @@ import (
 
 func TestNewService(t *testing.T) {
 
-	test.InitGlobelSetting()
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	test.InitGlobelSetting4Test()
+	db, q := test.GetTestDBAndEtcd4Test()
 
 	taskservice := NewService(db, q)
 
@@ -26,17 +25,23 @@ func TestNewService(t *testing.T) {
 }
 
 func TestGetTaskbyID(t *testing.T) {
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	db, q := test.GetTestDBAndEtcd4Test()
 	tasksc := &taskService{db: db, queue: q}
-	task, _ := tasksc.getTaskbyID("task-LBx4k82RMZOo")
+	task, _ := tasksc.getTaskbyID("task-QvQEG9n5BkZO")
 	logger.Infof(nil, task.EmailAddr)
 }
 
 func TestGetTaskwithNfContentbyID(t *testing.T) {
-	db := test.GetTestDB()
-	q := test.GetEtcdQueue()
+	db, q := test.GetTestDBAndEtcd4Test()
 	tasksc := &taskService{db: db, queue: q}
-	task, _ := tasksc.getTaskwithNfContentbyID("task-LBx4k82RMZOo")
+	task, _ := tasksc.GetTaskwithNfContentbyID("task-QvQEG9n5BkZO")
 	logger.Infof(nil, task.EmailAddr)
+}
+
+func TestUpdateStatusById(t *testing.T) {
+	db, q := test.GetTestDBAndEtcd4Test()
+	tasksc := &taskService{db: db, queue: q}
+	task, _ := tasksc.GetTaskwithNfContentbyID("task-QvQEG9n5BkZO")
+	//status := "test_status"
+	tasksc.UpdateStatus2SendingByIds(*task)
 }

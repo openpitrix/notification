@@ -1,20 +1,15 @@
 package task
 
 import (
-	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/config"
-	"openpitrix.io/notification/pkg/models"
-	"openpitrix.io/notification/pkg/util/emailutil"
-
-	//	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/config"
+	nfconstants "openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/models"
+	"openpitrix.io/notification/pkg/util/emailutil"
 	"openpitrix.io/notification/pkg/util/etcdutil"
-
-	//	"openpitrix.io/openpitrix/pkg/models"
-	//	"openpitrix.io/openpitrix/pkg/pi"
-	//	"openpitrix.io/openpitrix/pkg/plugins"
-	//	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"strings"
 	"time"
 )
 
@@ -22,6 +17,8 @@ import (
 type Service interface {
 	ExtractTasks() error
 	HandleTask(handlerNum string) error
+	GetTaskwithNfContentbyID(taskID string) (*models.TaskWithNfInfo, error)
+	UpdateStatus2SendingByIds(taskWithNfInfo models.TaskWithNfInfo) (bool, error)
 }
 
 //Contains all of the logic for the User model.
@@ -29,6 +26,7 @@ type taskService struct {
 	db             *gorm.DB
 	queue          *etcdutil.Queue
 	runningTaskIds chan string
+	nfIdLast       string
 }
 
 func NewService(db *gorm.DB, queue *etcdutil.Queue) Service {
@@ -40,7 +38,7 @@ func NewService(db *gorm.DB, queue *etcdutil.Queue) Service {
 
 func (sc *taskService) ExtractTasks() error {
 	for {
-		taskId, err := sc.queue.Dequeue()
+		nfTaskIdsStr, err := sc.queue.Dequeue()
 		//taskId := time.Now().Format("2006-01-02 15:04:05")
 		//time.Sleep(1 * time.Second)
 		if err != nil {
@@ -49,29 +47,58 @@ func (sc *taskService) ExtractTasks() error {
 			continue
 		}
 
-		logger.Infof(nil, "%+v", "Dequeue from etcd queue success  "+taskId)
-		sc.runningTaskIds <- taskId
+		logger.Infof(nil, "%+v", "Dequeue from etcd queue success,  "+nfTaskIdsStr)
+		sc.runningTaskIds <- nfTaskIdsStr
 	}
 	return nil
 }
 
 func (sc *taskService) HandleTask(handlerNum string) error {
+	sc.nfIdLast = ""
 	for {
-		taskId := <-sc.runningTaskIds
-		logger.Debugf(nil, time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:", taskId)
-		logger.Debugf(nil, "******handlerNum:"+handlerNum)
-		taskWNfInfo, err := sc.getTaskwithNfContentbyID(taskId)
+		nfTaskIdsStr := <-sc.runningTaskIds
+		logger.Debugf(nil, time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:", nfTaskIdsStr)
+
+		ids := strings.Split(nfTaskIdsStr, ",")
+		taskId := ids[1]
+		logger.Debugf(nil, "test=======handlerNums%d", handlerNum)
+		logger.Debugf(nil, "test=======taskId=s%", taskId)
+		//	nfId := ids[1]
+		taskWithNfInfo, err := sc.GetTaskwithNfContentbyID(taskId)
 		if err != nil {
-			logger.Errorf(nil, "Error, Task from DB withNfContent byID : %+v", err)
+			logger.Errorf(nil, "got TaskwithNfContentbyID failed, [%+v]", err)
 			return err
 		}
+		logger.Debugf(nil, "got TaskwithNfContentbyID successed, : [%+v]", taskWithNfInfo)
 
-		logger.Debugf(nil, "******emailaddr="+taskWNfInfo.EmailAddr)
+		emailAddr := taskWithNfInfo.EmailAddr
+		titel := taskWithNfInfo.Title
+		content := taskWithNfInfo.Content
+		err = emailutil.SendMail(emailAddr, titel, content)
+		if err != nil {
+			logger.Warnf(nil, "send email failed, [%+v]", err)
+			return err
+		}
+		//if send successfully,need to update notification, job and task status.
+		_, err = sc.UpdateStatus2FinishedByIds(*taskWithNfInfo)
+		if err != nil {
+			logger.Errorf(nil, "update job and task status  to finished failed, [%+v]", err)
+			return err
+		}
+		logger.Debugf(nil, "update job and task status to finished: [%+v]", taskWithNfInfo)
 
-		emailAddr := taskWNfInfo.EmailAddr
-		titel := taskWNfInfo.Title
-		content := taskWNfInfo.Content
-		emailutil.SendMail(emailAddr, titel, content)
+		//if the nfId is different from nfIdLast,that means the nf including all the tasks is finished.
+		//update notification status to finished
+		//if sc.nfIdLast != nfId && sc.nfIdLast != "" {
+		//	nfsc := nfsc.NewService(sc.db, sc.queue)
+		//	_, err = nfsc.UpdateStatus2FinishedById(sc.nfIdLast)
+		//	if err != nil {
+		//		logger.Errorf(nil, "update notification status to finished failed, [%+v]", err)
+		//		return err
+		//	}
+		//}
+		//sc.nfIdLast = nfId
+
 	}
 	return nil
 }
@@ -81,21 +108,74 @@ func (sc *taskService) getTaskbyID(taskID string) (*models.Task, error) {
 	err := sc.db.
 		Where("task_id = ?", taskID).
 		First(task).Error
-
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return nil, err
-		}
+		//if err != gorm.ErrRecordNotFound {
+		//	return nil, err
+		//}
 		return nil, err
 	}
 	return task, nil
 }
 
-func (sc *taskService) getTaskwithNfContentbyID(taskID string) (*models.TaskWNfInfo, error) {
-	logger.Debugf(nil, "%+v", taskID)
-	taskWNfInfo := &models.TaskWNfInfo{}
-	sc.db.Raw("SELECT  t3.title,t3.short_content,  t3.content,t1.task_id,t1.email_addr "+
-		"	FROM task t1,job t2,notification t3 where t1.job_id=t2.job_id and t2.notification_id=t3.notification_id  and t1.task_id=? ", taskID).Scan(&taskWNfInfo)
-	logger.Debugf(nil, "******%+v", taskWNfInfo.TaskID)
-	return taskWNfInfo, nil
+func (sc *taskService) GetTaskwithNfContentbyID(taskID string) (*models.TaskWithNfInfo, error) {
+	logger.Debugf(nil, "test========taskID=%s", taskID)
+	taskWithNfInfo := &models.TaskWithNfInfo{}
+	sql := models.GetTaskwithNfContentbyIDSQL
+	sc.db.Raw(sql, taskID).Scan(&taskWithNfInfo)
+	logger.Debugf(nil, "getTaskwithNfContentbyID got a task: [%+v]", taskWithNfInfo)
+	return taskWithNfInfo, nil
+}
+
+func (sc *taskService) UpdateStatus2SendingByIds(taskWithNfInfo models.TaskWithNfInfo) (bool, error) {
+	jobId := taskWithNfInfo.JobID
+	taskId := taskWithNfInfo.TaskID
+	nfId := taskWithNfInfo.NotificationId
+
+	job := &models.Job{
+		JobID: jobId,
+	}
+	task := &models.Task{
+		TaskID: taskId,
+	}
+	nf := &models.Notification{
+		NotificationId: nfId,
+	}
+
+	tx := sc.db.Begin()
+	status := nfconstants.StatusSending
+	err := sc.db.Model(&task).Where("task_id = ?", taskId).Update("status", status).Error
+	err = sc.db.Model(&job).Where("job_id = ?", jobId).Update("status", status).Error
+	err = sc.db.Model(&nf).Where("notification_id = ?", nfId).Update("status", status).Error
+	if err != nil {
+		logger.Errorf(nil, "%+v", err)
+		return false, err
+	}
+	tx.Commit()
+
+	return true, nil
+}
+
+func (sc *taskService) UpdateStatus2FinishedByIds(taskWithNfInfo models.TaskWithNfInfo) (bool, error) {
+
+	jobId := taskWithNfInfo.JobID
+	taskId := taskWithNfInfo.TaskID
+
+	job := &models.Job{
+		JobID: jobId,
+	}
+	task := &models.Task{
+		TaskID: taskId,
+	}
+
+	tx := sc.db.Begin()
+	status := nfconstants.StatusFinished
+	err := sc.db.Model(&task).Where("task_id = ?", taskId).Update("status", status).Error
+	err = sc.db.Model(&job).Where("job_id = ?", jobId).Update("status", status).Error
+	if err != nil {
+		logger.Errorf(nil, "%+v", err)
+		return false, err
+	}
+	tx.Commit()
+
+	return true, nil
 }

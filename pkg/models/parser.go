@@ -11,7 +11,7 @@ import (
 type ModelParser struct {
 }
 
-func (parser *ModelParser) CreateNfWaddrs(in *pb.CreateNfWithAddrsRequest) (*Notification, error) {
+func (parser *ModelParser) CreateNfWithAddrs(in *pb.CreateNfWithAddrsRequest) (*Notification, error) {
 	nf := &Notification{
 		NotificationId: idutil.GetUuid(constants.NfPostIDPrifix),
 		ContentType:    in.GetContentType().GetValue(),
@@ -22,7 +22,7 @@ func (parser *ModelParser) CreateNfWaddrs(in *pb.CreateNfWithAddrsRequest) (*Not
 		ShortContent:   in.GetShortContent().GetValue(),
 		ExporedDays:    2,
 		Owner:          in.GetOwner().GetValue(),
-		Status:         "New",
+		Status:         constants.StatusNew,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
 	}
