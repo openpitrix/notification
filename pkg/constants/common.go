@@ -1,6 +1,11 @@
 package constants
 
 const (
+	EtcdPrefix = "notification/"
+	EmailQueue = "emailtask"
+)
+
+const (
 	NfPostIDPrifix   = "nf-"
 	JobPostIDPrifix  = "job-"
 	TaskPostIDPrifix = "task-"

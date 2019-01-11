@@ -1,4 +1,4 @@
-package services
+package notification
 
 import (
 	"golang.org/x/net/context"
@@ -11,15 +11,13 @@ import (
 
 func TestNewServer(t *testing.T) {
 	logger.SetLevelByString("debug")
-	InitGlobelSetting()
 	s, _ := NewServer()
 	_, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	logger.Infof(nil, "[%+v]", s)
 }
 
-func TestCreateNfWaddrs(t *testing.T) {
-	InitGlobelSetting()
+func TestCreateNfWithAddrs(t *testing.T) {
 	s, _ := NewServer()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

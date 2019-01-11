@@ -2,19 +2,13 @@ package main
 
 import (
 	"log"
-	"openpitrix.io/notification/pkg/config"
-	"openpitrix.io/notification/pkg/services"
+	"openpitrix.io/notification/pkg/services/notification"
 )
 
 func main() {
 	log.Println("Starting server...")
 
-	cfg := config.GetInstance()
-	cfg.LoadConf()
-
-	services.InitGlobelSetting()
-
-	services.Serve(cfg)
+	notification.Serve()
 
 	log.Println("Server shuting down...")
 

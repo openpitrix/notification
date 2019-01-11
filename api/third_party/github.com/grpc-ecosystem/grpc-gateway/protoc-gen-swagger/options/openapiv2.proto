@@ -229,7 +229,7 @@ message Tag {
   // tag in individual operation specifications.
   //
   // TODO(ivucica): Add 'name' property. Use it to allow override of the name of
-  // global Tag object, then use that name to reference the tag throughout the
+  // globalcfg Tag object, then use that name to reference the tag throughout the
   // Swagger file.
   reserved 1;
   // TODO(ivucica): Description should be extracted from comments on the proto

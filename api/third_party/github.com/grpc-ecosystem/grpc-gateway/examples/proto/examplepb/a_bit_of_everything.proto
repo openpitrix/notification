@@ -345,7 +345,7 @@ service ABitOfEverythingService {
 				}
 			}
 			responses: {
-				// Overwrites global definition.
+				// Overwrites globalcfg definition.
 				key: "404";
 				value: {
 					description: "Returned when the resource does not exist.";

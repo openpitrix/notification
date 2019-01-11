@@ -19,7 +19,7 @@ require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/golang/mock v1.1.1
 	github.com/golang/protobuf v1.2.0
-	github.com/google/gops v0.3.5 // indirect
+	github.com/google/gops v0.3.5
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.5.1

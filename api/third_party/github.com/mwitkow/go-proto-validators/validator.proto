@@ -13,7 +13,7 @@ import "google/protobuf/descriptor.proto";
 
 option go_package = "validator";
 
-// TODO(mwitkow): Email protobuf-global-extension-registry@google.com to get an extension ID.
+// TODO(mwitkow): Email protobuf-globalcfg-extension-registry@google.com to get an extension ID.
 
 extend google.protobuf.FieldOptions {
   optional FieldValidator field = 65020;

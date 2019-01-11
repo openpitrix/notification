@@ -20,7 +20,6 @@ type Config struct {
 	Grpc  GrpcConfig
 	Mysql MysqlConfig
 	Etcd  EtcdConfig
-	//IAM   IAMConfig
 	Email Emailcfg
 }
 
@@ -38,19 +37,12 @@ func GetInstance() *Config {
 type Appcfg struct {
 	Name string `default:"Notification"`
 	//Host    string `default:"192.168.0.3"`
-	Host string `default:"127.0.0.1"`
-	//Port       string `default:":50051"`
+	Host       string `default:"127.0.0.1"`
 	Port       string `default:":9201"`
 	Env        string `default:"DEV"`
 	Maxtasks   int    `default:"5"`
 	Applogmode string `default:"debug"`
 }
-
-//type IAMConfig struct {
-//	SecretKey              string        `default:"OpenPitrix-lC4LipAXPYsuqw5F"`
-//	ExpireTime             time.Duration `default:"2h"`
-//	RefreshTokenExpireTime time.Duration `default:"336h"` // default is 2 week
-//}
 
 type LogConfig struct {
 	Level string `default:"debug"` // debug, info, warn, error, fatal
@@ -63,16 +55,17 @@ type GrpcConfig struct {
 type EtcdConfig struct {
 	//	Endpoints string `default:"openpitrix-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
 	Endpoints string `default:"192.168.0.7:2379"`
-	Prefix    string `default:"nf_"`
-	Topic     string `default:"task"`
+	//Prefix    string `default:"nf_"`
+	//Topic     string `default:"task"`
 }
+
 type MysqlConfig struct {
 	Host     string `default:"192.168.0.10"`
 	Port     string `default:"13306"`
 	User     string `default:"root"`
 	Password string `default:"password"`
 	Database string `default:"notification"`
-	Disable  bool   `default:"true"`
+	Disable  bool   `default:"false"`
 	//Logmode  bool   `default:"true"`
 	Logmode bool `default:"false"`
 }
@@ -110,7 +103,6 @@ func (c *Config) ParseFlag() {
 func (c *Config) LoadConf() *Config {
 	c.ParseFlag()
 	config := instance
-	//config := new(Config)
 	m := &multiconfig.DefaultLoader{}
 	m.Loader = multiconfig.MultiLoader(newLoader("notification"))
 	m.Validator = multiconfig.MultiValidator(

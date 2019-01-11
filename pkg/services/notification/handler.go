@@ -5,38 +5,39 @@ import (
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/notification/pkg/services/notification/service/notification"
+	"openpitrix.io/notification/pkg/services/notification/service/task"
 	"openpitrix.io/notification/pkg/util/pbutil"
+	"openpitrix.io/openpitrix/pkg/etcd"
 )
 
-type Handler interface {
-	CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error)
-	DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error)
+type Handler struct {
+	nfsc   notification.Service
+	tasksc task.Service
 }
 
-type handler struct {
-	nfsc Service
-}
-
-func NewHandler(nfService Service) Handler {
-	return &handler{
-		nfsc: nfService,
+func NewHandler(nfService notification.Service, tasksc task.Service) Handler {
+	return Handler{
+		nfsc:   nfService,
+		tasksc: tasksc,
 	}
 }
 
-func (h *handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error) {
+func (h *Handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest, q *etcd.Queue) (*pb.CreateNfResponse, error) {
 	parser := &models.ModelParser{}
 	nf, err := parser.CreateNfWithAddrs(in)
 	if err != nil {
-		logger.Warnf(nil, "%+v", err)
+		logger.Warnf(nil, "Failed to parser.CreateNfWithAddrs, error:[%+v]", err)
 		return nil, err
 	}
-	logger.Debugf(nil, "%+v", nf.NotificationId)
+	logger.Debugf(nil, "Success to  parser.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
 
-	nfId, err := h.nfsc.CreateNfWithAddrs(nf)
+	nfId, err := h.nfsc.CreateNfWithAddrs(nf, q)
 	if err != nil {
-		logger.Warnf(nil, "%+v", err)
+		logger.Warnf(nil, "Failed to service.CreateNfWithAddrs, error:[%+v]", err)
 		return nil, err
 	}
+	logger.Debugf(nil, "Success to  service.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
 
 	res := &pb.CreateNfResponse{
 		NotificationId: pbutil.ToProtoString(nfId),
@@ -44,7 +45,7 @@ func (h *handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddr
 	return res, nil
 }
 
-func (h *handler) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
+func (h *Handler) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
 	nfId := ""
 	nf, err := h.nfsc.DescribeNfs(nfId)
 	logger.Debugf(nil, "%+v", nf)

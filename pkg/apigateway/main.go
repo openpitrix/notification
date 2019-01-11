@@ -34,7 +34,6 @@ import (
 )
 
 type Server struct {
-	//config.IAMConfig
 }
 
 type register struct {
@@ -42,7 +41,6 @@ type register struct {
 	endpoint string
 }
 
-//func Serve(cfg *config.Config) {
 func Serve() {
 	version.PrintVersionInfo(func(s string, i ...interface{}) {
 		logger.Info(nil, s, i...)

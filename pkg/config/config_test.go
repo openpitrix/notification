@@ -55,8 +55,8 @@ func TestLoadConf(t *testing.T) {
 
 	logger.Debugf(nil, "Etcdcfg=========================================")
 	logger.Debugf(nil, "NF_ETCD_ENDPOINTS : %+v", mycfg.Etcd.Endpoints)
-	logger.Debugf(nil, "NF_ETCD_PREFIX : %+v", mycfg.Etcd.Prefix)
-	logger.Debugf(nil, "NF_ETCD_TOPIC : %+v", mycfg.Etcd.Topic)
+	//logger.Debugf(nil, "NF_ETCD_PREFIX : %+v", mycfg.Etcd.Prefix)
+	//logger.Debugf(nil, "NF_ETCD_TOPIC : %+v", mycfg.Etcd.Topic)
 
 	logger.Debugf(nil, "Emailcfg=========================================")
 	logger.Debugf(nil, "NF_EMAIL_HOST : %+v", mycfg.Email.Host)

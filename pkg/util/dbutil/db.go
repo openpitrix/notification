@@ -31,11 +31,9 @@ func GetInstance() *MysqlConnPool {
 }
 
 /*
-* @fuc 初始化数据库连接(可在mail()适当位置调用)
+* @fuc 初始化数据库连接
  */
 func (m *MysqlConnPool) InitDataPool() (issucc bool) {
-	//db, err_db = gorm.Open("mysql", "root:password@tcp(192.168.0.10:13306)/notification?charset=utf8&parseTime=True&loc=Local")
-	//fmt.Println(err_db)
 	cfg := config.GetInstance()
 
 	var (
