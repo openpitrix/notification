@@ -46,3 +46,13 @@ build:# fmt build-flyway ## Build all openpitrix images
 	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
 	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
