@@ -3,7 +3,8 @@
 # that can be found in the LICENSE file.
 
 TARG.Name:=notification
-TRAG.Gopkg:=openpitrix.io/notification
+#TRAG.Gopkg:=openpitrix.io/notification
+TRAG.Gopkg:=root/notification
 TRAG.Version:=openpitrix.io/pkg/version
 
 
@@ -37,22 +38,15 @@ build-flyway: ## Build custom flyway image
 	docker build -t $(TARG.Name):flyway -f ./pkg/db/Dockerfile ./pkg/db/
 
 
+
 .PHONY: build
-build:# fmt build-flyway ## Build all openpitrix images
-    #cd ./cmd/server
-    #go build
-	mkdir -p ./tmp/bin
-	$(call get_build_flags)
-	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
-	docker image prune -f 1>/dev/null 2>&1
+build:
+	#docker build -t notification_server:v0.0.1-dev -f ./Dockerfile.server .
+	#docker build -t notification_gateway:v0.0.1-dev -f ./Dockerfile.api_gateway .
+	docker build -t notification:v0.0.1-dev -f ./Dockerfile.notification .
 	@echo "build done"
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+.PHONY: compose-up
+compose-up:
+	docker-compose up -d
+	@echo "compose-up done"
