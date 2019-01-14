@@ -77,9 +77,9 @@ func (g *GlobalCfg) openEtcd() *GlobalCfg {
 }
 
 func (g *GlobalCfg) setLoggerLevel() *GlobalCfg {
-	AppLogMode := config.GetInstance().App.Applogmode
+	AppLogMode := config.GetInstance().Log.Level
 	logger.SetLevelByString(AppLogMode)
-	logger.Debugf(nil, "Set log level to %+s", AppLogMode)
+	logger.Debugf(nil, "Set app log level to %+s", AppLogMode)
 	return g
 }
 

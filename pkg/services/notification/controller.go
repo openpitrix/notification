@@ -5,7 +5,6 @@
 package notification
 
 import (
-	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/globalcfg"
 	"openpitrix.io/notification/pkg/services/notification/service/notification"
@@ -40,7 +39,7 @@ func NewController(nfService notification.Service, tasksc task.Service) Controll
 func (c *Controller) Serve() {
 	go c.ExtractTasks()
 
-	MaxWorkingTasks := config.GetInstance().App.Maxtasks
+	MaxWorkingTasks := constants.MaxWorkingTasks
 	for i := 0; i < MaxWorkingTasks; i++ {
 		go c.HandleTask(strconv.Itoa(i))
 	}

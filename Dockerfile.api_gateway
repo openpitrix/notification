@@ -10,21 +10,24 @@ RUN apk add --no-cache git
 # install /usr/bin/nsenter
 RUN apk add --no-cache util-linux
 
-WORKDIR /go/src/openpitrix.io/notification/
+WORKDIR /root/notification
 COPY . .
 
 ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 
-RUN  go build -v  -a -installsuffix cgo -ldflags '-w'  -o  cmd/nf_server_main  cmd/server/server_main.go
+#to fix a issue: verifying ...: checksum mismatch
+RUN rm go.sum;go mod download
+RUN  go build -v  -a -installsuffix cgo -ldflags '-w'  -o  cmd/gatewaymainexe  cmd/api-gateway/main.go
+
 
 
 
 FROM alpine
-COPY --from=builder /go/src/openpitrix.io/notification/cmd/nf_server_main /usr/local/bin/
+COPY --from=builder  /root/notification/cmd/gatewaymainexe /usr/local/bin/
 
-EXPOSE 50051
-CMD ["/usr/local/bin/nf_server_main"]
+EXPOSE 9200
+CMD ["/usr/local/bin/gatewaymainexe"]
 
 

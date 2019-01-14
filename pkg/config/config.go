@@ -15,7 +15,6 @@ import (
 )
 
 type Config struct {
-	App   Appcfg
 	Log   LogConfig
 	Grpc  GrpcConfig
 	Mysql MysqlConfig
@@ -34,15 +33,6 @@ func GetInstance() *Config {
 }
 
 /*===================================================================================================*/
-type Appcfg struct {
-	Name string `default:"Notification"`
-	//Host    string `default:"192.168.0.3"`
-	Host       string `default:"127.0.0.1"`
-	Port       string `default:":9201"`
-	Env        string `default:"DEV"`
-	Maxtasks   int    `default:"5"`
-	Applogmode string `default:"debug"`
-}
 
 type LogConfig struct {
 	Level string `default:"debug"` // debug, info, warn, error, fatal
@@ -53,21 +43,21 @@ type GrpcConfig struct {
 }
 
 type EtcdConfig struct {
-	//	Endpoints string `default:"openpitrix-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
-	Endpoints string `default:"192.168.0.7:2379"`
-	//Prefix    string `default:"nf_"`
-	//Topic     string `default:"task"`
+	Endpoints string `default:"notification-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
+	//Endpoints string `default:"192.168.0.7:2379"`
 }
 
 type MysqlConfig struct {
-	Host     string `default:"192.168.0.10"`
-	Port     string `default:"13306"`
+	Host string `default:"notification-db"`
+	//Host     string `default:"192.168.0.10"`
+	//Host     string `default:"192.168.0.3"`
+	//Port     string `default:"13306"`
+	Port     string `default:"3306"`
 	User     string `default:"root"`
 	Password string `default:"password"`
 	Database string `default:"notification"`
 	Disable  bool   `default:"false"`
-	//Logmode  bool   `default:"true"`
-	Logmode bool `default:"false"`
+	Logmode  bool   `default:"false"`
 }
 
 func (m *MysqlConfig) GetUrl() string {

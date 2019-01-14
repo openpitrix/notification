@@ -36,14 +36,6 @@ func TestLoadConf(t *testing.T) {
 	mycfg := GetInstance()
 	mycfg.LoadConf()
 
-	logger.Debugf(nil, "Appcfg=========================================")
-	logger.Debugf(nil, "NF_APP_NAME : %+v", mycfg.App.Name)
-	logger.Debugf(nil, "NF_APP_HOST : %+v", mycfg.App.Host)
-	logger.Debugf(nil, "NF_APP_PORT : %+v", mycfg.App.Port)
-	logger.Debugf(nil, "NF_APP_ENV : %+v", mycfg.App.Env)
-	logger.Debugf(nil, "NF_APP_MAXTASKS : %+v", mycfg.App.Maxtasks)
-	logger.Debugf(nil, "NF_APP_APPLOGMODE : %+v", mycfg.App.Applogmode)
-
 	logger.Debugf(nil, "Dbcfg=========================================")
 	logger.Debugf(nil, "NF_DB_HOST : %+v", mycfg.Mysql.Host)
 	logger.Debugf(nil, "NF_DB_PORT : %+v", mycfg.Mysql.Port)

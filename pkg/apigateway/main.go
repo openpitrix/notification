@@ -45,7 +45,7 @@ func Serve() {
 	version.PrintVersionInfo(func(s string, i ...interface{}) {
 		logger.Info(nil, s, i...)
 	})
-	logger.Info(nil, "App service http://%s:%d", constants.NotificationManagerHost, constants.NotificationManagerPort)
+	logger.Info(nil, "Notification service http://%s:%d", constants.NotificationManagerHost, constants.NotificationManagerPort)
 	logger.Info(nil, "Api service start http://%s:%d", constants.ApiGatewayHost, constants.ApiGatewayPort)
 
 	//cfg.Mysql.Disable = true
