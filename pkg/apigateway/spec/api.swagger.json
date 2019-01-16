@@ -19,35 +19,8 @@
     "application/json"
   ],
   "paths": {
-    "/v1/SayHello": {
-      "post": {
-        "summary": "#API 0.SayHello:gRPC testing,Sends a greeting.",
-        "operationId": "SayHello",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/pbHelloReply"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbHelloRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
-    "/v1/nf/DescribeNfs": {
-      "post": {
+    "/v1/notifications": {
+      "get": {
         "summary": "#API 2.DescribeNfs:describe single Notification with filter.",
         "operationId": "DescribeNfs",
         "responses": {
@@ -60,20 +33,84 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbDescribeNfsRequest"
-            }
+            "name": "content_type",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "sent_type",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "userids_str",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
           }
         ],
         "tags": [
           "notification"
         ]
-      }
-    },
-    "/v1/notification/CreateNfWithAddrs": {
+      },
       "post": {
         "summary": "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers).",
         "operationId": "CreateNfWithAddrs",
@@ -142,73 +179,10 @@
         }
       }
     },
-    "pbDescribeNfsRequest": {
-      "type": "object",
-      "properties": {
-        "content_type": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "sent_type": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "title": {
-          "type": "string"
-        },
-        "content": {
-          "type": "string"
-        },
-        "owner": {
-          "type": "string"
-        },
-        "userids_str": {
-          "type": "string"
-        },
-        "status": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "limit": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "offset": {
-          "type": "integer",
-          "format": "int64"
-        },
-        "sort_key": {
-          "type": "string"
-        }
-      }
-    },
     "pbDescribeNfsResponse": {
       "type": "object",
       "properties": {
         "message": {
-          "type": "string"
-        }
-      }
-    },
-    "pbHelloReply": {
-      "type": "object",
-      "properties": {
-        "message": {
-          "type": "string"
-        }
-      },
-      "title": "The response message containing the greetings"
-    },
-    "pbHelloRequest": {
-      "type": "object",
-      "properties": {
-        "name": {
           "type": "string"
         }
       }

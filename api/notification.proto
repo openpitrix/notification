@@ -27,16 +27,16 @@ import "google/protobuf/timestamp.proto";
 // The notification service definition.
 service notification {
 
-    //#API 0.SayHello
-    rpc SayHello (HelloRequest) returns (HelloReply) {
-        option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "#API 0.SayHello:gRPC testing,Sends a greeting."
-		};
-        option (google.api.http) = {
-			post: "/v1/SayHello"
-			body: "*"
-		};
-    }
+//    //#API 0.SayHello
+//    rpc SayHello (HelloRequest) returns (HelloReply) {
+//        option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+//			summary: "#API 0.SayHello:gRPC testing,Sends a greeting."
+//		};
+//        option (google.api.http) = {
+//			post: "/v1/SayHello"
+//			body: "*"
+//		};
+//    }
 
 
   //#API 1.CreateNfWaddrs
@@ -45,7 +45,7 @@ service notification {
 			summary: "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers)."
 		};
       option (google.api.http) = {
-			post: "/v1/notification/CreateNfWithAddrs"
+			post: "/v1/notifications"
 			body: "*"
 		};
   }
@@ -56,9 +56,9 @@ service notification {
 			summary: "#API 2.DescribeNfs:describe single Notification with filter."
 		};
       option (google.api.http) = {
-			//get: "/v1/nf/DescribeNfs"
-			post: "/v1/nf/DescribeNfs"
-			body: "*"
+			get: "/v1/notifications"
+			//post: "/v1/nf/DescribeNfs"
+			//body: "*"
 		};
   }
 

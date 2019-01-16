@@ -6,6 +6,7 @@ package emailutil
 
 import (
 	"crypto/tls"
+	"gopkg.in/gomail.v2"
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"

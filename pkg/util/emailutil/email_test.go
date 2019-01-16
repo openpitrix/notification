@@ -5,14 +5,14 @@
 package emailutil
 
 import (
+	"openpitrix.io/notification/pkg/config"
 	"testing"
 
 	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/services/test"
 )
 
 func TestSendMail(t *testing.T) {
-	test.InitGlobelSetting4Test()
+	config.GetInstance().LoadConf()
 	emailaddr := "huojiao2006@163.com"
 	header := "Subject-hello from Openpitrix notication"
 	body := "Body-hello from Openpitrix notication"
