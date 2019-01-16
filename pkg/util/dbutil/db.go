@@ -1,12 +1,18 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package dbutil
 
 import (
 	"fmt"
+	"log"
+	"sync"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"log"
+
 	"openpitrix.io/notification/pkg/config"
-	"sync"
 )
 
 /*

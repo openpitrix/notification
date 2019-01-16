@@ -19,13 +19,15 @@
 package client
 
 import (
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
 	"log"
-	"openpitrix.io/notification/pkg/config"
-	pb "openpitrix.io/notification/pkg/pb"
 	"os"
 	"time"
+
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+
+	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/pb"
 )
 
 const (

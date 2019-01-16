@@ -1,10 +1,15 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package etcdutil
 
 import (
 	"fmt"
 	"log"
-	"openpitrix.io/openpitrix/pkg/etcd"
 	"testing"
+
+	"openpitrix.io/openpitrix/pkg/etcd"
 )
 
 func TestConnect(t *testing.T) {
@@ -60,7 +65,6 @@ func TestEnqueue(t *testing.T) {
 		t.Logf("Got message [%s] from queue, worker number [%d]", n, i)
 	}
 }
-
 
 func TestEnqueue2(t *testing.T) {
 	endpoints := []string{"192.168.0.7:2379"}

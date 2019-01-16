@@ -1,16 +1,22 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package globalcfg
 
 import (
+	"os"
+	"strings"
+	"sync"
+
 	"github.com/google/gops/agent"
 	"github.com/jinzhu/gorm"
+
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/util/dbutil"
 	"openpitrix.io/openpitrix/pkg/etcd"
-	"os"
-	"strings"
-	"sync"
 )
 
 type GlobalCfg struct {
