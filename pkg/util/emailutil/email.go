@@ -1,8 +1,12 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package emailutil
 
 import (
 	"crypto/tls"
-	"gopkg.in/gomail.v2"
+
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 )
@@ -21,7 +25,7 @@ func SendMail(emailaddr string, header string, body string) error {
 	username := config.GetInstance().Email.Username
 	password := config.GetInstance().Email.Password
 
-	d := gomail.NewDialer(host, port , username, password)
+	d := gomail.NewDialer(host, port, username, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	if err := d.DialAndSend(m); err != nil {
 		logger.Warnf(nil, "send email failed, [%+v]", err)

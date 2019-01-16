@@ -5,14 +5,15 @@
 package notification
 
 import (
+	"strconv"
+	"strings"
+	"time"
+
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/globalcfg"
 	"openpitrix.io/notification/pkg/services/notification/service/notification"
 	"openpitrix.io/notification/pkg/services/notification/service/task"
 	"openpitrix.io/notification/pkg/util/emailutil"
-	"strconv"
-	"strings"
-	"time"
 
 	"openpitrix.io/logger"
 	"openpitrix.io/openpitrix/pkg/etcd"

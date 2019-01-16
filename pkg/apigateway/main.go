@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -12,9 +12,10 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
-	"openpitrix.io/openpitrix/pkg/util/senderutil"
 	"strings"
 	"time"
+
+	"openpitrix.io/openpitrix/pkg/util/senderutil"
 
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -24,6 +25,7 @@ import (
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
+
 	staticSpec "openpitrix.io/notification/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/notification/pkg/apigateway/swagger-ui"
 	"openpitrix.io/notification/pkg/constants"

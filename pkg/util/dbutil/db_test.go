@@ -6,29 +6,30 @@ package dbutil
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/config"
 	"os"
 	"testing"
+
+	"github.com/jinzhu/gorm"
+
+	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/config"
 )
 
 type Product struct {
 	gorm.Model
-	Code string
+	Code  string
 	Price uint
 }
 
-
 func TestGetMysqlDB(t *testing.T) {
 
-	logger.Debugf(nil,"step0.1:初始化配置参数")
+	logger.Debugf(nil, "step0.1:初始化配置参数")
 	config.GetInstance().LoadConf()
 
-	logger.Debugf(nil,"step0.2:初始化DB connection pool")
+	logger.Debugf(nil, "step0.2:初始化DB connection pool")
 	issucc := GetInstance().InitDataPool()
 	if !issucc {
-		logger.Criticalf(nil,"init database pool failure...")
+		logger.Criticalf(nil, "init database pool failure...")
 		os.Exit(1)
 	}
 
@@ -36,7 +37,7 @@ func TestGetMysqlDB(t *testing.T) {
 
 	// 读取
 	var product Product
-	db.First(&product, 1) // 查询id为1的product
+	db.First(&product, 1)                   // 查询id为1的product
 	db.First(&product, "code = ?", "L1212") // 查询code为l1212的product
 	fmt.Println(product)
 

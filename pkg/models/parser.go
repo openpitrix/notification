@@ -1,11 +1,16 @@
+// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Use of this source code is governed by a Apache license
+// that can be found in the LICENSE file.
+
 package models
 
 import (
+	"strings"
+	"time"
+
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/idutil"
-	"strings"
-	"time"
 )
 
 type ModelParser struct {

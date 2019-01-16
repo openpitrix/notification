@@ -5,8 +5,9 @@
 package pbutil
 
 import (
-	"openpitrix.io/logger"
 	"time"
+
+	"openpitrix.io/logger"
 
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -25,7 +26,6 @@ const (
 	DefaultOffset = uint64(0)
 	DefaultLimit  = uint64(20)
 )
-
 
 func FromProtoTimestamp(t *timestamp.Timestamp) (tt time.Time) {
 	tt, err := ptypes.Timestamp(t)

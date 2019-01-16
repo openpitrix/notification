@@ -7,11 +7,13 @@ package config
 import (
 	"flag"
 	"fmt"
-	"github.com/koding/multiconfig"
-	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/constants"
 	"os"
 	"sync"
+
+	"github.com/koding/multiconfig"
+
+	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/constants"
 )
 
 type Config struct {
