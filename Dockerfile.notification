@@ -19,10 +19,10 @@ ENV GOOS=linux
 
 #to fix a issue: verifying ...: checksum mismatch
 RUN rm go.sum;go mod download
-RUN  go build -v -a -installsuffix cgo -ldflags '-w' -o cmd/api-gateway cmd/api-gateway/main.go
-RUN  go build -v -a -installsuffix cgo -ldflags '-w' -o cmd/notification-manager cmd/server/main.go
+RUN  go build -v -a -installsuffix cgo -ldflags '-w' -o cmd/build/api-gateway cmd/api-gateway/main.go
+RUN  go build -v -a -installsuffix cgo -ldflags '-w' -o cmd/build/notification-manager cmd/server/main.go
 
 FROM alpine:3.7
-COPY --from=builder /root/notification/cmd/notification-manager /usr/local/bin/
-COPY --from=builder /root/notification/cmd/api-gateway /usr/local/bin/
+COPY --from=builder /root/notification/cmd/build/notification-manager /usr/local/bin/
+COPY --from=builder /root/notification/cmd/build/api-gateway /usr/local/bin/
 EXPOSE 9200

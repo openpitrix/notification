@@ -1,7 +1,1 @@
-
-root
-password
-13306
-
-
 CREATE DATABASE IF NOT EXISTS notification DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;

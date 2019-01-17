@@ -7,18 +7,6 @@
 -- create database notification;
 -- use notification;
 
-drop table if exists job;
-
-drop table if exists notification_user_filter;
-
-
-drop table if exists notification;
-
-drop table if exists notification_app_user_filter;
-
-drop table if exists task;
-
-drop table if exists user_notification;
 
 /*==============================================================*/
 /* Table: job                                                   */
@@ -119,8 +107,8 @@ create table user_notification
    deleted_at           timestamp default NULL
 );
 
--- alter table user_notification
---    add primary key (user_notification_id);
+ alter table user_notification
+    add primary key (user_notification_id);
 --
 -- alter table job add constraint FK_Reference_15 foreign key (notification_id)
 --       references notification (notification_id) on delete restrict on update restrict;
