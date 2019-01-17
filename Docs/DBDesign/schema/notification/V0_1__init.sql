@@ -9,12 +9,12 @@
 
 drop table if exists job;
 
-drop table if exists notfication_user_filter;
+drop table if exists notification_user_filter;
 
 
 drop table if exists notification;
 
-drop table if exists notification_appuser_filter;
+drop table if exists notification_app_user_filter;
 
 drop table if exists task;
 
@@ -43,9 +43,9 @@ alter table job
    add primary key (job_id);
 
 /*==============================================================*/
-/* Table: notfication_user_filter                               */
+/* Table: notification_user_filter                               */
 /*==============================================================*/
-create table notfication_user_filter
+create table notification_user_filter
 (
    notification_id      varchar(50),
    user_filter_type     varchar(50) not null default 'specified',
@@ -77,9 +77,9 @@ alter table notification
    add primary key (notification_id);
 
 /*==============================================================*/
-/* Table: notification_appuser_filter                           */
+/* Table: notification_app_user_filter                           */
 /*==============================================================*/
-create table notification_appuser_filter
+create table notification_app_user_filter
 (
    notification_id      varchar(50),
    app_id               text,
@@ -125,10 +125,10 @@ create table user_notification
 -- alter table job add constraint FK_Reference_15 foreign key (notification_id)
 --       references notification (notification_id) on delete restrict on update restrict;
 --
--- alter table notfication_user_filter add constraint FK_Reference_12 foreign key (notification_id)
+-- alter table notification_user_filter add constraint FK_Reference_12 foreign key (notification_id)
 --       references notification (notification_id) on delete restrict on update restrict;
 --
--- alter table notification_appuser_filter add constraint FK_Reference_14 foreign key (notification_id)
+-- alter table notification_app_user_filter add constraint FK_Reference_14 foreign key (notification_id)
 --       references notification (notification_id) on delete restrict on update restrict;
 --
 -- alter table task add constraint FK_Reference_13 foreign key (job_id)

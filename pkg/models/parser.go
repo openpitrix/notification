@@ -34,7 +34,7 @@ func (parser *ModelParser) CreateNfWithAddrs(in *pb.CreateNfWithAddrsRequest) (*
 	return nf, nil
 }
 
-func (parser *ModelParser) GenJobfromNf(nf *Notification) (*Job, error) {
+func (parser *ModelParser) GenJobFromNf(nf *Notification) (*Job, error) {
 	//todo check eamil string
 	emailsArray := strings.Split(nf.AddrsStr, ";")
 	taskcnt := int64(len(emailsArray))
@@ -55,8 +55,8 @@ func (parser *ModelParser) GenJobfromNf(nf *Notification) (*Job, error) {
 	return job, nil
 }
 
-//GenTaskfromJob
-func (parser *ModelParser) GenTasksfromJob(job *Job) ([]*Task, error) {
+//GenTaskFromJob
+func (parser *ModelParser) GenTasksFromJob(job *Job) ([]*Task, error) {
 	emailsArray := strings.Split(job.AddrsStr, ";")
 	tasks := make([]*Task, 0, len(emailsArray))
 	for _, email := range emailsArray {

@@ -47,8 +47,8 @@ alter table job
 create table notification
 (
    notification_id      varchar(50) not null,
-   content_type         varchar(50) not null default '' comment ' -- network / fee / new feature etc..  产品消息 故障通知 安全通知 财务相关 其他',
-   sent_type            varchar(50) not null default '' comment 'web / mobile / email /sms  邮箱 短信 移动APP 浏览器推送',
+   content_type         varchar(50) not null default '' comment ' -- network / fee / new feature etc..',
+   sent_type            varchar(50) not null default '' comment 'web / mobile / email /sms',
    addrs_str            text not null,
    title                varchar(255) not null,
    content              text not null,

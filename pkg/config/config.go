@@ -21,7 +21,7 @@ type Config struct {
 	Grpc  GrpcConfig
 	Mysql MysqlConfig
 	Etcd  EtcdConfig
-	Email Emailcfg
+	Email EmailCfg
 }
 
 var instance *Config
@@ -59,14 +59,14 @@ type MysqlConfig struct {
 	Password string `default:"password"`
 	Database string `default:"notification"`
 	Disable  bool   `default:"false"`
-	Logmode  bool   `default:"false"`
+	LogMode  bool   `default:"false"`
 }
 
 func (m *MysqlConfig) GetUrl() string {
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", m.User, m.Password, m.Host, m.Port, m.Database)
 }
 
-type Emailcfg struct {
+type EmailCfg struct {
 	Host     string `default:"mail.app-center.cn"`
 	Port     int    `default:"25"`
 	Username string `default:"openpitrix@app-center.cn"`

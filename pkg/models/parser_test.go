@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestGenTasksfromJob(t *testing.T) {
+func TestGenTasksFromJob(t *testing.T) {
 	emailsArray := strings.Split("johuo@yunify.com;danma@yunify.com", ";")
 	for _, email := range emailsArray {
 		println(email)

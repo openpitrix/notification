@@ -24,13 +24,13 @@ type Server struct {
 func NewServer() (*Server, error) {
 	s := &Server{}
 
-	nfservice := notification.NewService()
-	taskservice := task.NewService()
+	nfService := notification.NewService()
+	taskService := task.NewService()
 
-	nfhandler := NewHandler(nfservice, taskservice)
-	s.handler = &nfhandler
+	nfHandler := NewHandler(nfService, taskService)
+	s.handler = &nfHandler
 
-	taskController := NewController(nfservice, taskservice)
+	taskController := NewController(nfService, taskService)
 	s.controller = &taskController
 
 	return s, nil
@@ -44,7 +44,6 @@ func Serve() {
 
 	manager.NewGrpcServer("notification-manager", constants.NotificationManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
-		//WithBuilder(nil).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterNotificationServer(server, s)
 		})

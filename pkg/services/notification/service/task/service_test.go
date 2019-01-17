@@ -24,20 +24,20 @@ import (
 //	//}
 //}
 
-func TestGetTaskbyID(t *testing.T) {
-	tasksc := &taskService{}
-	task, _ := tasksc.getTaskbyID("task-6J1BEDx9wJ94")
+func TestGetTaskByID(t *testing.T) {
+	taskService := &taskService{}
+	task, _ := taskService.getTaskbyID("task-6J1BEDx9wJ94")
 	logger.Infof(nil, task.EmailAddr)
 }
 
-func TestGetTaskwithNfContentbyID(t *testing.T) {
-	tasksc := &taskService{}
-	task, _ := tasksc.GetTaskwithNfContentbyID("task-mqY0kxG9yl98")
+func TestGetTaskWithNfContentByID(t *testing.T) {
+	taskService := &taskService{}
+	task, _ := taskService.GetTaskWithNfContentByID("task-mqY0kxG9yl98")
 	logger.Infof(nil, "EmailAddr=[%+s]", task.EmailAddr)
 }
 
 func TestUpdateStatusById(t *testing.T) {
 	tasksc := &taskService{}
-	task, _ := tasksc.GetTaskwithNfContentbyID("task-QvQEG9n5BkZO")
+	task, _ := tasksc.GetTaskWithNfContentByID("task-QvQEG9n5BkZO")
 	tasksc.UpdateStatus2SendingByIds(*task)
 }

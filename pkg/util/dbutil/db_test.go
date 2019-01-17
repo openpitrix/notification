@@ -27,8 +27,8 @@ func TestGetMysqlDB(t *testing.T) {
 	config.GetInstance().LoadConf()
 
 	logger.Debugf(nil, "step0.2:初始化DB connection pool")
-	issucc := GetInstance().InitDataPool()
-	if !issucc {
+	isSucc := GetInstance().InitDataPool()
+	if !isSucc {
 		logger.Criticalf(nil, "init database pool failure...")
 		os.Exit(1)
 	}

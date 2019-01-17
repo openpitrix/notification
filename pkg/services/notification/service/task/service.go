@@ -14,7 +14,7 @@ import (
 )
 
 type Service interface {
-	GetTaskwithNfContentbyID(taskID string) (*models.TaskWithNfInfo, error)
+	GetTaskWithNfContentByID(taskID string) (*models.TaskWithNfInfo, error)
 	UpdateStatus2SendingByIds(taskWithNfInfo models.TaskWithNfInfo) (bool, error)
 	UpdateJobTaskStatus2FinishedById(taskWithNfInfo models.TaskWithNfInfo) (bool, error)
 }
@@ -41,11 +41,11 @@ func (sc *taskService) getTaskbyID(taskID string) (*models.Task, error) {
 	return task, nil
 }
 
-func (sc *taskService) GetTaskwithNfContentbyID(taskID string) (*models.TaskWithNfInfo, error) {
+func (sc *taskService) GetTaskWithNfContentByID(taskID string) (*models.TaskWithNfInfo, error) {
 	db := globalcfg.GetInstance().GetDB()
 	logger.Debugf(nil, "test========taskID=%s", taskID)
 	taskWithNfInfo := &models.TaskWithNfInfo{}
-	sql := models.GetTaskwithNfContentbyIDSQL
+	sql := models.GetTaskWithNfContentByIDSQL
 	db.Raw(sql, taskID).Scan(&taskWithNfInfo)
 	logger.Debugf(nil, "getTaskwithNfContentbyID got a task,TaskID: [%+s]", taskWithNfInfo.TaskID)
 	return taskWithNfInfo, nil

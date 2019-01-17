@@ -7,7 +7,10 @@ TRAG.Gopkg:=openpitrix.io/notification
 TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
+GO_RACE:=go build -race
+GO_VET:=go vet
 GO_FILES:=./cmd ./pkg
+GO_PATH_FILES:=./cmd/... ./pkg/...
 
 DOCKER_TAGS=latest
 BUILDER_IMAGE=openpitrix/openpitrix-builder:release-v0.2.3

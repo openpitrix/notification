@@ -19,10 +19,10 @@ import (
 )
 
 func TestCreateNfWithAddrs4handler(t *testing.T) {
-	nfservice := notification.NewService()
-	taskservice := task.NewService()
+	nfService := notification.NewService()
+	taskService := task.NewService()
 	queue := globalcfg.GetInstance().GetEtcd().NewQueue(constants.EmailQueue)
-	handler := NewHandler(nfservice, taskservice)
+	handler := NewHandler(nfService, taskService)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

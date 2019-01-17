@@ -27,7 +27,7 @@ var instance *MysqlConnPool
 var once sync.Once
 
 var db *gorm.DB
-var err_db error
+var err error
 
 func GetInstance() *MysqlConnPool {
 	once.Do(func() {
@@ -39,7 +39,7 @@ func GetInstance() *MysqlConnPool {
 /*
 * @fuc 初始化数据库连接
  */
-func (m *MysqlConnPool) InitDataPool() (issucc bool) {
+func (m *MysqlConnPool) InitDataPool() (isSucc bool) {
 	cfg := config.GetInstance()
 
 	var (
@@ -54,26 +54,26 @@ func (m *MysqlConnPool) InitDataPool() (issucc bool) {
 		)
 	)
 
-	db, err_db = gorm.Open("mysql", connectionString)
-	if err_db != nil {
-		log.Print(err_db)
+	db, err = gorm.Open("mysql", connectionString)
+	if err != nil {
+		log.Print(err)
 		return false
 	}
 
-	err_db = db.DB().Ping()
+	err = db.DB().Ping()
 
-	if err_db != nil {
+	if err != nil {
 		return false
 	}
 
 	db.DB().SetMaxIdleConns(10)
-	db.LogMode(cfg.Mysql.Logmode)
+	db.LogMode(cfg.Mysql.LogMode)
 
 	// 全局禁用表名复数
 	db.SingularTable(true)
 
-	if err_db != nil {
-		log.Fatal(err_db)
+	if err != nil {
+		log.Fatal(err)
 		return false
 	}
 	//关闭数据库，db会被多个goroutine共享，可以不调用
