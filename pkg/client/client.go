@@ -20,14 +20,10 @@ package client
 
 import (
 	"log"
-	"os"
-	"time"
 
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"openpitrix.io/notification/pkg/config"
-	"openpitrix.io/notification/pkg/pb"
 )
 
 const (
@@ -38,28 +34,13 @@ func Serve() {
 	log.Println("Start to run client. Step 1")
 
 	config.GetInstance().LoadConf()
-	host := config.GetInstance().App.Host
-	port := config.GetInstance().App.Port
-	address := host + port
+	//host := config.GetInstance().App.Host
+	//port := config.GetInstance().App.Port
+	address := "localhost:9201"
 
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewNotificationClient(conn)
-
-	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("Greeting output client - SayHello: %s", r.Message)
-
 }

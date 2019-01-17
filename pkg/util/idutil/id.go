@@ -8,6 +8,7 @@ import (
 	"crypto/rand"
 
 	"github.com/sony/sonyflake"
+	hashids "github.com/speps/go-hashids"
 
 	"openpitrix.io/notification/pkg/util/stringutil"
 )

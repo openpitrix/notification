@@ -5,11 +5,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"strconv"
 	"time"
 
-	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
 	"openpitrix.io/notification/pkg/client"

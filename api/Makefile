@@ -3,7 +3,7 @@
 # that can be found in the LICENSE file.
 
 
-PROTO_FILES=$(sort $(wildcard *.proto))
+PROTO_FILES=$(sort $(wildcard ./*.proto))
 PROTOC_INC_PATH=/usr/local/include
 GOOGLEAPIS_PATH=third_party/googleapis
 GRPC_GATEWAY_PATH=third_party/github.com/grpc-ecosystem/grpc-gateway/
@@ -16,7 +16,7 @@ PWD:=$(shell pwd)
 
 
 
-generate: Makefile
+generate: $(PROTO_FILES) Makefile
 	@rm -rf ../pkg/pb/*
 
 
@@ -34,6 +34,8 @@ generate: Makefile
 
 	make -C ../pkg/apigateway/spec
 	make -C ../pkg/apigateway/swagger-ui
+
+	goimports -l -w -e -local=openpitrix ../pkg/pb
 
 
 clean:

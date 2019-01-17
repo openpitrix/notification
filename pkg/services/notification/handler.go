@@ -5,7 +5,7 @@
 package notification
 
 import (
-	"golang.org/x/net/context"
+	"context"
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/models"
@@ -28,11 +28,7 @@ func NewHandler(nfService notification.Service, taskService task.Service) Handle
 	}
 }
 
-func (h *Handler) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{Message: "Hello,use function SayHello at server end. "}, nil
-}
-
-func (h *Handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest, q *etcd.Queue) (*pb.CreateNfResponse, error) {
+func (h *Handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest, q *etcd.Queue) (*pb.CreateNfWithAddrsResponse, error) {
 	parser := &models.ModelParser{}
 	nf, err := parser.CreateNfWithAddrs(in)
 	if err != nil {
@@ -48,7 +44,7 @@ func (h *Handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddr
 	}
 	logger.Debugf(ctx, "Success to  service.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
 
-	res := &pb.CreateNfResponse{
+	res := &pb.CreateNfWithAddrsResponse{
 		NotificationId: pbutil.ToProtoString(nfId),
 	}
 	return res, nil

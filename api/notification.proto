@@ -12,7 +12,7 @@ import "protoc-gen-swagger/options/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 service notification {
-	rpc CreateNfWithAddrs (CreateNfWithAddrsRequest) returns (CreateNfResponse) {
+	rpc CreateNfWithAddrs (CreateNfWithAddrsRequest) returns (CreateNfWithAddrsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers)."
 		};
@@ -45,7 +45,7 @@ message CreateNfWithAddrsRequest {
 	google.protobuf.StringValue status = 9;
 }
 
-message CreateNfResponse {
+message CreateNfWithAddrsResponse {
 	google.protobuf.StringValue notification_id = 1;
 }
 
