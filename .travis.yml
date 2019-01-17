@@ -1,22 +1,22 @@
-sudo: required
-services:
-- docker
 language: go
 go:
-- '1.10'
 - '1.11'
+
 go_import_path: openpitrix.io/notification
+
 script:
-- make fmt-check
-- make check
-deploy:
-- provider: script
-  script: bash docker_push latest
-  on:
-    branch: master
-    repo: openpitrix/notification
-- provider: script
-  script: bash docker_push $TRAVIS_TAG
-  on:
-    tags: true
-    repo: openpitrix/notification
+- env GO111MODULE=on go test ./...
+- env GO111MODULE=on go vet ./...
+- make test
+
+#deploy:
+#- provider: script
+#  script: bash docker_push latest
+#  on:
+#    branch: master
+#    repo: openpitrix/notification
+#- provider: script
+#  script: bash docker_push $TRAVIS_TAG
+#  on:
+#    tags: true
+#    repo: openpitrix/notification

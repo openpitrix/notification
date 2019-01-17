@@ -51,12 +51,19 @@ fmt-check: fmt-all ## Check whether all files be formatted
 
 .PHONY: check
 check: ## go vet and race
-	$(GO_RACE) $(GO_PATH_FILES)
-	$(GO_VET) $(GO_PATH_FILES)
+	#$(GO_RACE) $(GO_PATH_FILES)
+	#$(GO_VET) $(GO_PATH_FILES)
+	go fmt ./...
+	go vet ./...
+	go build ./...
 
 .PHONY: build-flyway
 build-flyway: ## Build custom flyway image
 	docker build -t $(TARG.Name):flyway -f ./pkg/db/Dockerfile ./pkg/db/
+
+
+.PHONY: test
+test:
 
 .PHONY: build
 build:

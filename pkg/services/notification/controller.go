@@ -60,7 +60,6 @@ func (c *Controller) ExtractTasks() error {
 		logger.Infof(nil, "%+v", "Dequeue from etcd queue success,  "+nfTaskIdsStr)
 		c.runningTaskIds <- nfTaskIdsStr
 	}
-	return nil
 }
 
 func (c *Controller) HandleTask(handlerNum string) error {
@@ -112,5 +111,4 @@ func (c *Controller) HandleTask(handlerNum string) error {
 		}
 		c.nfIdLast = nfId
 	}
-	return nil
 }

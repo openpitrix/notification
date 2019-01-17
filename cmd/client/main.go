@@ -12,7 +12,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 
-	"openpitrix.io/notification/pkg/client"
+	_ "openpitrix.io/notification/pkg/client"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/pb"
@@ -20,7 +20,7 @@ import (
 )
 
 func main() {
-	client.Serve()
+	//client.Serve()
 }
 
 func Serve() {

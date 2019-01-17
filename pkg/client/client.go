@@ -18,6 +18,8 @@
 
 package client
 
+/*
+
 import (
 	"log"
 	"os"
@@ -63,3 +65,4 @@ func Serve() {
 	log.Printf("Greeting output client - SayHello: %s", r.Message)
 
 }
+*/
