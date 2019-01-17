@@ -34,7 +34,7 @@ var Files = map[string]string{
         "operationId": "DescribeNfs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
               "$ref": "#/definitions/pbDescribeNfsResponse"
             }
@@ -125,9 +125,9 @@ var Files = map[string]string{
         "operationId": "CreateNfWithAddrs",
         "responses": {
           "200": {
-            "description": "",
+            "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateNfResponse"
+              "$ref": "#/definitions/pbCreateNfWithAddrsResponse"
             }
           }
         },
@@ -148,14 +148,6 @@ var Files = map[string]string{
     }
   },
   "definitions": {
-    "pbCreateNfResponse": {
-      "type": "object",
-      "properties": {
-        "notification_id": {
-          "type": "string"
-        }
-      }
-    },
     "pbCreateNfWithAddrsRequest": {
       "type": "object",
       "properties": {
@@ -184,6 +176,14 @@ var Files = map[string]string{
           "type": "string"
         },
         "status": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateNfWithAddrsResponse": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
           "type": "string"
         }
       }

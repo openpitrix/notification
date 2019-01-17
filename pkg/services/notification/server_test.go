@@ -5,10 +5,9 @@
 package notification
 
 import (
+	"context"
 	"testing"
 	"time"
-
-	"golang.org/x/net/context"
 
 	"openpitrix.io/logger"
 	notification "openpitrix.io/notification/pkg/pb"

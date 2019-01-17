@@ -2,7 +2,6 @@
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
 
-TARG.Name:=notification
 TRAG.Gopkg:=openpitrix.io/notification
 TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 
@@ -34,7 +33,8 @@ generate-in-local: ## Generate code from protobuf file in local
 	cd ./api && make generate
 
 .PHONY: generate
-generate: generate-in-local ## Generate code from protobuf file in docker
+generate: ## Generate code from protobuf file in docker
+	$(RUN_IN_DOCKER) make generate-in-local
 	@echo "generate done"
 
 .PHONY: fmt-all
@@ -51,12 +51,8 @@ fmt-check: fmt-all ## Check whether all files be formatted
 
 .PHONY: check
 check: ## go vet and race
-	$(GO_RACE) $(GO_PATH_FILES)
-	$(GO_VET) $(GO_PATH_FILES)
-
-.PHONY: build-flyway
-build-flyway: ## Build custom flyway image
-	docker build -t $(TARG.Name):flyway -f ./pkg/db/Dockerfile ./pkg/db/
+	env GO111MODULE=on $(GO_RACE) $(GO_PATH_FILES)
+	env GO111MODULE=on $(GO_VET) $(GO_PATH_FILES)
 
 .PHONY: build
 build:
@@ -72,14 +68,14 @@ compose-up:
 
 build-image-%: ## build docker image
 	@if [ "$*" = "latest" ];then \
-	docker build -t openpitrix/runtime-provider-aws:latest .; \
+	docker build -t openpitrix/notification:latest .; \
 	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
-	docker build -t openpitrix/runtime-provider-aws:$* .; \
+	docker build -t openpitrix/notification:$* .; \
 	fi
 
 push-image-%: ## push docker image
 	@if [ "$*" = "latest" ];then \
-	docker push openpitrix/runtime-provider-aws:latest; \
+	docker push openpitrix/notification:latest; \
 	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
-	docker push openpitrix/runtime-provider-aws:$*; \
+	docker push openpitrix/notification:$*; \
 	fi

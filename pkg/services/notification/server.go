@@ -5,7 +5,8 @@
 package notification
 
 import (
-	"golang.org/x/net/context"
+	"context"
+
 	"google.golang.org/grpc"
 
 	"openpitrix.io/notification/pkg/config"
@@ -22,7 +23,7 @@ type Server struct {
 }
 
 func NewServer() (*Server, error) {
-	s := &Server{}
+	s := new(Server)
 
 	nfService := notification.NewService()
 	taskService := task.NewService()
@@ -47,19 +48,14 @@ func Serve() {
 		Serve(func(server *grpc.Server) {
 			pb.RegisterNotificationServer(server, s)
 		})
-
 }
 
-func (s *Server) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
+func (s *Server) DescribeNfs(ctx context.Context, req *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
 	return &pb.DescribeNfsResponse{Message: "Hello,use function DescribeNfs at server end. "}, nil
 }
 
-func (s *Server) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest) (*pb.CreateNfResponse, error) {
+func (s *Server) CreateNfWithAddrs(ctx context.Context, req *pb.CreateNfWithAddrsRequest) (*pb.CreateNfWithAddrsResponse, error) {
 	q := s.controller.queue
-	res, err := s.handler.CreateNfWithAddrs(ctx, in, q)
+	res, err := s.handler.CreateNfWithAddrs(ctx, req, q)
 	return res, err
-}
-
-func (s *Server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-	return &pb.HelloReply{Message: "Hello,use function SayHello at server end. "}, nil
 }
