@@ -46,7 +46,7 @@ func newGlobalCfg() *GlobalCfg {
 	if err := agent.Listen(agent.Options{
 		ShutdownCleanup: true,
 	}); err != nil {
-		logger.Criticalf(nil, "failed to start gops agent")
+		logger.Criticalf(nil, "Failed to start gops agent")
 	}
 	return g
 }
@@ -56,10 +56,10 @@ func (g *GlobalCfg) openDatabase() *GlobalCfg {
 		logger.Debugf(nil, "%+s", "Database setting for Mysql.Disable is true.")
 		return g
 	}
-	issucc := dbutil.GetInstance().InitDataPool()
+	isSucc := dbutil.GetInstance().InitDataPool()
 	logger.Debugf(nil, "%+s", "Init database pool successfully.")
-	if !issucc {
-		logger.Criticalf(nil, "%+s", "init database pool failure...")
+	if !isSucc {
+		logger.Criticalf(nil, "%+s", "Init database pool failure...")
 		os.Exit(1)
 	}
 
@@ -73,10 +73,10 @@ func (g *GlobalCfg) openEtcd() *GlobalCfg {
 	endpoints := strings.Split(g.cfg.Etcd.Endpoints, ",")
 	e, err := etcd.Connect(endpoints, constants.EtcdPrefix)
 	if err != nil {
-		logger.Criticalf(nil, "%+s", "failed to connect etcd...")
+		logger.Criticalf(nil, "%+s", "Failed to connect etcd...")
 		panic(err)
 	}
-	logger.Debugf(nil, "%+s", "Connect to etcd succesfully.")
+	logger.Debugf(nil, "%+s", "Connect to etcd successfully.")
 	g.etcd = e
 	logger.Debugf(nil, "%+s", "Set globalcfg etcd value.")
 	return g

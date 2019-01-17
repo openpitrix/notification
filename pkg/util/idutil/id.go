@@ -6,7 +6,6 @@ package idutil
 
 import (
 	"crypto/rand"
-	"github.com/speps/go-hashids"
 
 	"github.com/sony/sonyflake"
 

@@ -48,14 +48,14 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "NF_DB_PASSWORD : %+v", mycfg.Mysql.Password)
 	logger.Debugf(nil, "NF_DB_DBNAME : %+v", mycfg.Mysql.Database)
 	logger.Debugf(nil, "NF_DB_DISABLE : %+v", mycfg.Mysql.Disable)
-	logger.Debugf(nil, "NF_DB_DBLOGMODE : %+v", mycfg.Mysql.Logmode)
+	logger.Debugf(nil, "NF_DB_DBLOGMODE : %+v", mycfg.Mysql.LogMode)
 
 	logger.Debugf(nil, "Etcdcfg=========================================")
 	logger.Debugf(nil, "NF_ETCD_ENDPOINTS : %+v", mycfg.Etcd.Endpoints)
 	//logger.Debugf(nil, "NF_ETCD_PREFIX : %+v", mycfg.Etcd.Prefix)
 	//logger.Debugf(nil, "NF_ETCD_TOPIC : %+v", mycfg.Etcd.Topic)
 
-	logger.Debugf(nil, "Emailcfg=========================================")
+	logger.Debugf(nil, "EmailCfg=========================================")
 	logger.Debugf(nil, "NF_EMAIL_HOST : %+v", mycfg.Email.Host)
 	logger.Debugf(nil, "NF_EMAIL_PORT : %+v", mycfg.Email.Port)
 	logger.Debugf(nil, "NF_EMAIL_USERNAME : %+v", mycfg.Email.Username)

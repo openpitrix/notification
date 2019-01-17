@@ -13,10 +13,10 @@ import (
 )
 
 func TestServe(t *testing.T) {
-	nfservice := notification.NewService()
-	taskservice := task.NewService()
+	nfService := notification.NewService()
+	taskService := task.NewService()
 
-	c := NewController(nfservice, taskservice)
+	c := NewController(nfService, taskService)
 
 	go c.ExtractTasks()
 	go c.HandleTask("A")

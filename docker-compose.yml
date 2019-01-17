@@ -43,7 +43,7 @@ services:
     #build: .
     #image: "notification_server:v0.0.1-dev"
     image: "notification:v0.0.1-dev"
-    command: "notification-manager-exe"
+    command: "notification-manager"
     links:
     - notification-db:notification-db
     - notification-etcd:notification-etcd
@@ -79,7 +79,7 @@ services:
     #image: "notification_gateway:v0.0.1-dev"
     image: "notification:v0.0.1-dev"
     container_name: "notification-api-gateway"
-    command: "api-gateway-exe"
+    command: "api-gateway"
     links:
     - notification-db:notification-db
     - notification-etcd:notification-etcd

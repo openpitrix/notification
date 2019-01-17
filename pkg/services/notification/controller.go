@@ -23,8 +23,8 @@ type Controller struct {
 	queue          *etcd.Queue
 	runningTaskIds chan string
 	nfIdLast       string
-	nfsc           notification.Service
-	tasksc         task.Service
+	nfService      notification.Service
+	taskService    task.Service
 }
 
 func NewController(nfService notification.Service, tasksc task.Service) Controller {
@@ -32,8 +32,8 @@ func NewController(nfService notification.Service, tasksc task.Service) Controll
 		queue:          globalcfg.GetInstance().GetEtcd().NewQueue(constants.EmailQueue),
 		runningTaskIds: make(chan string),
 		nfIdLast:       "",
-		nfsc:           nfService,
-		tasksc:         tasksc,
+		nfService:      nfService,
+		taskService:    tasksc,
 	}
 }
 
@@ -77,36 +77,36 @@ func (c *Controller) HandleTask(handlerNum string) error {
 		//logger.Debugf(nil, "test=======taskId=s%", taskId)
 		//logger.Debugf(nil, "test=======nfId=s%", nfId)
 
-		taskWithNfInfo, err := c.tasksc.GetTaskwithNfContentbyID(taskId)
+		taskWithNfInfo, err := c.taskService.GetTaskWithNfContentByID(taskId)
 		if err != nil {
-			logger.Errorf(nil, "got TaskwithNfContentbyID failed, [%+v]", err)
+			logger.Errorf(nil, "Got TaskwithNfContentbyID failed, [%+v]", err)
 			return err
 		}
 
-		logger.Debugf(nil, "got TaskwithNfContentbyID successed, : [%+v]", taskWithNfInfo)
+		logger.Debugf(nil, "Got TaskwithNfContentbyID successed, : [%+v]", taskWithNfInfo)
 
 		emailAddr := taskWithNfInfo.EmailAddr
-		titel := taskWithNfInfo.Title
+		title := taskWithNfInfo.Title
 		content := taskWithNfInfo.Content
-		err = emailutil.SendMail(emailAddr, titel, content)
+		err = emailutil.SendMail(emailAddr, title, content)
 		if err != nil {
-			logger.Warnf(nil, "send email failed, [%+v]", err)
+			logger.Warnf(nil, "Send email failed, [%+v]", err)
 			//return err
 		} else {
 			//if send successfully,need to update notification, job and task status.
-			_, err = c.tasksc.UpdateJobTaskStatus2FinishedById(*taskWithNfInfo)
+			_, err = c.taskService.UpdateJobTaskStatus2FinishedById(*taskWithNfInfo)
 			if err != nil {
-				logger.Errorf(nil, "update job and task status  to finished failed, [%+v]", err)
+				logger.Errorf(nil, "Update job and task status  to finished failed, [%+v]", err)
 				return err
 			}
-			logger.Debugf(nil, "update job and task status to finished: [%+v]", taskWithNfInfo)
+			logger.Debugf(nil, "Update job and task status to finished: [%+v]", taskWithNfInfo)
 		}
 		//if the nfId is different from nfIdLast,that means the nf including all the tasks is finished.
 		//update notification status to finished
 		if c.nfIdLast != nfId && c.nfIdLast != "" {
-			_, err = c.nfsc.UpdateStatus2FinishedById(c.nfIdLast)
+			_, err = c.nfService.UpdateStatus2FinishedById(c.nfIdLast)
 			if err != nil {
-				logger.Errorf(nil, "update notification status to finished failed, [%+v]", err)
+				logger.Errorf(nil, "Update notification status to finished failed, [%+v]", err)
 				return err
 			}
 		}

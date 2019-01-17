@@ -17,32 +17,36 @@ import (
 )
 
 type Handler struct {
-	nfsc   notification.Service
-	tasksc task.Service
+	nfService   notification.Service
+	taskService task.Service
 }
 
-func NewHandler(nfService notification.Service, tasksc task.Service) Handler {
+func NewHandler(nfService notification.Service, taskService task.Service) Handler {
 	return Handler{
-		nfsc:   nfService,
-		tasksc: tasksc,
+		nfService:   nfService,
+		taskService: taskService,
 	}
+}
+
+func (h *Handler) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
+	return &pb.HelloReply{Message: "Hello,use function SayHello at server end. "}, nil
 }
 
 func (h *Handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest, q *etcd.Queue) (*pb.CreateNfResponse, error) {
 	parser := &models.ModelParser{}
 	nf, err := parser.CreateNfWithAddrs(in)
 	if err != nil {
-		logger.Warnf(nil, "Failed to parser.CreateNfWithAddrs, error:[%+v]", err)
+		logger.Warnf(ctx, "Failed to parser.CreateNfWithAddrs, error:[%+v]", err)
 		return nil, err
 	}
-	logger.Debugf(nil, "Success to  parser.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
+	logger.Debugf(ctx, "Success to  parser.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
 
-	nfId, err := h.nfsc.CreateNfWithAddrs(nf, q)
+	nfId, err := h.nfService.CreateNfWithAddrs(nf, q)
 	if err != nil {
-		logger.Warnf(nil, "Failed to service.CreateNfWithAddrs, error:[%+v]", err)
+		logger.Warnf(ctx, "Failed to service.CreateNfWithAddrs, error:[%+v]", err)
 		return nil, err
 	}
-	logger.Debugf(nil, "Success to  service.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
+	logger.Debugf(ctx, "Success to  service.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
 
 	res := &pb.CreateNfResponse{
 		NotificationId: pbutil.ToProtoString(nfId),
@@ -52,10 +56,10 @@ func (h *Handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddr
 
 func (h *Handler) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
 	nfId := ""
-	nf, err := h.nfsc.DescribeNfs(nfId)
-	logger.Debugf(nil, "%+v", nf)
+	nf, err := h.nfService.DescribeNfs(nfId)
+	logger.Debugf(ctx, "%+v", nf)
 	if err != nil {
-		logger.Warnf(nil, "%+v", err)
+		logger.Warnf(ctx, "%+v", err)
 		return nil, err
 	}
 	return nil, nil

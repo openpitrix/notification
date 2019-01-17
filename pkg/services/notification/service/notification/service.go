@@ -44,14 +44,14 @@ func (sc *nfService) CreateNfWithAddrs(nf *models.Notification, q *etcd.Queue) (
 	}
 
 	parser := &models.ModelParser{}
-	job, err = parser.GenJobfromNf(nf)
+	job, err = parser.GenJobFromNf(nf)
 	if err := tx.Create(&job).Error; err != nil {
 		tx.Rollback()
 		logger.Errorf(nil, "Cannot insert job data to db, [%+v]", err)
 		return "", err
 	}
 
-	tasks, err := parser.GenTasksfromJob(job)
+	tasks, err := parser.GenTasksFromJob(job)
 	for _, task := range tasks {
 		if err := tx.Create(&task).Error; err != nil {
 			tx.Rollback()

@@ -6,18 +6,17 @@ package emailutil
 
 import (
 	"crypto/tls"
-	"gopkg.in/gomail.v2"
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 )
 
-func SendMail(emailaddr string, header string, body string) error {
-	logger.Debugf(nil, "emailaddr="+emailaddr)
+func SendMail(emailAddr string, header string, body string) error {
+	logger.Debugf(nil, "emailAddr="+emailAddr)
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", "openpitrix@app-center.cn")
-	m.SetHeader("To", emailaddr)
+	m.SetHeader("To", emailAddr)
 	m.SetHeader("Subject", header)
 	m.SetBody("text/plain", body)
 
@@ -29,7 +28,7 @@ func SendMail(emailaddr string, header string, body string) error {
 	d := gomail.NewDialer(host, port, username, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	if err := d.DialAndSend(m); err != nil {
-		logger.Warnf(nil, "send email failed, [%+v]", err)
+		logger.Warnf(nil, "Send email failed, [%+v]", err)
 		return err
 	}
 	return nil

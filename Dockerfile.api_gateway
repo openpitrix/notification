@@ -19,15 +19,12 @@ ENV GOOS=linux
 
 #to fix a issue: verifying ...: checksum mismatch
 RUN rm go.sum;go mod download
-RUN  go build -v  -a -installsuffix cgo -ldflags '-w'  -o  cmd/api-gateway-exe  cmd/api-gateway/main.go
+RUN  go build -v -a -installsuffix cgo -ldflags '-w' -o cmd/api-gateway cmd/api-gateway/main.go
 
-
-
-
-FROM alpine
-COPY --from=builder  /root/notification/cmd/api-gateway-exe /usr/local/bin/
+FROM alpine:3.7
+COPY --from=builder /root/notification/cmd/api-gateway /usr/local/bin/
 
 EXPOSE 9200
-CMD ["/usr/local/bin/api-gateway-exe"]
+CMD ["/usr/local/bin/api-gateway"]
 
 

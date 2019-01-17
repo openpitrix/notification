@@ -5,10 +5,10 @@
 package emailutil
 
 import (
-	"openpitrix.io/notification/pkg/config"
 	"testing"
 
 	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/config"
 )
 
 func TestSendMail(t *testing.T) {
