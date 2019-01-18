@@ -1,27 +1,3 @@
- /*==============================================================*/
-/* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2019/1/11 13:21:10                           */
-/*==============================================================*/
-
---
--- alter table job
---    drop primary key;
---
--- drop table if exists job;
---
--- alter table notification
---    drop primary key;
---
--- drop table if exists notification;
---
--- alter table task
---    drop primary key;
---
--- drop table if exists task;
-
-/*==============================================================*/
-/* Table: job                                                   */
-/*==============================================================*/
 create table job
 (
    job_id               varchar(50) not null,
@@ -36,14 +12,14 @@ create table job
    status               varchar(50) comment ' new / sending / finished',
    created_at           timestamp not null default CURRENT_TIMESTAMP,
    updated_at           timestamp not null default CURRENT_TIMESTAMP
+   PRIMARY KEY (job_id)
 );
 
-alter table job
-   add primary key (job_id);
+CREATE INDEX job_notification_id_idx ON job (notification_id);
+CREATE INDEX job_job_type_idx ON job (job_type);
+CREATE INDEX job_job_action_idx ON job (job_action);
+CREATE INDEX job_status_idx ON job (status);
 
-/*==============================================================*/
-/* Table: notification                                          */
-/*==============================================================*/
 create table notification
 (
    notification_id      varchar(50) not null,
@@ -58,15 +34,13 @@ create table notification
    status               varchar(50) not null default '0' comment '-- new / sending / finished',
    created_at           timestamp not null default CURRENT_TIMESTAMP,
    updated_at           timestamp not null default CURRENT_TIMESTAMP,
-   deleted_at           timestamp default NULL
+   PRIMARY KEY (notification_id)
 );
 
-alter table notification
-   add primary key (notification_id);
+CREATE INDEX notification_sent_type_idx ON notification (sent_type);
+CREATE INDEX notification_owner_idx ON notification (owner);
+CREATE INDEX notification_status_idx ON notification (status);
 
-/*==============================================================*/
-/* Table: task                                                  */
-/*==============================================================*/
 create table task
 (
    task_id              varchar(50) not null,
@@ -77,14 +51,9 @@ create table task
    status               varchar(50) comment ' new / sending / finished',
    created_at           timestamp not null default CURRENT_TIMESTAMP,
    updated_at           timestamp not null default CURRENT_TIMESTAMP
+   PRIMARY KEY (task_id)
 );
 
--- alter table task
---    add primary key (task_id);
---
--- alter table job add constraint FK_Reference_15 foreign key (notification_id)
---       references notification (notification_id) on delete restrict on update restrict;
---
--- alter table task add constraint FK_Reference_13 foreign key (job_id)
---       references job (job_id) on delete restrict on update restrict;
---
+CREATE INDEX task_job_id_idx ON task (job_id);
+CREATE INDEX task_task_action_idx ON task (task_action);
+CREATE INDEX task_status_idx ON task (status);
