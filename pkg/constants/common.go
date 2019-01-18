@@ -5,22 +5,25 @@
 package constants
 
 const (
-	EtcdPrefix      = "notification/"
-	EmailQueue      = "emailtask"
-	MaxWorkingTasks = 5
+	EtcdPrefix            = "notification/"
+	NotificationTaskTopic = "nft"
+	NotificationJobTopic  = "nfj"
+	MaxWorkingTasks       = 5
+	MaxWorkingJobs        = 5
+	MaxTaskRetryTimes     = 5
 )
 
 const (
-	NfPostIDPrifix   = "nf-"
-	JobPostIDPrifix  = "job-"
-	TaskPostIDPrifix = "task-"
+	NfPostIDPrefix   = "nf-"
+	JobPostIDPrefix  = "job-"
+	TaskPostIDPrefix = "task-"
 )
 
 const (
-	StatusNew      = "new"
-	StatusSending  = "sending"
-	StatusFinished = "finished"
-	StatusFailed   = "failed"
+	StatusNew        = "new"
+	StatusSending    = "sending"
+	StatusSuccessful = "successful"
+	StatusFailed     = "failed"
 )
 
 const (

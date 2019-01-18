@@ -7,16 +7,10 @@ package notification
 import (
 	"testing"
 	"time"
-
-	"openpitrix.io/notification/pkg/services/notification/service/notification"
-	"openpitrix.io/notification/pkg/services/notification/service/task"
 )
 
 func TestServe(t *testing.T) {
-	nfService := notification.NewService()
-	taskService := task.NewService()
-
-	c := NewController(nfService, taskService)
+	c := NewController()
 
 	go c.ExtractTasks()
 	go c.HandleTask("A")

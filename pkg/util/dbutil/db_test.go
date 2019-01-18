@@ -23,10 +23,10 @@ type Product struct {
 
 func TestGetMysqlDB(t *testing.T) {
 
-	logger.Debugf(nil, "step0.1:初始化配置参数")
+	logger.Debugf(nil, "step0.1:init params")
 	config.GetInstance().LoadConf()
 
-	logger.Debugf(nil, "step0.2:初始化DB connection pool")
+	logger.Debugf(nil, "step0.2:init db connection pool")
 	isSucc := GetInstance().InitDataPool()
 	if !isSucc {
 		logger.Criticalf(nil, "init database pool failure...")
@@ -35,10 +35,10 @@ func TestGetMysqlDB(t *testing.T) {
 
 	db = GetInstance().GetMysqlDB()
 
-	// 读取
+	// query
 	var product Product
-	db.First(&product, 1)                   // 查询id为1的product
-	db.First(&product, "code = ?", "L1212") // 查询code为l1212的product
+	db.First(&product, 1)
+	db.First(&product, "code = ?", "L1212")
 	fmt.Println(product)
 
 }

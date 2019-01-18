@@ -14,8 +14,6 @@ import (
 )
 
 func SendMail(emailAddr string, header string, body string) error {
-	logger.Debugf(nil, "emailAddr="+emailAddr)
-
 	m := gomail.NewMessage()
 	m.SetHeader("From", "openpitrix@app-center.cn")
 	m.SetHeader("To", emailAddr)
@@ -30,7 +28,7 @@ func SendMail(emailAddr string, header string, body string) error {
 	d := gomail.NewDialer(host, port, username, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	if err := d.DialAndSend(m); err != nil {
-		logger.Warnf(nil, "Send email failed, [%+v]", err)
+		logger.Warnf(nil, "Send email to [%s] failed, [%+v]", emailAddr, err)
 		return err
 	}
 	return nil

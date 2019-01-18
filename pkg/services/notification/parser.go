@@ -2,31 +2,29 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package models
+package notification
 
 import (
 	"strings"
 	"time"
 
 	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/idutil"
 )
 
-type ModelParser struct {
-}
-
-func (parser *ModelParser) CreateNfWithAddrs(in *pb.CreateNfWithAddrsRequest) (*Notification, error) {
-	nf := &Notification{
-		NotificationId: idutil.GetUuid(constants.NfPostIDPrifix),
-		ContentType:    in.GetContentType().GetValue(),
-		SentType:       in.GetSentType().GetValue(),
-		AddrsStr:       in.GetAddrsStr().GetValue(),
-		Title:          in.GetTitle().GetValue(),
-		Content:        in.GetContent().GetValue(),
-		ShortContent:   in.GetShortContent().GetValue(),
+func GenNotificationFromReq(req *pb.CreateNfWithAddrsRequest) (*models.Notification, error) {
+	nf := &models.Notification{
+		NotificationId: idutil.GetUuid(constants.NfPostIDPrefix),
+		ContentType:    req.GetContentType().GetValue(),
+		SentType:       req.GetSentType().GetValue(),
+		AddrsStr:       req.GetAddrsStr().GetValue(),
+		Title:          req.GetTitle().GetValue(),
+		Content:        req.GetContent().GetValue(),
+		ShortContent:   req.GetShortContent().GetValue(),
 		ExporedDays:    2,
-		Owner:          in.GetOwner().GetValue(),
+		Owner:          req.GetOwner().GetValue(),
 		Status:         constants.StatusNew,
 		CreatedAt:      time.Now(),
 		UpdatedAt:      time.Now(),
@@ -34,12 +32,12 @@ func (parser *ModelParser) CreateNfWithAddrs(in *pb.CreateNfWithAddrsRequest) (*
 	return nf, nil
 }
 
-func (parser *ModelParser) GenJobFromNf(nf *Notification) (*Job, error) {
+func GenJobFromNf(nf *models.Notification) (*models.Job, error) {
 	//todo check eamil string
 	emailsArray := strings.Split(nf.AddrsStr, ";")
 	taskcnt := int64(len(emailsArray))
-	job := &Job{
-		JobID:          idutil.GetUuid(constants.JobPostIDPrifix),
+	job := &models.Job{
+		JobID:          idutil.GetUuid(constants.JobPostIDPrefix),
 		NotificationId: nf.NotificationId,
 		JobType:        nf.SentType,
 		AddrsStr:       nf.AddrsStr,
@@ -55,13 +53,12 @@ func (parser *ModelParser) GenJobFromNf(nf *Notification) (*Job, error) {
 	return job, nil
 }
 
-//GenTaskFromJob
-func (parser *ModelParser) GenTasksFromJob(job *Job) ([]*Task, error) {
+func GenTasksFromJob(job *models.Job) ([]*models.Task, error) {
 	emailsArray := strings.Split(job.AddrsStr, ";")
-	tasks := make([]*Task, 0, len(emailsArray))
+	tasks := make([]*models.Task, 0, len(emailsArray))
 	for _, email := range emailsArray {
-		tasks = append(tasks, &Task{
-			TaskID:     idutil.GetUuid(constants.TaskPostIDPrifix),
+		tasks = append(tasks, &models.Task{
+			TaskID:     idutil.GetUuid(constants.TaskPostIDPrefix),
 			JobID:      job.JobID,
 			EmailAddr:  email,
 			TaskAction: "",

@@ -8,55 +8,107 @@ import (
 	"context"
 
 	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/globalcfg"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/notification/pkg/services/notification/service/notification"
-	"openpitrix.io/notification/pkg/services/notification/service/task"
 	"openpitrix.io/notification/pkg/util/pbutil"
 	"openpitrix.io/openpitrix/pkg/etcd"
 )
 
-type Handler struct {
-	nfService   notification.Service
-	taskService task.Service
+func CreateNotification(nf *models.Notification, taskQueue, jobQueue *etcd.Queue) (string, error) {
+	db := globalcfg.GetInstance().GetDB()
+	var err error
+	var job *models.Job
+
+	tx := db.Begin()
+
+	if err = tx.Create(&nf).Error; err != nil {
+		tx.Rollback()
+		logger.Errorf(nil, "Cannot insert notification data to db, [%+v]", err)
+		return "", err
+	}
+
+	job, err = GenJobFromNf(nf)
+	if err := tx.Create(&job).Error; err != nil {
+		tx.Rollback()
+		logger.Errorf(nil, "Cannot insert job data to db, [%+v]", err)
+		return "", err
+	}
+
+	tasks, err := GenTasksFromJob(job)
+	for _, task := range tasks {
+		if err := tx.Create(&task).Error; err != nil {
+			tx.Rollback()
+			logger.Errorf(nil, "Cannot insert task data to db, [%+v]", err)
+			return "", err
+		}
+	}
+
+	if err != nil {
+		logger.Errorf(nil, "CreateNfWithAddrs failed, [%+v]", err)
+		return "", err
+	}
+
+	tx.Commit()
+
+	// Before send all task ids to etcd then need to update nf and job status to sending.
+	err = UpdateNfStatus(nf.NotificationId, constants.StatusSending)
+	if err != nil {
+		logger.Errorf(nil, "Failed to update nf [%s] status to sending, error: [%+v]", nf.NotificationId, err)
+	}
+	logger.Debugf(nil, "Succeed to update nf [%s] status to sending", nf.NotificationId)
+
+	err = UpdateJobStatus(job.JobID, constants.StatusSending)
+	if err != nil {
+		logger.Errorf(nil, "Failed to update job [%s] status to sending, error: [%+v]", job.JobID, err)
+	}
+	logger.Debugf(nil, "Succeed to update job [%s] status to sending", job.JobID)
+
+	nfIdAndJobIdStr := nf.NotificationId + "," + job.JobID
+	err = jobQueue.Enqueue(nfIdAndJobIdStr)
+
+	// After write DB,then write to Etcd.
+	// The format to write to Etcd is nf.NotificationId + "," + task.TaskID.
+	for _, task := range tasks {
+		// After send one task id to etcd then need to change the task status to sending.
+		err = UpdateTaskStatus(task.TaskID, constants.StatusSending)
+		if err != nil {
+			logger.Errorf(nil, "Failed to update task [%s] status to sending, error: [%+v]", task.TaskID, err)
+		}
+		logger.Debugf(nil, "Succeed to update task [%s] status to sending", task.TaskID)
+
+		err = taskQueue.Enqueue(task.TaskID)
+		if err != nil {
+			logger.Errorf(nil, "Failed to push task [%s] into etcd, error: [%+v]", task.TaskID, err)
+		}
+		logger.Debugf(nil, "Succeed to push task [%s] into etcd", task.TaskID)
+	}
+
+	return nf.NotificationId, nil
 }
 
-func NewHandler(nfService notification.Service, taskService task.Service) Handler {
-	return Handler{
-		nfService:   nfService,
-		taskService: taskService,
-	}
+func (s *Server) DescribeNfs(ctx context.Context, req *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
+	return &pb.DescribeNfsResponse{Message: "Hello,use function DescribeNfs at server end. "}, nil
 }
 
-func (h *Handler) CreateNfWithAddrs(ctx context.Context, in *pb.CreateNfWithAddrsRequest, q *etcd.Queue) (*pb.CreateNfWithAddrsResponse, error) {
-	parser := &models.ModelParser{}
-	nf, err := parser.CreateNfWithAddrs(in)
+func (s *Server) CreateNfWithAddrs(ctx context.Context, req *pb.CreateNfWithAddrsRequest) (*pb.CreateNfWithAddrsResponse, error) {
+	nf, err := GenNotificationFromReq(req)
 	if err != nil {
-		logger.Warnf(ctx, "Failed to parser.CreateNfWithAddrs, error:[%+v]", err)
+		logger.Errorf(ctx, "Failed to parser.CreateNfWithAddrs, error:[%+v]", err)
 		return nil, err
 	}
-	logger.Debugf(ctx, "Success to  parser.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
+	logger.Debugf(ctx, "Succeed to parser.CreateNfWithAddrs, NotificationId:[%s]", nf.NotificationId)
 
-	nfId, err := h.nfService.CreateNfWithAddrs(nf, q)
+	nfId, err := CreateNotification(nf, s.controller.jobQueue, s.controller.taskQueue)
 	if err != nil {
-		logger.Warnf(ctx, "Failed to service.CreateNfWithAddrs, error:[%+v]", err)
+		logger.Errorf(ctx, "Failed to service.CreateNfWithAddrs, error:[%+v]", err)
 		return nil, err
 	}
-	logger.Debugf(ctx, "Success to  service.CreateNfWithAddrs, NotificationId:[%+s]", nf.NotificationId)
+	logger.Debugf(ctx, "Succeed to service.CreateNfWithAddrs, NotificationId:[%s]", nf.NotificationId)
 
 	res := &pb.CreateNfWithAddrsResponse{
 		NotificationId: pbutil.ToProtoString(nfId),
 	}
 	return res, nil
-}
-
-func (h *Handler) DescribeNfs(ctx context.Context, in *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
-	nfId := ""
-	nf, err := h.nfService.DescribeNfs(nfId)
-	logger.Debugf(ctx, "%+v", nf)
-	if err != nil {
-		logger.Warnf(ctx, "%+v", err)
-		return nil, err
-	}
-	return nil, nil
 }
