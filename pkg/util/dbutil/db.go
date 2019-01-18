@@ -17,8 +17,7 @@ import (
 
 /*
 * MysqlConnPool
-* 数据库连接操作库
-* 基于gorm封装开发
+* use gorm
  */
 type MysqlConnPool struct {
 }
@@ -37,7 +36,7 @@ func GetInstance() *MysqlConnPool {
 }
 
 /*
-* @fuc 初始化数据库连接
+* @fuc init connection
  */
 func (m *MysqlConnPool) InitDataPool() (isSucc bool) {
 	cfg := config.GetInstance()
@@ -69,21 +68,18 @@ func (m *MysqlConnPool) InitDataPool() (isSucc bool) {
 	db.DB().SetMaxIdleConns(10)
 	db.LogMode(cfg.Mysql.LogMode)
 
-	// 全局禁用表名复数
+	// table name should be singular
 	db.SingularTable(true)
 
 	if err != nil {
 		log.Fatal(err)
 		return false
 	}
-	//关闭数据库，db会被多个goroutine共享，可以不调用
+	// share between goroutine, no need to close.
 	// defer db.Close()
 	return true
 }
 
-/*
-* 对外获取数据库连接对象db
- */
 func (m *MysqlConnPool) GetMysqlDB() *gorm.DB {
 	return db
 }
