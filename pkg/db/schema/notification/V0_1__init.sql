@@ -11,7 +11,7 @@ create table job
    error_code           varchar(50),
    status               varchar(50) comment ' new / sending / finished',
    created_at           timestamp not null default CURRENT_TIMESTAMP,
-   updated_at           timestamp not null default CURRENT_TIMESTAMP
+   updated_at           timestamp not null default CURRENT_TIMESTAMP,
    PRIMARY KEY (job_id)
 );
 
@@ -50,7 +50,7 @@ create table task
    error_code           int,
    status               varchar(50) comment ' new / sending / finished',
    created_at           timestamp not null default CURRENT_TIMESTAMP,
-   updated_at           timestamp not null default CURRENT_TIMESTAMP
+   updated_at           timestamp not null default CURRENT_TIMESTAMP,
    PRIMARY KEY (task_id)
 );
 
