@@ -100,7 +100,7 @@ func (s *Server) CreateNfWithAddrs(ctx context.Context, req *pb.CreateNfWithAddr
 	}
 	logger.Debugf(ctx, "Succeed to parser.CreateNfWithAddrs, NotificationId:[%s]", nf.NotificationId)
 
-	nfId, err := CreateNotification(nf, s.controller.jobQueue, s.controller.taskQueue)
+	nfId, err := CreateNotification(nf, s.controller.taskQueue, s.controller.jobQueue)
 	if err != nil {
 		logger.Errorf(ctx, "Failed to service.CreateNfWithAddrs, error:[%+v]", err)
 		return nil, err
