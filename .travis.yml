@@ -3,7 +3,7 @@ services:
 - docker
 language: go
 go:
-- '1.11'
+- '1.11.4'
 go_import_path: openpitrix.io/notification
 script:
 - make fmt-check
