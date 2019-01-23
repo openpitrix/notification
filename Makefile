@@ -6,6 +6,7 @@ TRAG.Gopkg:=openpitrix.io/notification
 TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
+GO_MOD_TIDY:=go mod tidy
 GO_RACE:=go build -race
 GO_VET:=go vet
 GO_FILES:=./cmd ./pkg
@@ -28,6 +29,12 @@ define get_build_flags
 		-X $(TRAG.Version).BuildDate="$(DATE)")
 endef
 
+CMD?=...
+comma:= ,
+empty:=
+space:= $(empty) $(empty)
+CMDS=$(subst $(comma),$(space),$(CMD))
+
 .PHONY: generate-in-local
 generate-in-local: ## Generate code from protobuf file in local
 	cd ./api && make generate
@@ -42,8 +49,13 @@ fmt-all: ## Format all code
 	$(RUN_IN_DOCKER) $(GO_FMT) $(GO_FILES)
 	@echo "fmt done"
 
+.PHONY: tidy
+tidy: ## Tidy go.mod
+	env GO111MODULE=on $(GO_MOD_TIDY)
+	@echo "go mod tidy done"
+
 .PHONY: fmt-check
-fmt-check: fmt-all ## Check whether all files be formatted
+fmt-check: fmt-all tidy ## Check whether all files be formatted
 	$(call get_diff_files)
 	$(if $(DIFF_FILES), \
 		exit 2 \
@@ -55,10 +67,12 @@ check: ## go vet and race
 	env GO111MODULE=on $(GO_VET) $(GO_PATH_FILES)
 
 .PHONY: build
-build:
-	#docker build -t notification_server:v0.0.1-dev -f ./Dockerfile.server .
-	#docker build -t notification_gateway:v0.0.1-dev -f ./Dockerfile.api_gateway .
-	docker build -t notification:v0.0.1-dev -f ./Dockerfile.notification .
+build: fmt-all ## Build notification image
+	mkdir -p ./tmp/bin
+	$(call get_build_flags)
+	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
+	docker build -t $(TARG.Name) -f ./Dockerfile.dev ./tmp/bin
+	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"
 
 .PHONY: compose-up
