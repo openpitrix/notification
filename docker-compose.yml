@@ -72,24 +72,3 @@ services:
     depends_on:
     - notification-db
     container_name: "notification-notification-db-ctrl"
-
-  # notification-api-gateway service
-  notification-api-gateway:
-    #build: .
-    #image: "notification_gateway:v0.0.1-dev"
-    image: "notification:v0.0.1-dev"
-    container_name: "notification-api-gateway"
-    command: "api-gateway"
-    links:
-    - notification-db:notification-db
-    - notification-etcd:notification-etcd
-    ports:
-    - "9200:9200"
-    environment:
-    - NOTIFICATION_LOG_LEVEL=${NOTIFICATION_LOG_LEVEL}
-    - NOTIFICATION_GRPC_SHOW_ERROR_CAUSE=${NOTIFICATION_GRPC_SHOW_ERROR_CAUSE}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: ${NOTIFICATION_LOG_MAX_SIZE}
-        max-file: ${NOTIFICATION_LOG_MAX_FILE}

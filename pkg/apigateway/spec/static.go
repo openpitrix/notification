@@ -30,17 +30,27 @@ var Files = map[string]string{
   "paths": {
     "/v1/notifications": {
       "get": {
-        "summary": "#API 2.DescribeNfs:describe single Notification with filter.",
-        "operationId": "DescribeNfs",
+        "summary": "describe notifications",
+        "operationId": "DescribeNotifications",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbDescribeNfsResponse"
+              "$ref": "#/definitions/pbDescribeNotificationsResponse"
             }
           }
         },
         "parameters": [
+          {
+            "name": "notification_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
           {
             "name": "content_type",
             "in": "query",
@@ -52,7 +62,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "sent_type",
+            "name": "owner",
             "in": "query",
             "required": false,
             "type": "array",
@@ -60,30 +70,6 @@ var Files = map[string]string{
               "type": "string"
             },
             "collectionFormat": "multi"
-          },
-          {
-            "name": "title",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "content",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "owner",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "userids_str",
-            "in": "query",
-            "required": false,
-            "type": "string"
           },
           {
             "name": "status",
@@ -110,10 +96,33 @@ var Files = map[string]string{
             "format": "int64"
           },
           {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "sort_key",
             "in": "query",
             "required": false,
             "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
@@ -121,13 +130,13 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers).",
-        "operationId": "CreateNfWithAddrs",
+        "summary": "create notification",
+        "operationId": "CreateNotification",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateNfWithAddrsResponse"
+              "$ref": "#/definitions/pbCreateNotificationResponse"
             }
           }
         },
@@ -137,7 +146,537 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateNfWithAddrsRequest"
+              "$ref": "#/definitions/pbCreateNotificationRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/notifications/address": {
+      "get": {
+        "summary": "describe addresses",
+        "operationId": "DescribeAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDescribeAddressesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "address_list_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "address",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "notify_type",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "delete": {
+        "summary": "delete addresses",
+        "operationId": "DeleteAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteAddressesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDeleteAddressesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "post": {
+        "summary": "create address",
+        "operationId": "CreateAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateAddressResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateAddressRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "patch": {
+        "summary": "modify address",
+        "operationId": "ModifyAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbModifyAddressResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbModifyAddressRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/notifications/address_list": {
+      "get": {
+        "summary": "describe address list",
+        "operationId": "DescribeAddressList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDescribeAddressListResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address_list_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "extra",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "delete": {
+        "summary": "delete address list",
+        "operationId": "DeleteAddressList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteAddressListResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDeleteAddressListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "post": {
+        "summary": "create address list",
+        "operationId": "CreateAddressList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateAddressListResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateAddressListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "patch": {
+        "summary": "modify address list",
+        "operationId": "ModifyAddressList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbModifyAddressListResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbModifyAddressListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/notifications/tasks": {
+      "get": {
+        "summary": "describe tasks",
+        "operationId": "DescribeTasks",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDescribeTasksResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "notification_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "task_id",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "task_action",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "error_code",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/notifications/tasks:retry": {
+      "post": {
+        "summary": "retry tasks",
+        "operationId": "RetryTasks",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRetryTasksResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbRetryTasksRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/notifications:retry": {
+      "post": {
+        "summary": "retry notifications",
+        "operationId": "RetryNotifications",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRetryNotificationsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbRetryNotificationsRequest"
             }
           }
         ],
@@ -148,16 +687,132 @@ var Files = map[string]string{
     }
   },
   "definitions": {
-    "pbCreateNfWithAddrsRequest": {
+    "pbAddress": {
+      "type": "object",
+      "properties": {
+        "address_id": {
+          "type": "string"
+        },
+        "address_list_id": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        },
+        "verification_code": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "verify_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notify_type": {
+          "type": "string"
+        }
+      }
+    },
+    "pbAddressList": {
+      "type": "object",
+      "properties": {
+        "address_list_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "extra": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "address_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbAddress"
+          }
+        }
+      }
+    },
+    "pbCreateAddressListRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "extra": {
+          "type": "string"
+        },
+        "address_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbCreateAddressListResponse": {
+      "type": "object",
+      "properties": {
+        "address_list_id": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateAddressRequest": {
+      "type": "object",
+      "properties": {
+        "address_list_id": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        },
+        "verification_code": {
+          "type": "string"
+        },
+        "notify_type": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateAddressResponse": {
+      "type": "object",
+      "properties": {
+        "address_id": {
+          "type": "string"
+        }
+      }
+    },
+    "pbCreateNotificationRequest": {
       "type": "object",
       "properties": {
         "content_type": {
-          "type": "string"
-        },
-        "sent_type": {
-          "type": "string"
-        },
-        "addrs_str": {
           "type": "string"
         },
         "title": {
@@ -170,17 +825,18 @@ var Files = map[string]string{
           "type": "string"
         },
         "expired_days": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
         "owner": {
           "type": "string"
         },
-        "status": {
+        "address_info": {
           "type": "string"
         }
       }
     },
-    "pbCreateNfWithAddrsResponse": {
+    "pbCreateNotificationResponse": {
       "type": "object",
       "properties": {
         "notification_id": {
@@ -188,10 +844,276 @@ var Files = map[string]string{
         }
       }
     },
-    "pbDescribeNfsResponse": {
+    "pbDeleteAddressListRequest": {
       "type": "object",
       "properties": {
-        "message": {
+        "address_list_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbDeleteAddressListResponse": {
+      "type": "object",
+      "properties": {
+        "address_list_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbDeleteAddressesRequest": {
+      "type": "object",
+      "properties": {
+        "address_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbDeleteAddressesResponse": {
+      "type": "object",
+      "properties": {
+        "address_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbDescribeAddressListResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "address_list_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbAddressList"
+          }
+        }
+      }
+    },
+    "pbDescribeAddressesResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "address_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbAddress"
+          }
+        }
+      }
+    },
+    "pbDescribeNotificationsResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "notification_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbNotification"
+          }
+        }
+      }
+    },
+    "pbDescribeTasksResponse": {
+      "type": "object",
+      "properties": {
+        "total_count": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbTask"
+          }
+        }
+      }
+    },
+    "pbModifyAddressListRequest": {
+      "type": "object",
+      "properties": {
+        "address_list_id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "extra": {
+          "type": "string"
+        }
+      }
+    },
+    "pbModifyAddressListResponse": {
+      "type": "object",
+      "properties": {
+        "address_list_id": {
+          "type": "string"
+        }
+      }
+    },
+    "pbModifyAddressRequest": {
+      "type": "object",
+      "properties": {
+        "address_id": {
+          "type": "string"
+        },
+        "address_list_id": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "remarks": {
+          "type": "string"
+        },
+        "verification_code": {
+          "type": "string"
+        },
+        "notify_type": {
+          "type": "string"
+        }
+      }
+    },
+    "pbModifyAddressResponse": {
+      "type": "object",
+      "properties": {
+        "address_id": {
+          "type": "string"
+        }
+      }
+    },
+    "pbNotification": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "type": "string"
+        },
+        "content_type": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "short_content": {
+          "type": "string"
+        },
+        "expired_days": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "address_info": {
+          "type": "string"
+        }
+      }
+    },
+    "pbRetryNotificationsRequest": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbRetryNotificationsResponse": {
+      "type": "object",
+      "properties": {
+        "notification_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbNotification"
+          }
+        }
+      }
+    },
+    "pbRetryTasksRequest": {
+      "type": "object",
+      "properties": {
+        "task_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "pbRetryTasksResponse": {
+      "type": "object",
+      "properties": {
+        "task_set": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pbTask"
+          }
+        }
+      }
+    },
+    "pbTask": {
+      "type": "object",
+      "properties": {
+        "notification_id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "task_action": {
+          "type": "string"
+        },
+        "error_code": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "status": {
+          "type": "string"
+        },
+        "create_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status_time": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "directive": {
           "type": "string"
         }
       }

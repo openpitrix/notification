@@ -11,10 +11,223 @@ import "google/protobuf/wrappers.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
+message CreateNotificationRequest {
+	google.protobuf.StringValue content_type = 1;
+	google.protobuf.StringValue title = 2;
+	google.protobuf.StringValue content = 3;
+	google.protobuf.StringValue short_content = 4;
+	google.protobuf.UInt32Value expired_days = 5;
+	google.protobuf.StringValue owner = 6;
+	google.protobuf.StringValue address_info = 7;
+}
+
+message CreateNotificationResponse {
+	google.protobuf.StringValue notification_id = 1;
+}
+
+message Notification {
+	google.protobuf.StringValue notification_id = 1;
+	google.protobuf.StringValue content_type = 2;
+	google.protobuf.StringValue title = 3;
+	google.protobuf.StringValue content = 4;
+	google.protobuf.StringValue short_content = 5;
+	google.protobuf.UInt32Value expired_days = 6;
+	google.protobuf.StringValue status = 7;
+	google.protobuf.Timestamp create_time = 8;
+	google.protobuf.Timestamp status_time = 9;
+	google.protobuf.StringValue owner = 10;
+	google.protobuf.StringValue address_info = 11;
+}
+
+message DescribeNotificationsRequest {
+	repeated string notification_id = 1;
+	repeated string content_type = 2;
+	repeated string owner = 3;
+	repeated string status = 4;
+	uint32 limit = 5;
+	uint32 offset = 6;
+	google.protobuf.StringValue search_word = 7;
+	google.protobuf.StringValue sort_key = 8;
+	google.protobuf.BoolValue reverse = 9;
+	repeated string display_columns = 10;
+}
+
+message DescribeNotificationsResponse {
+	uint32 total_count = 1;
+	repeated Notification notification_set = 2;
+}
+
+message RetryNotificationsRequest {
+	repeated string notification_id = 1;
+}
+
+message RetryNotificationsResponse {
+	repeated Notification notification_set = 1;
+}
+
+message Task {
+	google.protobuf.StringValue notification_id = 1;
+	google.protobuf.StringValue task_id = 2;
+	google.protobuf.StringValue task_action = 3;
+	google.protobuf.UInt32Value error_code = 4;
+	google.protobuf.StringValue status = 5;
+	google.protobuf.Timestamp create_time = 6;
+	google.protobuf.Timestamp status_time = 7;
+	google.protobuf.StringValue directive = 8;
+}
+
+message DescribeTasksRequest {
+	repeated string notification_id = 1;
+	repeated string task_id = 2;
+	repeated string task_action = 3;
+	repeated string error_code = 4;
+	repeated string status = 5;
+	uint32 limit = 6;
+	uint32 offset = 7;
+	google.protobuf.StringValue search_word = 8;
+	google.protobuf.StringValue sort_key = 9;
+	google.protobuf.BoolValue reverse = 10;
+	repeated string display_columns = 11;
+}
+
+message DescribeTasksResponse {
+	uint32 total_count = 1;
+	repeated Task task_set = 2;
+}
+
+message RetryTasksRequest {
+	repeated string task_id = 1;
+}
+
+message RetryTasksResponse {
+	repeated Task task_set = 1;
+}
+
+message CreateAddressRequest {
+	google.protobuf.StringValue address_list_id = 1;
+	google.protobuf.StringValue address = 2;
+	google.protobuf.StringValue remarks = 3;
+	google.protobuf.StringValue verification_code = 4;
+	google.protobuf.StringValue notify_type = 5;
+}
+
+message CreateAddressResponse {
+	google.protobuf.StringValue address_id = 1;
+}
+
+message DescribeAddressesRequest {
+	repeated string address_id = 1;
+	repeated string address_list_id = 2;
+	repeated string address = 3;
+	repeated string notify_type = 4;
+	repeated string status = 5;
+	uint32 limit = 6;
+	uint32 offset = 7;
+	google.protobuf.StringValue search_word = 8;
+	google.protobuf.StringValue sort_key = 9;
+	google.protobuf.BoolValue reverse = 10;
+	repeated string display_columns = 11;
+}
+
+message Address {
+	google.protobuf.StringValue address_id = 1;
+	google.protobuf.StringValue address_list_id = 2;
+	google.protobuf.StringValue address = 3;
+	google.protobuf.StringValue remarks = 4;
+	google.protobuf.StringValue verification_code = 5;
+	google.protobuf.StringValue status = 6;
+	google.protobuf.Timestamp create_time = 7;
+	google.protobuf.Timestamp verify_time = 8;
+	google.protobuf.Timestamp status_time = 9;
+	google.protobuf.StringValue notify_type = 10;
+}
+
+message DescribeAddressesResponse {
+	uint32 total_count = 1;
+	repeated Address address_set = 2;
+}
+
+message ModifyAddressRequest {
+	google.protobuf.StringValue address_id = 1;
+	google.protobuf.StringValue address_list_id = 2;
+	google.protobuf.StringValue address = 3;
+	google.protobuf.StringValue remarks = 4;
+	google.protobuf.StringValue verification_code = 5;
+	google.protobuf.StringValue notify_type = 6;
+}
+
+message ModifyAddressResponse {
+	google.protobuf.StringValue address_id = 1;
+}
+
+message DeleteAddressesRequest {
+	repeated string address_id = 1;
+}
+
+message DeleteAddressesResponse {
+	repeated string address_id = 1;
+}
+
+message CreateAddressListRequest {
+	google.protobuf.StringValue name = 1;
+	google.protobuf.StringValue extra = 2;
+	repeated string address_id = 3;
+}
+
+message CreateAddressListResponse {
+	google.protobuf.StringValue address_list_id = 1;
+}
+
+message DescribeAddressListRequest {
+	repeated string address_list_id = 1;
+	repeated string name = 2;
+	repeated string extra = 3;
+	repeated string status = 4;
+	uint32 limit = 5;
+	uint32 offset = 6;
+	google.protobuf.StringValue search_word = 7;
+	google.protobuf.StringValue sort_key = 8;
+	google.protobuf.BoolValue reverse = 9;
+	repeated string display_columns = 10;
+}
+
+message AddressList {
+	google.protobuf.StringValue address_list_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue extra = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
+	repeated Address address_set = 7;
+}
+
+message DescribeAddressListResponse {
+	uint32 total_count = 1;
+	repeated AddressList address_list_set = 2;
+}
+
+message ModifyAddressListRequest {
+	google.protobuf.StringValue address_list_id = 1;
+	google.protobuf.StringValue name = 2;
+	google.protobuf.StringValue extra = 3;
+}
+
+message ModifyAddressListResponse {
+	google.protobuf.StringValue address_list_id = 1;
+}
+
+message DeleteAddressListRequest {
+	repeated string address_list_id = 1;
+}
+
+message DeleteAddressListResponse {
+	repeated string address_list_id = 1;
+}
+
 service notification {
-	rpc CreateNfWithAddrs (CreateNfWithAddrsRequest) returns (CreateNfWithAddrsResponse) {
+	rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "#API 1.CreateNfWithAddrs：create notification with addrs(email addrs, phone numbers)."
+			summary: "create notification"
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications"
@@ -22,60 +235,119 @@ service notification {
 		};
 	}
 
-	//#API 2.DescribeNfs
-	rpc DescribeNfs (DescribeNfsRequest) returns (DescribeNfsResponse) {
+	rpc DescribeNotifications (DescribeNotificationsRequest) returns (DescribeNotificationsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "#API 2.DescribeNfs:describe single Notification with filter."
+			summary: "describe notifications"
 		};
 		option (google.api.http) = {
 			get: "/v1/notifications"
 		};
 	}
-}
 
-message CreateNfWithAddrsRequest {
-	google.protobuf.StringValue content_type = 1;
-	google.protobuf.StringValue sent_type = 2;
-	google.protobuf.StringValue addrs_str = 3;
-	google.protobuf.StringValue title = 4;
-	google.protobuf.StringValue content = 5;
-	google.protobuf.StringValue short_content = 6;
-	google.protobuf.StringValue expired_days = 7;
-	google.protobuf.StringValue owner = 8;
-	google.protobuf.StringValue status = 9;
-}
+	rpc RetryNotifications (RetryNotificationsRequest) returns (RetryNotificationsResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "retry notifications"
+		};
+		option (google.api.http) = {
+			post: "/v1/notifications:retry"
+			body: "*"
+		};
+	}
 
-message CreateNfWithAddrsResponse {
-	google.protobuf.StringValue notification_id = 1;
-}
+	rpc DescribeTasks (DescribeTasksRequest) returns (DescribeTasksResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe tasks"
+		};
+		option (google.api.http) = {
+			get: "/v1/notifications/tasks"
+		};
+	}
 
-message DescribeNfsRequest {
-	repeated string content_type = 1;
-	repeated string sent_type = 2;
-	google.protobuf.StringValue title = 3;
-	google.protobuf.StringValue content = 4;
-	google.protobuf.StringValue owner = 5;
-	google.protobuf.StringValue userids_str = 6;
-	repeated string status = 7;
-	uint32 limit = 8; // NOTE: uint64 marshal to json will convert to string
-	uint32 offset = 9;
-	google.protobuf.StringValue sort_key = 10;
-}
+	rpc RetryTasks (RetryTasksRequest) returns (RetryTasksResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "retry tasks"
+		};
+		option (google.api.http) = {
+			post: "/v1/notifications/tasks:retry"
+			body: "*"
+		};
+	}
 
-message DescribeNfsResponse {
-	string message = 1;
-}
+	rpc CreateAddress (CreateAddressRequest) returns (CreateAddressResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create address"
+		};
+		option (google.api.http) = {
+			post: "/v1/notifications/address"
+			body: "*"
+		};
+	}
 
-message Notification {
-	google.protobuf.StringValue notification_id = 1;
-	google.protobuf.StringValue content_type = 2;
-	google.protobuf.StringValue sent_type = 3;
-	google.protobuf.StringValue title = 4;
-	google.protobuf.StringValue content = 5;
-	google.protobuf.StringValue short_content = 6;
-	google.protobuf.StringValue expired_days = 7;
-	google.protobuf.StringValue status = 8;
-	google.protobuf.Timestamp create_time = 9;
-	google.protobuf.Timestamp status_time = 10;
-	google.protobuf.StringValue owner = 11;
+	rpc DescribeAddresses (DescribeAddressesRequest) returns (DescribeAddressesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe addresses"
+		};
+		option (google.api.http) = {
+			get: "/v1/notifications/address"
+		};
+	}
+
+	rpc ModifyAddress (ModifyAddressRequest) returns (ModifyAddressResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify address"
+		};
+		option (google.api.http) = {
+			patch: "/v1/notifications/address"
+			body: "*"
+		};
+	}
+
+	rpc DeleteAddresses (DeleteAddressesRequest) returns (DeleteAddressesResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete addresses"
+		};
+		option (google.api.http) = {
+			delete: "/v1/notifications/address"
+			body: "*"
+		};
+	}
+
+	rpc CreateAddressList (CreateAddressListRequest) returns (CreateAddressListResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "create address list"
+		};
+		option (google.api.http) = {
+			post: "/v1/notifications/address_list"
+			body: "*"
+		};
+	}
+
+	rpc DescribeAddressList (DescribeAddressListRequest) returns (DescribeAddressListResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "describe address list"
+		};
+		option (google.api.http) = {
+			get: "/v1/notifications/address_list"
+		};
+	}
+
+	rpc ModifyAddressList (ModifyAddressListRequest) returns (ModifyAddressListResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "modify address list"
+		};
+		option (google.api.http) = {
+			patch: "/v1/notifications/address_list"
+			body: "*"
+		};
+	}
+
+	rpc DeleteAddressList (DeleteAddressListRequest) returns (DeleteAddressListResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "delete address list"
+		};
+		option (google.api.http) = {
+			delete: "/v1/notifications/address_list"
+			body: "*"
+		};
+	}
 }

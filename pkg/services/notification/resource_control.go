@@ -5,54 +5,70 @@
 package notification
 
 import (
-	"github.com/jinzhu/gorm"
+	"context"
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/globalcfg"
 	"openpitrix.io/notification/pkg/models"
 )
 
-func UpdateNfStatus(nfId, status string) error {
-	db := globalcfg.GetInstance().GetDB()
-
-	nf := &models.Notification{
-		NotificationId: nfId,
+func RegisterNotification(ctx context.Context, notification *models.Notification) error {
+	addressInfo := notification.AddressInfo
+	_, err := models.DecodeAddressInfo(addressInfo)
+	if err != nil {
+		_, err := models.DecodeAddressListIds(addressInfo)
+		if err != nil {
+			return err
+		}
+		notification.AddressInfo = ""
+		// TODO: register nf_address_list
 	}
 
+	db := globalcfg.GetInstance().GetDB()
 	tx := db.Begin()
-	err := db.Model(&nf).Where("notification_id = ?", nfId).Update("status", status).Error
+	err = tx.Create(&notification).Error
+	notification.AddressInfo = addressInfo
 	if err != nil {
+		tx.Rollback()
+		logger.Errorf(ctx, "Insert notification failed, [%+v]", err)
 		return err
 	}
 	tx.Commit()
-
 	return nil
 }
 
-func UpdateJobStatus(jobId, status string) error {
+func RegisterTask(ctx context.Context, task *models.Task) error {
 	db := globalcfg.GetInstance().GetDB()
-
-	job := &models.Job{
-		JobID: jobId,
-	}
-
 	tx := db.Begin()
-	err := db.Model(&job).Where("job_id = ?", jobId).Update("status", status).Error
+	err := tx.Create(&task).Error
+	if err != nil {
+		tx.Rollback()
+		logger.Errorf(ctx, "Insert task failed, [%+v]", err)
+		return err
+	}
+	tx.Commit()
+	return nil
+}
+
+func UpdateNotificationStatus(notificationId, status string) error {
+	db := globalcfg.GetInstance().GetDB()
+	nf := &models.Notification{
+		NotificationId: notificationId,
+	}
+	tx := db.Begin()
+	err := db.Model(&nf).Where("notification_id = ?", notificationId).Update("status", status).Error
 	if err != nil {
 		return err
 	}
 	tx.Commit()
-
 	return nil
 }
 
 func UpdateTaskStatus(taskId, status string) error {
 	db := globalcfg.GetInstance().GetDB()
-
 	task := &models.Task{
-		TaskID: taskId,
+		TaskId: taskId,
 	}
-
 	tx := db.Begin()
 	err := db.Model(&task).Where("task_id = ?", taskId).Update("status", status).Error
 	if err != nil {
@@ -63,41 +79,31 @@ func UpdateTaskStatus(taskId, status string) error {
 	return nil
 }
 
-func GetStatusTasks(jobId string, status []string) []*models.Task {
+func GetStatusTasks(notificationId string, status []string) []*models.Task {
 	db := globalcfg.GetInstance().GetDB()
-
 	var tasks []*models.Task
-
 	tx := db.Begin()
-	db.Where("job_id = ? AND status in (?)", jobId, status).Find(&tasks)
-
+	db.Where("notification_id = ? AND status in (?)", notificationId, status).Find(&tasks)
 	tx.Commit()
-
 	return tasks
 }
 
-func GetTaskWithNfInfo(taskID string) (*models.TaskWithNfInfo, error) {
+func GetTask(taskId string) (*models.Task, error) {
 	db := globalcfg.GetInstance().GetDB()
-	taskWithNfInfo := &models.TaskWithNfInfo{}
-	sql := models.GetTaskWithNfContentByIDSQL
-	db.Raw(sql, taskID).Scan(&taskWithNfInfo)
-	logger.Debugf(nil, "Get task: [%s]", taskWithNfInfo.TaskID)
-	return taskWithNfInfo, nil
-}
-
-func GetNotification(nfID string) (*models.Notification, error) {
-	db := globalcfg.GetInstance().GetDB()
-	nf := &models.Notification{}
-	err := db.
-		Where("nf_post_id = ?", nfID).
-		First(nf).Error
-
+	task := new(models.Task)
+	err := db.Where("task_id = ?", taskId).First(task).Error
 	if err != nil {
-		if err != gorm.ErrRecordNotFound {
-			return nil, err
-		}
 		return nil, err
 	}
+	return task, nil
+}
 
+func GetNotification(notificationId string) (*models.Notification, error) {
+	db := globalcfg.GetInstance().GetDB()
+	nf := new(models.Notification)
+	err := db.Where("notification_id = ?", notificationId).First(nf).Error
+	if err != nil {
+		return nil, err
+	}
 	return nf, nil
 }

@@ -25,7 +25,7 @@ func Serve() {
 
 	go s.controller.Serve()
 
-	manager.NewGrpcServer("notification-manager", constants.NotificationManagerPort).
+	manager.NewGrpcServer(constants.NotificationManagerHost, constants.NotificationManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterNotificationServer(server, s)

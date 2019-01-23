@@ -16,7 +16,7 @@ func TestSendMail(t *testing.T) {
 	emailaddr := "huojiao2006@163.com"
 	header := "Subject-hello from Openpitrix notication"
 	body := "Body-hello from Openpitrix notication"
-	err := SendMail(emailaddr, header, body)
+	err := SendMail(nil, emailaddr, header, body)
 
 	if err != nil {
 		logger.Warnf(nil, "%+v", err)

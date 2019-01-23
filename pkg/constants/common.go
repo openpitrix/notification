@@ -5,36 +5,38 @@
 package constants
 
 const (
-	EtcdPrefix            = "notification/"
-	NotificationTaskTopic = "nft"
-	NotificationJobTopic  = "nfj"
-	MaxWorkingTasks       = 5
-	MaxWorkingJobs        = 5
-	MaxTaskRetryTimes     = 5
+	EtcdPrefix              = "notification/"
+	NotificationTaskTopic   = "nft"
+	NotificationTopic       = "nf"
+	MaxWorkingTasks         = 5
+	MaxWorkingNotifications = 5
+	MaxTaskRetryTimes       = 5
 )
 
 const (
-	NfPostIDPrefix   = "nf-"
-	JobPostIDPrefix  = "job-"
-	TaskPostIDPrefix = "task-"
+	NotificationIdPrefix = "nf-"
+	TaskIdPrefix         = "t-"
 )
 
 const (
-	StatusNew        = "new"
+	NotifyTypeWeb    = "web"
+	NotifyTypeMobile = "mobile"
+	NotifyTypeEmail  = "email"
+	NotifyTypeSms    = "sms"
+	NotifyTypeWeChat = "wechat"
+)
+
+const (
+	StatusPending    = "pending"
 	StatusSending    = "sending"
 	StatusSuccessful = "successful"
 	StatusFailed     = "failed"
 )
 
 const (
-	ServiceName    = "Notification"
-	prefix         = "notification-"
-	ApiGatewayHost = prefix + "api-gateway"
-	//ApiGatewayHost = "127.0.0.1"
-	ApiGatewayPort = 9200
+	ServiceName = "Notification"
+	prefix      = "notification-"
 
 	NotificationManagerHost = prefix + "manager"
-	//NotificationManagerHost = "127.0.0.1"
-	//NotificationManagerHost = "192.168.0.3"
 	NotificationManagerPort = 9201
 )
