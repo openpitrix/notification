@@ -8,107 +8,101 @@ import (
 	"context"
 
 	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/constants"
-	"openpitrix.io/notification/pkg/globalcfg"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/pbutil"
-	"openpitrix.io/openpitrix/pkg/etcd"
 )
 
-func CreateNotification(nf *models.Notification, taskQueue, jobQueue *etcd.Queue) (string, error) {
-	db := globalcfg.GetInstance().GetDB()
-	var err error
-	var job *models.Job
+func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificationRequest) (*pb.CreateNotificationResponse, error) {
+	notification := models.NewNotification(
+		req.GetContentType().GetValue(),
+		req.GetTitle().GetValue(),
+		req.GetContent().GetValue(),
+		req.GetShortContent().GetValue(),
+		req.GetAddressInfo().GetValue(),
+		req.GetOwner().GetValue(),
+		req.GetExpiredDays().GetValue(),
+	)
 
-	tx := db.Begin()
-
-	if err = tx.Create(&nf).Error; err != nil {
-		tx.Rollback()
-		logger.Errorf(nil, "Cannot insert notification data to db, [%+v]", err)
-		return "", err
-	}
-
-	job, err = GenJobFromNf(nf)
-	if err := tx.Create(&job).Error; err != nil {
-		tx.Rollback()
-		logger.Errorf(nil, "Cannot insert job data to db, [%+v]", err)
-		return "", err
-	}
-
-	tasks, err := GenTasksFromJob(job)
-	for _, task := range tasks {
-		if err := tx.Create(&task).Error; err != nil {
-			tx.Rollback()
-			logger.Errorf(nil, "Cannot insert task data to db, [%+v]", err)
-			return "", err
-		}
-	}
-
+	err := RegisterNotification(ctx, notification)
 	if err != nil {
-		logger.Errorf(nil, "CreateNfWithAddrs failed, [%+v]", err)
-		return "", err
-	}
-
-	tx.Commit()
-
-	// Before send all task ids to etcd then need to update nf and job status to sending.
-	err = UpdateNfStatus(nf.NotificationId, constants.StatusSending)
-	if err != nil {
-		logger.Errorf(nil, "Failed to update nf [%s] status to sending, error: [%+v]", nf.NotificationId, err)
-	}
-	logger.Debugf(nil, "Succeed to update nf [%s] status to sending", nf.NotificationId)
-
-	err = UpdateJobStatus(job.JobID, constants.StatusSending)
-	if err != nil {
-		logger.Errorf(nil, "Failed to update job [%s] status to sending, error: [%+v]", job.JobID, err)
-	}
-	logger.Debugf(nil, "Succeed to update job [%s] status to sending", job.JobID)
-
-	nfIdAndJobIdStr := nf.NotificationId + "," + job.JobID
-	err = jobQueue.Enqueue(nfIdAndJobIdStr)
-
-	// After write DB,then write to Etcd.
-	// The format to write to Etcd is nf.NotificationId + "," + task.TaskID.
-	for _, task := range tasks {
-		// After send one task id to etcd then need to change the task status to sending.
-		err = UpdateTaskStatus(task.TaskID, constants.StatusSending)
-		if err != nil {
-			logger.Errorf(nil, "Failed to update task [%s] status to sending, error: [%+v]", task.TaskID, err)
-		}
-		logger.Debugf(nil, "Succeed to update task [%s] status to sending", task.TaskID)
-
-		err = taskQueue.Enqueue(task.TaskID)
-		if err != nil {
-			logger.Errorf(nil, "Failed to push task [%s] into etcd, error: [%+v]", task.TaskID, err)
-		}
-		logger.Debugf(nil, "Succeed to push task [%s] into etcd", task.TaskID)
-	}
-
-	return nf.NotificationId, nil
-}
-
-func (s *Server) DescribeNfs(ctx context.Context, req *pb.DescribeNfsRequest) (*pb.DescribeNfsResponse, error) {
-	return &pb.DescribeNfsResponse{Message: "Hello,use function DescribeNfs at server end. "}, nil
-}
-
-func (s *Server) CreateNfWithAddrs(ctx context.Context, req *pb.CreateNfWithAddrsRequest) (*pb.CreateNfWithAddrsResponse, error) {
-	nf, err := GenNotificationFromReq(req)
-	if err != nil {
-		logger.Errorf(ctx, "Failed to parser.CreateNfWithAddrs, error:[%+v]", err)
 		return nil, err
 	}
-	logger.Debugf(ctx, "Succeed to parser.CreateNfWithAddrs, NotificationId:[%s]", nf.NotificationId)
 
-	nfId, err := CreateNotification(nf, s.controller.taskQueue, s.controller.jobQueue)
+	tasks, err := SplitNotificationIntoTasks(notification)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to service.CreateNfWithAddrs, error:[%+v]", err)
+		logger.Errorf(ctx, "Split notification into tasks failed, [%+v]", err)
 		return nil, err
 	}
-	logger.Debugf(ctx, "Succeed to service.CreateNfWithAddrs, NotificationId:[%s]", nf.NotificationId)
 
-	res := &pb.CreateNfWithAddrsResponse{
-		NotificationId: pbutil.ToProtoString(nfId),
+	for _, task := range tasks {
+		err = RegisterTask(ctx, task)
+		if err != nil {
+			return nil, err
+		}
+		err = s.controller.taskQueue.Enqueue(task.TaskId)
+		if err != nil {
+			logger.Errorf(ctx, "Push task [%s] into etcd failed, [%+v]", task.TaskId, err)
+			return nil, err
+		}
 	}
-	return res, nil
+
+	// Enqueue notification after tasks.
+	err = s.controller.notificationQueue.Enqueue(notification.NotificationId)
+	if err != nil {
+		logger.Errorf(ctx, "Push notification [%s] into etcd failed, [%+v]", notification.NotificationId, err)
+		return nil, err
+	}
+
+	return &pb.CreateNotificationResponse{
+		NotificationId: pbutil.ToProtoString(notification.NotificationId),
+	}, nil
+}
+
+func (s *Server) DescribeNotifications(ctx context.Context, req *pb.DescribeNotificationsRequest) (*pb.DescribeNotificationsResponse, error) {
+	return &pb.DescribeNotificationsResponse{}, nil
+}
+
+func (s *Server) RetryNotifications(ctx context.Context, req *pb.RetryNotificationsRequest) (*pb.RetryNotificationsResponse, error) {
+	return &pb.RetryNotificationsResponse{}, nil
+}
+
+func (s *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
+	return &pb.DescribeTasksResponse{}, nil
+}
+
+func (s *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb.RetryTasksResponse, error) {
+	return &pb.RetryTasksResponse{}, nil
+}
+
+func (s *Server) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
+	return &pb.CreateAddressResponse{}, nil
+}
+
+func (s *Server) DescribeAddresses(ctx context.Context, req *pb.DescribeAddressesRequest) (*pb.DescribeAddressesResponse, error) {
+	return &pb.DescribeAddressesResponse{}, nil
+}
+
+func (s *Server) ModifyAddress(ctx context.Context, req *pb.ModifyAddressRequest) (*pb.ModifyAddressResponse, error) {
+	return &pb.ModifyAddressResponse{}, nil
+}
+
+func (s *Server) DeleteAddresses(ctx context.Context, req *pb.DeleteAddressesRequest) (*pb.DeleteAddressesResponse, error) {
+	return &pb.DeleteAddressesResponse{}, nil
+}
+
+func (s *Server) CreateAddressList(ctx context.Context, req *pb.CreateAddressListRequest) (*pb.CreateAddressListResponse, error) {
+	return &pb.CreateAddressListResponse{}, nil
+}
+
+func (s *Server) DescribeAddressList(ctx context.Context, req *pb.DescribeAddressListRequest) (*pb.DescribeAddressListResponse, error) {
+	return &pb.DescribeAddressListResponse{}, nil
+}
+
+func (s *Server) ModifyAddressList(ctx context.Context, req *pb.ModifyAddressListRequest) (*pb.ModifyAddressListResponse, error) {
+	return &pb.ModifyAddressListResponse{}, nil
+}
+
+func (s *Server) DeleteAddressList(ctx context.Context, req *pb.DeleteAddressListRequest) (*pb.DeleteAddressListResponse, error) {
+	return &pb.DeleteAddressListResponse{}, nil
 }

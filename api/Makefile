@@ -13,12 +13,8 @@ PROTOC_FLAGS:=-I. -I$(GOOGLEAPIS_PATH) -I$(GRPC_GATEWAY_PATH) -I$(PROTOC_INC_PAT
 GOPATH:=$(shell go env GOPATH)
 PWD:=$(shell pwd)
 
-
-
-
 generate: $(PROTO_FILES) Makefile
 	@rm -rf ../pkg/pb/*
-
 
     #To generate notification.pb.go file
 	protoc $(PROTOC_FLAGS) --go_out=plugins=grpc:../pkg/pb ${PROTO_FILES}

@@ -4,22 +4,60 @@
 
 package models
 
-import "time"
+import (
+	"time"
 
-type Task struct {
-	TaskID     string    `gorm:"column:task_id"`
-	JobID      string    `gorm:"column:job_id"`
-	EmailAddr  string    `gorm:"column:email_addr"`
-	TaskAction string    `gorm:"column:task_action"`
-	ErrorCode  int64     `gorm:"column:error_code"`
-	Status     string    `gorm:"column:status"`
-	CreatedAt  time.Time `gorm:"column:created_at"`
-	UpdatedAt  time.Time `gorm:"column:updated_at"`
+	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/util/idutil"
+	"openpitrix.io/notification/pkg/util/jsonutil"
+)
+
+func NewTaskId() string {
+	return idutil.GetUuid(constants.TaskIdPrefix)
 }
 
-//func (Task) TableName() string {
-//	return "task"
-//}
+type Task struct {
+	TaskId         string    `gorm:"column:task_id"`
+	NotificationId string    `gorm:"column:notification_id"`
+	ErrorCode      int64     `gorm:"column:error_code"`
+	Status         string    `gorm:"column:status"`
+	CreateTime     time.Time `gorm:"column:create_time"`
+	StatusTime     time.Time `gorm:"column:status_time"`
+	Directive      string    `gorm:"column:directive"`
+}
+
+func NewTask(notificationId, directive string) *Task {
+	task := &Task{
+		TaskId:         NewTaskId(),
+		NotificationId: notificationId,
+		ErrorCode:      0,
+		Status:         constants.StatusPending,
+		CreateTime:     time.Now(),
+		StatusTime:     time.Now(),
+		Directive:      directive,
+	}
+	return task
+}
+
+type TaskDirective struct {
+	Address      string
+	NotifyType   string
+	ContentType  string
+	Title        string
+	Content      string
+	ShortContent string
+	ExpiredDays  uint32
+}
+
+func DecodeTaskDirective(data string) (*TaskDirective, error) {
+	taskDirective := new(TaskDirective)
+	err := jsonutil.Decode([]byte(data), taskDirective)
+	if err != nil {
+		logger.Errorf(nil, "Decode [%s] into task directive failed: %+v", data, err)
+	}
+	return taskDirective, err
+}
 
 type TaskWithNfInfo struct {
 	NotificationId string
@@ -30,8 +68,3 @@ type TaskWithNfInfo struct {
 	Content        string
 	EmailAddr      string
 }
-
-const (
-	GetTaskWithNfContentByIDSQL = "SELECT  t3.notification_id,t2.job_id,t1.task_id,t3.title,t3.short_content,  t3.content,t1.email_addr " +
-		"	FROM task t1,job t2,notification t3 where t1.job_id=t2.job_id and t2.notification_id=t3.notification_id  and t1.task_id=? "
-)
