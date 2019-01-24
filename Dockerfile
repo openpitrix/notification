@@ -20,7 +20,7 @@ ENV GOOS=linux
 #to fix a issue: verifying ...: checksum mismatch
 RUN rm go.sum;go mod download
 RUN mkdir -p /openpitrix_bin
-RUN go build -v -a -installsuffix cgo -ldflags '-w' -o /openpitrix_bin/notification-manager cmd/server/main.go
+RUN go build -v -a -installsuffix cgo -ldflags '-w' -o /openpitrix_bin/notification-manager cmd/notification/main.go
 
 FROM alpine:3.7
 COPY --from=builder /openpitrix_bin/notification-manager /usr/local/bin/
