@@ -82,7 +82,7 @@ compose-up:
 
 build-image-%: ## build docker image
 	@if [ "$*" = "latest" ];then \
-	docker build -t openpitrix/notification:latest .; \
+	docker build -t openpitrix/notification .; \
 	docker build -t openpitrix/notification:flyway -f ./pkg/db/Dockerfile ./pkg/db/; \
 	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
 	docker build -t openpitrix/notification:$* .; \
@@ -91,7 +91,7 @@ build-image-%: ## build docker image
 
 push-image-%: ## push docker image
 	@if [ "$*" = "latest" ];then \
-	docker push openpitrix/notification:latest; \
+	docker push openpitrix/notification; \
 	docker push openpitrix/notification:flyway; \
 	elif [ "`echo "$*" | grep -E "^v[0-9]+\.[0-9]+\.[0-9]+"`" != "" ];then \
 	docker push openpitrix/notification:$*; \
