@@ -85,6 +85,5 @@ create table task
    PRIMARY KEY (task_id)
 );
 CREATE INDEX task_notification_id_idx ON task (notification_id);
-CREATE INDEX task_task_action_idx ON task (task_action);
 CREATE INDEX task_status_idx ON task (status);
 CREATE INDEX task_error_code_idx ON task (error_code);
