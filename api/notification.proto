@@ -224,6 +224,24 @@ message DeleteAddressListResponse {
 	repeated string address_list_id = 1;
 }
 
+message EmailServerConfig {
+	google.protobuf.StringValue protocol = 1;
+	google.protobuf.StringValue server_name = 2;
+	google.protobuf.StringValue smtp_port = 3;
+	google.protobuf.StringValue sender_address = 4;
+	google.protobuf.StringValue server_user = 5;
+	google.protobuf.StringValue server_password = 6;
+}
+
+message SetEmailServerConfigResponse {
+	google.protobuf.BoolValue is_succ = 1;
+}
+
+message getEmailServerConfigRequest {
+	
+}
+
+
 service notification {
 	rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -350,4 +368,24 @@ service notification {
 			body: "*"
 		};
 	}
+
+	rpc SetEmailServerConfig (EmailServerConfig) returns (SetEmailServerConfigResponse) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Set Email Server configration"
+		};
+		option (google.api.http) = {
+			post: "/v1/notifications/set_email_server_config"
+			body: "*"
+		};
+	}
+	rpc getEmailServerConfig (getEmailServerConfigRequest) returns (EmailServerConfig) {
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "get Email Server configration"
+		};
+		option (google.api.http) = {
+			post: "/v1/notifications/get_email_server_config"
+			body: "*"
+		};
+	}
+
 }

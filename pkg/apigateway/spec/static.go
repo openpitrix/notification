@@ -519,6 +519,60 @@ var Files = map[string]string{
         ]
       }
     },
+    "/v1/notifications/get_email_server_config": {
+      "post": {
+        "summary": "get Email Server configration",
+        "operationId": "getEmailServerConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbEmailServerConfig"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbgetEmailServerConfigRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/notifications/set_email_server_config": {
+      "post": {
+        "summary": "Set Email Server configration",
+        "operationId": "SetEmailServerConfig",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbSetEmailServerConfigResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbEmailServerConfig"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
     "/v1/notifications/tasks": {
       "get": {
         "summary": "describe tasks",
@@ -948,6 +1002,29 @@ var Files = map[string]string{
         }
       }
     },
+    "pbEmailServerConfig": {
+      "type": "object",
+      "properties": {
+        "protocol": {
+          "type": "string"
+        },
+        "server_name": {
+          "type": "string"
+        },
+        "smtp_port": {
+          "type": "string"
+        },
+        "sender_address": {
+          "type": "string"
+        },
+        "server_user": {
+          "type": "string"
+        },
+        "server_password": {
+          "type": "string"
+        }
+      }
+    },
     "pbModifyAddressListRequest": {
       "type": "object",
       "properties": {
@@ -1086,6 +1163,15 @@ var Files = map[string]string{
         }
       }
     },
+    "pbSetEmailServerConfigResponse": {
+      "type": "object",
+      "properties": {
+        "is_succ": {
+          "type": "boolean",
+          "format": "boolean"
+        }
+      }
+    },
     "pbTask": {
       "type": "object",
       "properties": {
@@ -1117,6 +1203,9 @@ var Files = map[string]string{
           "type": "string"
         }
       }
+    },
+    "pbgetEmailServerConfigRequest": {
+      "type": "object"
     }
   },
   "securityDefinitions": {

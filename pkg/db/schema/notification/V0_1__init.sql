@@ -41,7 +41,7 @@ CREATE INDEX address_list_status_idx ON address_list (status);
 create table notification
 (
    notification_id      varchar(50)  not null,
-   content_type         varchar(50)  not null default '' comment ' network / fee / new feature etc. ',
+   content_type         varchar(50)  not null default '' comment 'invite, verify, fee, business',
    title                varchar(255) not null,
    content              text         not null,
    short_content        text         not null comment 'used by sms, mobile',

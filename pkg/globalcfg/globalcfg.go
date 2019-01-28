@@ -57,11 +57,11 @@ func (g *GlobalCfg) openDatabase() *GlobalCfg {
 		return g
 	}
 	isSucc := dbutil.GetInstance().InitDataPool()
-	logger.Debugf(nil, "%+s", "Init database pool successfully.")
 	if !isSucc {
 		logger.Criticalf(nil, "%+s", "Init database pool failure...")
 		os.Exit(1)
 	}
+	logger.Debugf(nil, "%+s", "Init database pool successfully.")
 
 	db := dbutil.GetInstance().GetMysqlDB()
 	g.database = db
