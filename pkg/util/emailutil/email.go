@@ -19,7 +19,7 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string)
 	m.SetHeader("From", "openpitrix@app-center.cn")
 	m.SetHeader("To", emailAddr)
 	m.SetHeader("Subject", header)
-	m.SetBody("text/plain", body)
+	m.SetBody("text/html", body)
 
 	host := config.GetInstance().Email.Host
 	port := config.GetInstance().Email.Port

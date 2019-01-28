@@ -5,12 +5,12 @@
 package constants
 
 const (
-	EtcdPrefix              = "notification/"
-	NotificationTaskTopic   = "nft"
-	NotificationTopic       = "nf"
-	MaxWorkingTasks         = 5
-	MaxWorkingNotifications = 5
-	MaxTaskRetryTimes       = 5
+	EtcdPrefix                  = "notification/"
+	NotificationTaskTopicPrefix = "nf-task"
+	NotificationTopicPrefix     = "nf-job"
+	MaxWorkingTasks             = 5
+	MaxWorkingNotifications     = 5
+	MaxTaskRetryTimes           = 5
 )
 
 const (

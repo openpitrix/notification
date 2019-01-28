@@ -26,8 +26,8 @@ type Controller struct {
 
 func NewController() *Controller {
 	return &Controller{
-		taskQueue:              globalcfg.GetInstance().GetEtcd().NewQueue(constants.NotificationTaskTopic),
-		notificationQueue:      globalcfg.GetInstance().GetEtcd().NewQueue(constants.NotificationTopic),
+		taskQueue:              globalcfg.GetInstance().GetEtcd().NewQueue(constants.NotificationTaskTopicPrefix),
+		notificationQueue:      globalcfg.GetInstance().GetEtcd().NewQueue(constants.NotificationTopicPrefix),
 		runningTaskIds:         make(chan string),
 		runningNotificationIds: make(chan string),
 	}
