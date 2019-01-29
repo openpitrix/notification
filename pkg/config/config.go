@@ -51,9 +51,9 @@ type EtcdConfig struct {
 
 type MysqlConfig struct {
 	Host string `default:"notification-db"`
-	//Host     string `default:"192.168.0.10"`
+	//Host string `default:"192.168.0.10"`
 	//Host     string `default:"192.168.0.3"`
-	//Port     string `default:"13306"`
+	//Port string `default:"13306"`
 	Port     string `default:"3306"`
 	User     string `default:"root"`
 	Password string `default:"password"`

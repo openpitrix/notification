@@ -4,6 +4,7 @@
 
 TRAG.Gopkg:=openpitrix.io/notification
 TRAG.Version:=$(TRAG.Gopkg)/pkg/version
+TARG.Name:=notification
 
 GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
 GO_MOD_TIDY:=go mod tidy
@@ -70,7 +71,7 @@ check: ## go vet and race
 build: fmt-all ## Build notification image
 	mkdir -p ./tmp/bin
 	$(call get_build_flags)
-	$(RUN_IN_DOCKER) time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
+	$(RUN_IN_DOCKER) env GO111MODULE=on time go install -tags netgo -v -ldflags '$(BUILD_FLAG)' $(foreach cmd,$(CMDS),$(TRAG.Gopkg)/cmd/$(cmd))
 	docker build -t $(TARG.Name) -f ./Dockerfile.dev ./tmp/bin
 	docker image prune -f 1>/dev/null 2>&1
 	@echo "build done"

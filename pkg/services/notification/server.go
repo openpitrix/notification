@@ -18,12 +18,13 @@ type Server struct {
 }
 
 func Serve() {
-	cfg := config.GetInstance().LoadConf()
+	cfg := config.GetInstance()
 	s := &Server{
 		controller: NewController(),
 	}
 
 	go s.controller.Serve()
+	go ServeApiGateway()
 
 	manager.NewGrpcServer(constants.NotificationManagerHost, constants.NotificationManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
