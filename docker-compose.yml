@@ -41,9 +41,10 @@ services:
   # notification service
   notification-manager:
     #build: .
-    #image: "notification_server:v0.0.1-dev"
-    image: "notification:v0.0.1-dev"
-    command: "notification-manager"
+    #image: "notification:v0.0.1-dev"
+    image: "notification:latest"
+    #command: "notification-manager"
+    command: "notification"
     links:
     - notification-db:notification-db
     - notification-etcd:notification-etcd
@@ -60,8 +61,8 @@ services:
       options:
         max-size: ${NOTIFICATION_LOG_MAX_SIZE}
         max-file: ${NOTIFICATION_LOG_MAX_FILE}
-    #ports:
-    #- "9201:9201"
+    ports:
+    - "9200:9200"
   notification-notification-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://notification-db/notification -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
