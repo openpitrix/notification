@@ -15,8 +15,11 @@ import (
 )
 
 func SendMail(ctx context.Context, emailAddr string, header string, body string) error {
+
 	m := gomail.NewMessage()
-	m.SetHeader("From", "openpitrix@app-center.cn")
+	//m.SetHeader("From", "openpitrix@app-center.cn")
+
+	m.SetHeader("From", config.GetInstance().Email.SenderAddr)
 	m.SetHeader("To", emailAddr)
 	m.SetHeader("Subject", header)
 	m.SetBody("text/html", body)
