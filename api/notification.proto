@@ -226,11 +226,12 @@ message DeleteAddressListResponse {
 
 message EmailServiceConfig {
 	google.protobuf.StringValue protocol = 1;
-	google.protobuf.StringValue server_name = 2;
-	google.protobuf.StringValue smtp_port = 3;
-	google.protobuf.StringValue sender_address = 4;
-	google.protobuf.StringValue server_user = 5;
-	google.protobuf.StringValue server_password = 6;
+	google.protobuf.StringValue email_host = 2;
+	google.protobuf.StringValue port = 3;
+	google.protobuf.StringValue display_email = 4;
+	google.protobuf.StringValue email = 5;
+	google.protobuf.StringValue password = 6;
+	google.protobuf.BoolValue ssl_enable = 7;
 }
 
 message ServiceConfig {

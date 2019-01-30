@@ -519,15 +519,15 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/notifications/get_email_server_config": {
+    "/v1/notifications/get_service_config": {
       "post": {
-        "summary": "get Email Server configration",
-        "operationId": "GetEmailServerConfig",
+        "summary": "get service configration",
+        "operationId": "GetServiceConfig",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbEmailServerConfig"
+              "$ref": "#/definitions/pbServiceConfig"
             }
           }
         },
@@ -537,7 +537,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbGetEmailServerConfigRequest"
+              "$ref": "#/definitions/pbGetServiceConfigRequest"
             }
           }
         ],
@@ -546,15 +546,15 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/notifications/set_email_server_config": {
+    "/v1/notifications/set_service_config": {
       "post": {
-        "summary": "Set Email Server configration",
-        "operationId": "SetEmailServerConfig",
+        "summary": "set service configration",
+        "operationId": "SetServiceConfig",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbSetEmailServerConfigResponse"
+              "$ref": "#/definitions/pbSetServiceConfigResponse"
             }
           }
         },
@@ -564,7 +564,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbEmailServerConfig"
+              "$ref": "#/definitions/pbServiceConfig"
             }
           }
         ],
@@ -731,60 +731,6 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbRetryNotificationsRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
-    "/v1/notifications/get_service_config": {
-      "post": {
-        "summary": "get service configration",
-        "operationId": "GetServiceConfig",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbServiceConfig"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbGetServiceConfigRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
-    "/v1/notifications/set_service_config": {
-      "post": {
-        "summary": "set service configration",
-        "operationId": "SetServiceConfig",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbSetServiceConfigResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbServiceConfig"
             }
           }
         ],
@@ -1056,31 +1002,43 @@ var Files = map[string]string{
         }
       }
     },
-    "pbEmailServerConfig": {
+    "pbEmailServiceConfig": {
       "type": "object",
       "properties": {
         "protocol": {
           "type": "string"
         },
-        "server_name": {
+        "email_host": {
           "type": "string"
         },
-        "smtp_port": {
+        "port": {
           "type": "string"
         },
-        "sender_address": {
+        "display_email": {
           "type": "string"
         },
-        "server_user": {
+        "email": {
           "type": "string"
         },
-        "server_password": {
+        "password": {
           "type": "string"
+        },
+        "ssl_enable": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
-    "pbGetEmailServerConfigRequest": {
-      "type": "object"
+    "pbGetServiceConfigRequest": {
+      "type": "object",
+      "properties": {
+        "service_type": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "pbModifyAddressListRequest": {
       "type": "object",
@@ -1220,7 +1178,15 @@ var Files = map[string]string{
         }
       }
     },
-    "pbSetEmailServerConfigResponse": {
+    "pbServiceConfig": {
+      "type": "object",
+      "properties": {
+        "email_service_config": {
+          "$ref": "#/definitions/pbEmailServiceConfig"
+        }
+      }
+    },
+    "pbSetServiceConfigResponse": {
       "type": "object",
       "properties": {
         "is_succ": {
@@ -1258,57 +1224,6 @@ var Files = map[string]string{
         },
         "directive": {
           "type": "string"
-        }
-      }
-    },
-    "pbEmailServiceConfig": {
-      "type": "object",
-      "properties": {
-        "protocol": {
-          "type": "string"
-        },
-        "server_name": {
-          "type": "string"
-        },
-        "smtp_port": {
-          "type": "string"
-        },
-        "sender_address": {
-          "type": "string"
-        },
-        "server_user": {
-          "type": "string"
-        },
-        "server_password": {
-          "type": "string"
-        }
-      }
-    },
-    "pbGetServiceConfigRequest": {
-      "type": "object",
-      "properties": {
-        "service_type": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    "pbServiceConfig": {
-      "type": "object",
-      "properties": {
-        "email_service_config": {
-          "$ref": "#/definitions/pbEmailServiceConfig"
-        }
-      }
-    },
-    "pbSetServiceConfigResponse": {
-      "type": "object",
-      "properties": {
-        "is_succ": {
-          "type": "boolean",
-          "format": "boolean"
         }
       }
     }
