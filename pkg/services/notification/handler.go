@@ -107,10 +107,10 @@ func (s *Server) DeleteAddressList(ctx context.Context, req *pb.DeleteAddressLis
 	return &pb.DeleteAddressListResponse{}, nil
 }
 
-func (s *Server) SetEmailServerConfig(context.Context, *pb.EmailServerConfig) (*pb.SetEmailServerConfigResponse, error) {
+func (s *Server) SetServiceConfig(context.Context, *pb.ServiceConfig) (*pb.SetServiceConfigResponse, error) {
 	panic("implement me")
 }
 
-func (s *Server) GetEmailServerConfig(context.Context, *pb.GetEmailServerConfigRequest) (*pb.EmailServerConfig, error) {
+func (s *Server) GetServiceConfig(context.Context, *pb.GetServiceConfigRequest) (*pb.ServiceConfig, error) {
 	panic("implement me")
 }
