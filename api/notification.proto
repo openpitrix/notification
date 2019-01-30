@@ -228,9 +228,9 @@ message EmailServiceConfig {
 	google.protobuf.StringValue protocol = 1;
 	google.protobuf.StringValue server_name = 2;
 	google.protobuf.StringValue smtp_port = 3;
-	google.protobuf.StringValue sender_from = 4;
-	google.protobuf.StringValue sender_email = 5;
-	google.protobuf.StringValue sender_email_password = 6;
+	google.protobuf.StringValue display_email = 4;
+	google.protobuf.StringValue email = 5;
+	google.protobuf.StringValue password = 6;
 }
 
 message ServiceConfig {
