@@ -1022,9 +1022,6 @@ var Files = map[string]string{
         },
         "server_password": {
           "type": "string"
-        },
-        "sender_addr": {
-          "type": "string"
         }
       }
     },

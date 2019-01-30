@@ -232,8 +232,7 @@ message EmailServerConfig {
 	google.protobuf.StringValue smtp_port = 3;
 	google.protobuf.StringValue sender_address = 4;
 	google.protobuf.StringValue server_user = 5;
-	google.protobuf.StringValue server_password = 6;
-	google.protobuf.StringValue sender_addr = 7;
+	google.protobuf.StringValue server_password = 6; 
 }
 
 message SetEmailServerConfigResponse {

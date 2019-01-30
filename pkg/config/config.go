@@ -67,11 +67,11 @@ func (m *MysqlConfig) GetUrl() string {
 }
 
 type EmailCfg struct {
-	SenderAddr string `default:"admin@openpitrix.io"`
-	Host       string `default:"mail.app-center.cn"`
-	Port       int    `default:"25"`
-	Username   string `default:"openpitrix@app-center.cn"`
-	Password   string `default:"openpitrix"`
+	SenderAddress string `default:"admin@openpitrix.io"`
+	Host          string `default:"mail.app-center.cn"`
+	Port          int    `default:"25"`
+	Username      string `default:"openpitrix@app-center.cn"`
+	Password      string `default:"openpitrix"`
 }
 
 /*===================================================================================================*/
