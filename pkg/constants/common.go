@@ -45,3 +45,16 @@ const (
 	//ApiGatewayHost = "localhost"
 	ApiGatewayPort = 9200
 )
+
+const (
+	ServiceTypeEmail = "email"
+)
+
+const (
+	ServiceCfgProtocol     = "protocol"
+	ServiceCfgEmailHost    = "email_host"
+	ServiceCfgPort         = "port"
+	ServiceCfgDisplayEmail = "display_email"
+	ServiceCfgEmail        = "email"
+	ServiceCfgPassword     = "password"
+)

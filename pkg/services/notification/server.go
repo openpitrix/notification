@@ -28,6 +28,7 @@ func Serve() {
 
 	manager.NewGrpcServer(constants.NotificationManagerHost, constants.NotificationManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
+		WithChecker(s.Checker).
 		Serve(func(server *grpc.Server) {
 			pb.RegisterNotificationServer(server, s)
 		})

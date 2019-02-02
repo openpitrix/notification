@@ -6,8 +6,14 @@ package notification
 
 import (
 	"context"
+	"fmt"
+	"os"
+	"strconv"
 
 	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/pbutil"
@@ -107,10 +113,86 @@ func (s *Server) DeleteAddressList(ctx context.Context, req *pb.DeleteAddressLis
 	return &pb.DeleteAddressListResponse{}, nil
 }
 
-func (s *Server) SetServiceConfig(context.Context, *pb.ServiceConfig) (*pb.SetServiceConfigResponse, error) {
-	panic("implement me")
+func (s *Server) SetServiceConfig(ctx context.Context, req *pb.ServiceConfig) (*pb.SetServiceConfigResponse, error) {
+	err := s.validateSetServiceConfigParams(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	protocol := req.GetEmailServiceConfig().GetProtocol().GetValue()
+	emailHost := req.GetEmailServiceConfig().GetEmailHost().GetValue()
+	port := req.GetEmailServiceConfig().GetPort().GetValue()
+	displayEmail := req.GetEmailServiceConfig().GetDisplayEmail().GetValue()
+	email := req.GetEmailServiceConfig().GetEmail().GetValue()
+	password := req.GetEmailServiceConfig().GetPassword().GetValue()
+	sslEnable := req.GetEmailServiceConfig().GetSslEnable().GetValue()
+
+	os.Setenv("NOTIFICATION_EMAIL_PROTOCOL", protocol)
+	os.Setenv("NOTIFICATION_EMAIL_EMAIL_HOST", emailHost)
+	os.Setenv("NOTIFICATION_EMAIL_PORT", port)
+	os.Setenv("NOTIFICATION_EMAIL_DISPLAY_EMAIL", displayEmail)
+	os.Setenv("NOTIFICATION_EMAIL_EMAIL", email)
+	os.Setenv("NOTIFICATION_EMAIL_PASSWORD", password)
+	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", strconv.FormatBool(sslEnable))
+
+	config.GetInstance().LoadConf()
+
+	return &pb.SetServiceConfigResponse{
+		IsSucc: pbutil.ToProtoBool(true),
+	}, nil
+
 }
 
-func (s *Server) GetServiceConfig(context.Context, *pb.GetServiceConfigRequest) (*pb.ServiceConfig, error) {
-	panic("implement me")
+func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigRequest) (*pb.ServiceConfig, error) {
+	var ServiceTypes = []string{
+		constants.ServiceTypeEmail,
+	}
+
+	serviceTypes := req.GetServiceType()
+	if len(serviceTypes) == 0 {
+		serviceTypes = ServiceTypes
+	}
+
+	var emailCfg *pb.EmailServiceConfig
+
+	scCfg := &pb.ServiceConfig{}
+
+	for _, scType := range serviceTypes {
+		if scType == constants.NotifyTypeEmail {
+			emailCfg = GetEmailServiceConfig(ctx)
+			break
+		}
+	}
+	if emailCfg == nil {
+		err := gerr.NewWithDetail(ctx, gerr.Internal, fmt.Errorf("Can not get EmailServiceConfig"), gerr.ErrorGetServiceConfigFailed)
+		return nil, err
+	}
+
+	scCfg.EmailServiceConfig = emailCfg
+	return scCfg, nil
+}
+
+func (s *Server) validateSetServiceConfigParams(ctx context.Context, req *pb.ServiceConfig) error {
+	email := req.GetEmailServiceConfig().GetEmail().GetValue()
+	err := VerifyEmailFmt(ctx, email)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", email, err)
+		return err
+	}
+
+	displayEmail := req.GetEmailServiceConfig().GetDisplayEmail().GetValue()
+	err = VerifyEmailFmt(ctx, displayEmail)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", displayEmail, err)
+		return err
+	}
+
+	portStr := req.GetEmailServiceConfig().GetPort().GetValue()
+	portNum, err := strconv.ParseInt(portStr, 10, 64)
+	err = VerifyPortFmt(ctx, portNum)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", portStr, err)
+		return err
+	}
+	return nil
 }
