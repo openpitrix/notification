@@ -21,12 +21,12 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string)
 	m.SetHeader("Subject", header)
 	m.SetBody("text/html", body)
 
-	host := config.GetInstance().Email.Host
+	host := config.GetInstance().Email.EmailHost
 	port := config.GetInstance().Email.Port
-	username := config.GetInstance().Email.Username
+	email := config.GetInstance().Email.Email
 	password := config.GetInstance().Email.Password
 
-	d := gomail.NewDialer(host, port, username, password)
+	d := gomail.NewDialer(host, port, email, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	if err := d.DialAndSend(m); err != nil {
 		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
