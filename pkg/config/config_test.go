@@ -53,6 +53,11 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_SSL_ENABLE : %+v", mycfg.Email.SSLEnable)
 	logger.Debugf(nil, "")
 
+	logger.Debugf(nil, "App=========================================")
+	logger.Debugf(nil, "NOTIFICATION_APP_HOST : %+v", mycfg.App.Host)
+	logger.Debugf(nil, "NOTIFICATION_APP_PORT : %+v", mycfg.App.Port)
+	logger.Debugf(nil, "")
+
 	mycfg.PrintUsage()
 
 }

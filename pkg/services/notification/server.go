@@ -5,10 +5,11 @@
 package notification
 
 import (
+	"strconv"
+
 	"google.golang.org/grpc"
 
 	"openpitrix.io/notification/pkg/config"
-	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/manager"
 )
@@ -26,7 +27,10 @@ func Serve() {
 	go s.controller.Serve()
 	go ServeApiGateway()
 
-	manager.NewGrpcServer(constants.NotificationManagerHost, constants.NotificationManagerPort).
+	notificationManagerHost := cfg.App.Host
+	notificationManagerPort, _ := strconv.Atoi(cfg.App.Port)
+
+	manager.NewGrpcServer(notificationManagerHost, notificationManagerPort).
 		ShowErrorCause(cfg.Grpc.ShowErrorCause).
 		WithChecker(s.Checker).
 		Serve(func(server *grpc.Server) {
