@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
+	"strconv"
 	"strings"
 	"time"
 
@@ -27,7 +28,6 @@ import (
 
 	staticSpec "openpitrix.io/notification/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/notification/pkg/apigateway/swagger-ui"
-	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/version"
@@ -42,11 +42,18 @@ func ServeApiGateway() {
 	version.PrintVersionInfo(func(s string, i ...interface{}) {
 		logger.Info(nil, s, i...)
 	})
-	logger.Info(nil, "Notification service http://%s:%d", constants.NotificationManagerHost, constants.NotificationManagerPort)
-	logger.Info(nil, "Api service start http://%s:%d/swagger-ui/", constants.ApiGatewayHost, constants.ApiGatewayPort)
+
+	cfg := config.GetInstance()
+	notificationManagerHost := cfg.App.Host
+	notificationManagerPort, _ := strconv.Atoi(cfg.App.Port)
+
+	notificationApiHost := cfg.App.ApiHost
+	notificationApiPort, _ := strconv.Atoi(cfg.App.ApiPort)
+
+	logger.Info(nil, "Notification service http://%s:%d", notificationManagerHost, notificationManagerPort)
+	logger.Info(nil, "Api service start http://%s:%d/swagger-ui/", notificationApiHost, notificationApiPort)
 
 	s := Server{}
-	config.GetInstance().LoadConf()
 
 	if err := s.run(); err != nil {
 		logger.Critical(nil, "Api gateway run failed: %+v", err)
@@ -132,7 +139,10 @@ func (s *Server) run() error {
 	r.Any("/v1/*filepath", mainHandler)
 	r.Any("/api/*filepath", mainHandler)
 
-	return r.Run(fmt.Sprintf(":%d", constants.ApiGatewayPort))
+	cfg := config.GetInstance()
+	notificationApiPort, _ := strconv.Atoi(cfg.App.ApiPort)
+
+	return r.Run(fmt.Sprintf(":%d", notificationApiPort))
 }
 
 func (s *Server) mainHandler() http.Handler {
@@ -140,9 +150,13 @@ func (s *Server) mainHandler() http.Handler {
 	var opts = []grpc.DialOption{grpc.WithInsecure()}
 	var err error
 
+	cfg := config.GetInstance()
+	notificationManagerHost := cfg.App.Host
+	notificationManagerPort, _ := strconv.Atoi(cfg.App.Port)
+
 	for _, r := range []register{{
 		pb.RegisterNotificationHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", constants.NotificationManagerHost, constants.NotificationManagerPort),
+		fmt.Sprintf("%s:%d", notificationManagerHost, notificationManagerPort),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {

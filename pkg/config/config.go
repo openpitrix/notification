@@ -22,6 +22,7 @@ type Config struct {
 	Mysql MysqlConfig
 	Etcd  EtcdConfig
 	Email EmailCfg
+	App   Appcfg
 }
 
 var instance *Config
@@ -33,8 +34,6 @@ func GetInstance() *Config {
 	})
 	return instance
 }
-
-/*===================================================================================================*/
 
 type LogConfig struct {
 	Level string `default:"debug"` // debug, info, warn, error, fatal
@@ -51,10 +50,9 @@ type EtcdConfig struct {
 
 type MysqlConfig struct {
 	Host string `default:"notification-db"`
-	//Host string `default:"192.168.0.10"`
-	//Host     string `default:"192.168.0.3"`
-	//Port string `default:"13306"`
-	Port     string `default:"3306"`
+	Port string `default:"3306"`
+	//Host     string `default:"192.168.0.10"`
+	//Port     string `default:"13306"`
 	User     string `default:"root"`
 	Password string `default:"password"`
 	Database string `default:"notification"`
@@ -76,7 +74,18 @@ type EmailCfg struct {
 	SSLEnable    bool   `default:"false"`
 }
 
-/*===================================================================================================*/
+type Appcfg struct {
+	//Host string `default:"localhost"`
+	//Port string `default:"9201"`
+	Host string `default:"notification-manager"`
+	Port string `default:"9201"`
+
+	//ApiHost string `default:"localhost"`
+	//ApiPort string `default:"9200"`
+	ApiHost string `default:"notification-manager"`
+	ApiPort string `default:"9200"`
+}
+
 func (c *Config) PrintUsage() {
 	fmt.Fprintf(os.Stdout, "Usage of %s:\n", os.Args[0])
 	flag.PrintDefaults()

@@ -35,15 +35,6 @@ const (
 
 const (
 	ServiceName = "Notification"
-	prefix      = "notification-"
-
-	NotificationManagerHost = prefix + "manager"
-	//NotificationManagerHost = "localhost"
-	NotificationManagerPort = 9201
-
-	ApiGatewayHost = NotificationManagerHost
-	//ApiGatewayHost = "localhost"
-	ApiGatewayPort = 9200
 )
 
 const (
