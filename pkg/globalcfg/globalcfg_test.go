@@ -6,8 +6,13 @@ package globalcfg
 
 import (
 	"testing"
+
+	pkg "openpitrix.io/notification/pkg"
 )
 
 func TestSetGlobalCfg(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("testing env disabled")
+	}
 	GetInstance()
 }

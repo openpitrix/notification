@@ -12,6 +12,8 @@ GO_RACE:=go build -race
 GO_VET:=go vet
 GO_FILES:=./cmd ./pkg
 GO_PATH_FILES:=./cmd/... ./pkg/...
+DB_TEST:=NOTIFICATION_DB_UNIT_TEST=1 NOTIFICATION_MYSQL_HOST=127.0.0.1 NOTIFICATION_MYSQL_PORT=13306
+ETCD_TEST:=NOTIFICATION_ETCD_UNIT_TEST=1 NOTIFICATION_ETCD_ENDPOINTS=127.0.0.1:12379
 
 DOCKER_TAGS=latest
 BUILDER_IMAGE=openpitrix/openpitrix-builder:release-v0.2.3
@@ -98,3 +100,16 @@ push-image-%: ## push docker image
 	docker push openpitrix/notification:$*; \
 	docker push openpitrix/notification:flyway-$*; \
 	fi
+
+.PHONY: test
+test: ## Run all tests
+	make unit-test
+	@echo "test done"
+
+.PHONY: unit-test
+unit-test: ## Run unit tests
+	$(DB_TEST) $(ETCD_TEST) go test -a -tags="etcd db" ./...
+	@echo "unit-test done"
+
+
+
