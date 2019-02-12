@@ -136,6 +136,7 @@ func (s *Server) SetServiceConfig(ctx context.Context, req *pb.ServiceConfig) (*
 	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", strconv.FormatBool(sslEnable))
 
 	config.GetInstance().LoadConf()
+	logger.Infof(ctx, "Set ServiceConfig successfully. %+v", config.GetInstance().Email)
 
 	return &pb.SetServiceConfigResponse{
 		IsSucc: pbutil.ToProtoBool(true),
@@ -167,6 +168,7 @@ func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 		err := gerr.NewWithDetail(ctx, gerr.Internal, fmt.Errorf("Can not get EmailServiceConfig"), gerr.ErrorGetServiceConfigFailed)
 		return nil, err
 	}
+	logger.Infof(ctx, "Get ServiceConfig successfully. %+v", emailCfg)
 
 	scCfg.EmailServiceConfig = emailCfg
 	return scCfg, nil

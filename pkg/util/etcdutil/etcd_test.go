@@ -8,28 +8,51 @@ package etcdutil
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"testing"
 
+	"openpitrix.io/logger"
+	pkg "openpitrix.io/notification/pkg"
 	"openpitrix.io/openpitrix/pkg/etcd"
 )
 
 func TestConnect(t *testing.T) {
-	endpoints := os.Getenv("NOTIFICATION_ETCD_ENDPOINTS")
-	//endpoints := []string{"192.168.0.7:2379"}
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("LocalDevEnv disabled")
+	}
+
+	var endpoints []string
+	if *pkg.LocalDevEnvEnabled {
+		endpoints = []string{"192.168.0.7:2379"}
+	} else {
+		cfg := os.Getenv("NOTIFICATION_ETCD_ENDPOINTS")
+		endpoints = []string{cfg}
+	}
 	prefix := "test"
 	e, err := etcd.Connect(endpoints, prefix)
-	log.Println(e)
+
 	if err != nil {
+		logger.Infof(nil, "Connect etcd failed, [%+v]", err)
 		t.Fatal(err)
+	} else {
+		logger.Infof(nil, "Connect etcd successfully, [%+v]", e)
 	}
 
 }
 
 func TestEnqueue(t *testing.T) {
-	endpoints := os.Getenv("NOTIFICATION_ETCD_ENDPOINTS")
-	//endpoints := []string{"192.168.0.7:2379"}
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("LocalDevEnv disabled")
+	}
+
+	var endpoints []string
+	if *pkg.LocalDevEnvEnabled {
+		endpoints = []string{"192.168.0.7:2379"}
+	} else {
+		cfg := os.Getenv("NOTIFICATION_ETCD_ENDPOINTS")
+		endpoints = []string{cfg}
+	}
+
 	prefix := "test"
 	e, err := etcd.Connect(endpoints, prefix)
 	if err != nil {

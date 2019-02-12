@@ -5,13 +5,13 @@
 package dbutil
 
 import (
-	"fmt"
 	"os"
 	"testing"
 
 	"github.com/jinzhu/gorm"
 
 	"openpitrix.io/logger"
+	pkg "openpitrix.io/notification/pkg"
 	"openpitrix.io/notification/pkg/config"
 )
 
@@ -22,6 +22,9 @@ type Product struct {
 }
 
 func TestGetMysqlDB(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("LocalDevEnv disabled")
+	}
 
 	logger.Debugf(nil, "step0.1:init params")
 	config.GetInstance().LoadConf()
@@ -35,10 +38,10 @@ func TestGetMysqlDB(t *testing.T) {
 
 	db = GetInstance().GetMysqlDB()
 
-	// query
-	var product Product
-	db.First(&product, 1)
-	db.First(&product, "code = ?", "L1212")
-	fmt.Println(product)
+	//// query
+	//var product Product
+	//db.First(&product, 1)
+	//db.First(&product, "code = ?", "L1212")
+	//fmt.Println(product)
 
 }

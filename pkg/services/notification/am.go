@@ -8,8 +8,8 @@ import (
 	"context"
 
 	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/manager"
 	"openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/manager"
 )
 
 func (s *Server) Checker(ctx context.Context, req interface{}) error {
