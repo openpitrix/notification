@@ -20,7 +20,7 @@ BUILDER_IMAGE=openpitrix/openpitrix-builder:release-v0.2.3
 RUN_IN_DOCKER:=docker run -it -v `pwd`:/go/src/$(TRAG.Gopkg) -v `pwd`/tmp/cache:/root/.cache/go-build  -w /go/src/$(TRAG.Gopkg) -e GOBIN=/go/src/$(TRAG.Gopkg)/tmp/bin -e USER_ID=`id -u` -e GROUP_ID=`id -g` $(BUILDER_IMAGE)
 
 define get_diff_files
-    $(eval DIFF_FILES=$(shell git diff --name-only --diff-filter=ad | grep -E "^(cmd|pkg)/.+\.go"))
+    $(eval DIFF_FILES=$(shell git diff --name-only --diff-filter=ad | grep -e "^(cmd|pkg)/.+\.go" -e "go.mod"))
 endef
 # Get project build flags
 define get_build_flags
