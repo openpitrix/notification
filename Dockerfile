@@ -7,9 +7,6 @@ FROM golang:1.11-alpine3.7 as builder
 # install tools
 RUN apk add --no-cache git
 
-# install /usr/bin/nsenter
-RUN apk add --no-cache util-linux
-
 WORKDIR /go/src/openpitrix.io//notification
 COPY . .
 
@@ -17,8 +14,6 @@ ENV GO111MODULE=on
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 
-#to fix a issue: verifying ...: checksum mismatch
-RUN rm go.sum;go mod download
 RUN mkdir -p /openpitrix_bin
 RUN go build -v -a -installsuffix cgo -ldflags '-w' -o /openpitrix_bin/notification-manager cmd/notification/main.go
 
