@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -13,10 +13,6 @@ import (
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
 
-func NewNotificationId() string {
-	return idutil.GetUuid(constants.NotificationIdPrefix)
-}
-
 type Notification struct {
 	NotificationId string    `gorm:"column:notification_id"`
 	ContentType    string    `gorm:"column:content_type"`
@@ -29,6 +25,30 @@ type Notification struct {
 	Status         string    `gorm:"column:status"`
 	CreateTime     time.Time `gorm:"column:create_time"`
 	StatusTime     time.Time `gorm:"column:status_time"`
+}
+
+//table name
+const (
+	TableNotification = "notification"
+)
+const (
+	NotificationIdPrefix = "nf-"
+)
+
+//field name
+//Nf is short for notification.
+const (
+	NfColId          = "notification_id"
+	NfColStatus      = "status"
+	NfColContentType = "content_type"
+	NfColOwner       = "owner"
+	NfColTitle       = "title"
+	NfColAddressInfo = "address_info"
+	NfColCreateTime  = "create_time"
+)
+
+func NewNotificationId() string {
+	return idutil.GetUuid(NotificationIdPrefix)
 }
 
 func NewNotification(contentType, title, content, shortContent, addressInfo, owner string, expiredDays uint32) *Notification {
@@ -62,4 +82,13 @@ func NotificationToPb(notification *Notification) *pb.Notification {
 	pbNotification.CreateTime = pbutil.ToProtoTimestamp(notification.CreateTime)
 	pbNotification.StatusTime = pbutil.ToProtoTimestamp(notification.StatusTime)
 	return &pbNotification
+}
+
+func ParseNfSet2PbSet(inNfs []*Notification) []*pb.Notification {
+	var pbNfs []*pb.Notification
+	for _, inNf := range inNfs {
+		pbNf := NotificationToPb(inNf)
+		pbNfs = append(pbNfs, pbNf)
+	}
+	return pbNfs
 }

@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -12,7 +12,7 @@ import (
 
 func TestSetGlobalCfg(t *testing.T) {
 	if !*pkg.LocalDevEnvEnabled {
-		t.Skip("testing env disabled")
+		t.Skip("Local Dev testing env disabled.")
 	}
 	GetInstance()
 }

@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -15,16 +15,18 @@ import (
 )
 
 func SendMail(ctx context.Context, emailAddr string, header string, body string) error {
-	m := gomail.NewMessage()
-	m.SetHeader("From", "openpitrix@app-center.cn")
-	m.SetHeader("To", emailAddr)
-	m.SetHeader("Subject", header)
-	m.SetBody("text/html", body)
-
 	host := config.GetInstance().Email.EmailHost
 	port := config.GetInstance().Email.Port
 	email := config.GetInstance().Email.Email
 	password := config.GetInstance().Email.Password
+	displayEmail := config.GetInstance().Email.DisplayEmail
+
+	m := gomail.NewMessage()
+	//m.SetHeader("From", "openpitrix@app-center.cn")
+	m.SetAddressHeader("From", email, displayEmail)
+	m.SetHeader("To", emailAddr)
+	m.SetHeader("Subject", header)
+	m.SetBody("text/html", body)
 
 	d := gomail.NewDialer(host, port, email, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}

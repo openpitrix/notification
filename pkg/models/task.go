@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -9,13 +9,11 @@ import (
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/idutil"
 	"openpitrix.io/notification/pkg/util/jsonutil"
+	"openpitrix.io/notification/pkg/util/pbutil"
 )
-
-func NewTaskId() string {
-	return idutil.GetUuid(constants.TaskIdPrefix)
-}
 
 type Task struct {
 	TaskId         string    `gorm:"column:task_id"`
@@ -26,6 +24,25 @@ type Task struct {
 	StatusTime     time.Time `gorm:"column:status_time"`
 	Directive      string    `gorm:"column:directive"`
 }
+
+//table name
+const (
+	TableTask = "task"
+)
+
+const (
+	TaskIdPrefix = "t-"
+)
+
+//field name
+//Nf is short for notification.
+const (
+	TaskColNfId       = "notification_id"
+	TaskColTaskId     = "task_id"
+	TaskColStatus     = "status"
+	TaskColErrorCode  = "error_code"
+	TaskColCreateTime = "create_time"
+)
 
 func NewTask(notificationId, directive string) *Task {
 	task := &Task{
@@ -38,6 +55,10 @@ func NewTask(notificationId, directive string) *Task {
 		Directive:      directive,
 	}
 	return task
+}
+
+func NewTaskId() string {
+	return idutil.GetUuid(TaskIdPrefix)
 }
 
 type TaskDirective struct {
@@ -67,4 +88,19 @@ type TaskWithNfInfo struct {
 	ShortContent   string
 	Content        string
 	EmailAddr      string
+}
+
+func TaskToPb(task *Task) *pb.Task {
+	pbTask := pb.Task{}
+	pbTask.NotificationId = pbutil.ToProtoString(task.NotificationId)
+	return &pbTask
+}
+
+func ParseTaskSet2PbSet(inTasks []*Task) []*pb.Task {
+	var pbTasks []*pb.Task
+	for _, inTask := range inTasks {
+		pbTask := TaskToPb(inTask)
+		pbTasks = append(pbTasks, pbTask)
+	}
+	return pbTasks
 }

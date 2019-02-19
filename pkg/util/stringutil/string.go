@@ -1,13 +1,13 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
 package stringutil
 
 import (
+	"regexp"
+	"strings"
 	"unicode/utf8"
-
-	"github.com/asaskevich/govalidator"
 )
 
 // Creates an slice of slice values not included in the other given slice.
@@ -35,14 +35,6 @@ func Unique(ss []string) (result []string) {
 	return result
 }
 
-func CamelCaseToUnderscore(str string) string {
-	return govalidator.CamelCaseToUnderscore(str)
-}
-
-func UnderscoreToCamelCase(str string) string {
-	return govalidator.UnderscoreToCamelCase(str)
-}
-
 func FindString(array []string, str string) int {
 	for index, s := range array {
 		if str == s {
@@ -66,3 +58,29 @@ func Reverse(s string) string {
 	}
 	return string(buf)
 }
+
+func Contains(ss []string, s string) bool {
+	for _, v := range ss {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
+
+func SimplifyStringList(s []string) []string {
+	b := s[:0]
+	for _, x := range s {
+		if x := SimplifyString(x); x != "" {
+			b = append(b, x)
+		}
+	}
+	return b
+}
+
+// "\ta  b  c" => "a b c"
+func SimplifyString(s string) string {
+	return reMoreSpace.ReplaceAllString(strings.TrimSpace(s), " ")
+}
+
+var reMoreSpace = regexp.MustCompile(`\s+`)

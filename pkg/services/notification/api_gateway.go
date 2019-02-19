@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 package notification
@@ -15,8 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"openpitrix.io/notification/pkg/config"
-
 	"github.com/gin-gonic/gin"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/pborman/uuid"
@@ -28,6 +26,7 @@ import (
 
 	staticSpec "openpitrix.io/notification/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/notification/pkg/apigateway/swagger-ui"
+	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/openpitrix/pkg/logger"
 	"openpitrix.io/openpitrix/pkg/version"

@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -7,17 +7,58 @@ package notification
 import (
 	"context"
 	"fmt"
-	"os"
-	"strconv"
 
 	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
+	rs "openpitrix.io/notification/pkg/services/notification/resource_control"
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
+
+func (s *Server) SetServiceConfig(ctx context.Context, req *pb.ServiceConfig) (*pb.SetServiceConfigResponse, error) {
+	err := ValidateSetServiceConfigParams(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	rs.SetServiceConfig(req)
+	return &pb.SetServiceConfigResponse{
+		IsSucc: pbutil.ToProtoBool(true),
+	}, nil
+
+}
+
+func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigRequest) (*pb.ServiceConfig, error) {
+	var ServiceTypes = []string{
+		constants.ServiceTypeEmail,
+	}
+
+	serviceTypes := req.GetServiceType()
+	if len(serviceTypes) == 0 {
+		serviceTypes = ServiceTypes
+	}
+
+	var emailCfg *pb.EmailServiceConfig
+
+	scCfg := &pb.ServiceConfig{}
+
+	for _, scType := range serviceTypes {
+		if scType == constants.NotifyTypeEmail {
+			emailCfg = rs.GetEmailServiceConfig()
+			break
+		}
+	}
+	if emailCfg == nil {
+		err := gerr.NewWithDetail(ctx, gerr.Internal, fmt.Errorf("Can not get EmailServiceConfig"), gerr.ErrorGetServiceConfigFailed)
+		return nil, err
+	}
+	logger.Infof(ctx, "Get ServiceConfig successfully. %+v", emailCfg)
+
+	scCfg.EmailServiceConfig = emailCfg
+	return scCfg, nil
+}
 
 func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificationRequest) (*pb.CreateNotificationResponse, error) {
 	notification := models.NewNotification(
@@ -30,7 +71,7 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 		req.GetExpiredDays().GetValue(),
 	)
 
-	err := RegisterNotification(ctx, notification)
+	err := rs.RegisterNotification(ctx, notification)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +83,7 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 	}
 
 	for _, task := range tasks {
-		err = RegisterTask(ctx, task)
+		err = rs.RegisterTask(ctx, task)
 		if err != nil {
 			return nil, err
 		}
@@ -66,7 +107,17 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 }
 
 func (s *Server) DescribeNotifications(ctx context.Context, req *pb.DescribeNotificationsRequest) (*pb.DescribeNotificationsResponse, error) {
-	return &pb.DescribeNotificationsResponse{}, nil
+	nfs, nfCnt, err := rs.DescribeNotifications(ctx, req)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to describe notifications, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	nfPbSet := models.ParseNfSet2PbSet(nfs)
+	res := &pb.DescribeNotificationsResponse{
+		TotalCount:      uint32(nfCnt),
+		NotificationSet: nfPbSet,
+	}
+	return res, nil
 }
 
 func (s *Server) RetryNotifications(ctx context.Context, req *pb.RetryNotificationsRequest) (*pb.RetryNotificationsResponse, error) {
@@ -74,7 +125,17 @@ func (s *Server) RetryNotifications(ctx context.Context, req *pb.RetryNotificati
 }
 
 func (s *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) (*pb.DescribeTasksResponse, error) {
-	return &pb.DescribeTasksResponse{}, nil
+	tasks, taskCnt, err := rs.DescribeTasks(ctx, req)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to describe tasks, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	taskPbSet := models.ParseTaskSet2PbSet(tasks)
+	res := &pb.DescribeTasksResponse{
+		TotalCount: uint32(taskCnt),
+		TaskSet:    taskPbSet,
+	}
+	return res, nil
 }
 
 func (s *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb.RetryTasksResponse, error) {
@@ -82,15 +143,44 @@ func (s *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb
 }
 
 func (s *Server) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
-	return &pb.CreateAddressResponse{}, nil
+	addr := models.NewAddress(req)
+	addrId, err := rs.CreateAddress(ctx, addr)
+
+	if err != nil {
+		logger.Errorf(ctx, "Failed to create address [%+v], %+v", addr, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	logger.Debugf(ctx, "Create new address, [%+v]", addr)
+
+	return &pb.CreateAddressResponse{
+		AddressId: pbutil.ToProtoString(addrId),
+	}, nil
 }
 
 func (s *Server) DescribeAddresses(ctx context.Context, req *pb.DescribeAddressesRequest) (*pb.DescribeAddressesResponse, error) {
-	return &pb.DescribeAddressesResponse{}, nil
+	addrs, addrCnt, err := rs.DescribeAddresses(ctx, req)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to Describe Addresses, error: %+v", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	addressPbSet := models.ParseAddressSet2PbSet(addrs)
+	res := &pb.DescribeAddressesResponse{
+		TotalCount: uint32(addrCnt),
+		AddressSet: addressPbSet,
+	}
+	return res, nil
 }
 
 func (s *Server) ModifyAddress(ctx context.Context, req *pb.ModifyAddressRequest) (*pb.ModifyAddressResponse, error) {
-	return &pb.ModifyAddressResponse{}, nil
+	addressId, err := rs.ModifyAddress(ctx, req)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to Modify Address [%s], %+v", addressId, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed, addressId)
+	}
+	return &pb.ModifyAddressResponse{
+		AddressId: pbutil.ToProtoString(addressId),
+	}, nil
+
 }
 
 func (s *Server) DeleteAddresses(ctx context.Context, req *pb.DeleteAddressesRequest) (*pb.DeleteAddressesResponse, error) {
@@ -111,90 +201,4 @@ func (s *Server) ModifyAddressList(ctx context.Context, req *pb.ModifyAddressLis
 
 func (s *Server) DeleteAddressList(ctx context.Context, req *pb.DeleteAddressListRequest) (*pb.DeleteAddressListResponse, error) {
 	return &pb.DeleteAddressListResponse{}, nil
-}
-
-func (s *Server) SetServiceConfig(ctx context.Context, req *pb.ServiceConfig) (*pb.SetServiceConfigResponse, error) {
-	err := s.validateSetServiceConfigParams(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
-	protocol := req.GetEmailServiceConfig().GetProtocol().GetValue()
-	emailHost := req.GetEmailServiceConfig().GetEmailHost().GetValue()
-	port := req.GetEmailServiceConfig().GetPort().GetValue()
-	displayEmail := req.GetEmailServiceConfig().GetDisplayEmail().GetValue()
-	email := req.GetEmailServiceConfig().GetEmail().GetValue()
-	password := req.GetEmailServiceConfig().GetPassword().GetValue()
-	sslEnable := req.GetEmailServiceConfig().GetSslEnable().GetValue()
-
-	os.Setenv("NOTIFICATION_EMAIL_PROTOCOL", protocol)
-	os.Setenv("NOTIFICATION_EMAIL_EMAIL_HOST", emailHost)
-	os.Setenv("NOTIFICATION_EMAIL_PORT", port)
-	os.Setenv("NOTIFICATION_EMAIL_DISPLAY_EMAIL", displayEmail)
-	os.Setenv("NOTIFICATION_EMAIL_EMAIL", email)
-	os.Setenv("NOTIFICATION_EMAIL_PASSWORD", password)
-	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", strconv.FormatBool(sslEnable))
-
-	config.GetInstance().LoadConf()
-	logger.Infof(ctx, "Set ServiceConfig successfully. %+v", config.GetInstance().Email)
-
-	return &pb.SetServiceConfigResponse{
-		IsSucc: pbutil.ToProtoBool(true),
-	}, nil
-
-}
-
-func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigRequest) (*pb.ServiceConfig, error) {
-	var ServiceTypes = []string{
-		constants.ServiceTypeEmail,
-	}
-
-	serviceTypes := req.GetServiceType()
-	if len(serviceTypes) == 0 {
-		serviceTypes = ServiceTypes
-	}
-
-	var emailCfg *pb.EmailServiceConfig
-
-	scCfg := &pb.ServiceConfig{}
-
-	for _, scType := range serviceTypes {
-		if scType == constants.NotifyTypeEmail {
-			emailCfg = GetEmailServiceConfig(ctx)
-			break
-		}
-	}
-	if emailCfg == nil {
-		err := gerr.NewWithDetail(ctx, gerr.Internal, fmt.Errorf("Can not get EmailServiceConfig"), gerr.ErrorGetServiceConfigFailed)
-		return nil, err
-	}
-	logger.Infof(ctx, "Get ServiceConfig successfully. %+v", emailCfg)
-
-	scCfg.EmailServiceConfig = emailCfg
-	return scCfg, nil
-}
-
-func (s *Server) validateSetServiceConfigParams(ctx context.Context, req *pb.ServiceConfig) error {
-	email := req.GetEmailServiceConfig().GetEmail().GetValue()
-	err := VerifyEmailFmt(ctx, email)
-	if err != nil {
-		logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", email, err)
-		return err
-	}
-
-	displayEmail := req.GetEmailServiceConfig().GetDisplayEmail().GetValue()
-	err = VerifyEmailFmt(ctx, displayEmail)
-	if err != nil {
-		logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", displayEmail, err)
-		return err
-	}
-
-	portStr := req.GetEmailServiceConfig().GetPort().GetValue()
-	portNum, err := strconv.ParseInt(portStr, 10, 64)
-	err = VerifyPortFmt(ctx, portNum)
-	if err != nil {
-		logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", portStr, err)
-		return err
-	}
-	return nil
 }
