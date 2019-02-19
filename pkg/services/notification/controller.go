@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -13,6 +13,7 @@ import (
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/globalcfg"
 	"openpitrix.io/notification/pkg/plugins"
+	rs "openpitrix.io/notification/pkg/services/notification/resource_control"
 	"openpitrix.io/openpitrix/pkg/etcd"
 	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
@@ -80,7 +81,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 
 		logger.Debugf(ctx, time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:"+notificationId)
 
-		err := UpdateNotificationStatus(notificationId, constants.StatusSending)
+		err := rs.UpdateNotificationStatus(notificationId, constants.StatusSending)
 		if err != nil {
 			logger.Errorf(ctx, "Update notification status to [sending] failed, [%+v]", err)
 			continue
@@ -92,7 +93,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 			if isNotificationFinished {
 				break
 			}
-			noSuccessfulTasks := GetStatusTasks(
+			noSuccessfulTasks := rs.GetTasksByStatus(
 				notificationId,
 				[]string{
 					constants.StatusFailed,
@@ -101,7 +102,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 				},
 			)
 			if len(noSuccessfulTasks) == 0 {
-				err := UpdateNotificationStatus(notificationId, constants.StatusSuccessful)
+				err := rs.UpdateNotificationStatus(notificationId, constants.StatusSuccessful)
 				if err != nil {
 					logger.Errorf(ctx, "Update notification status to [successful] failed, [%+v]", err)
 					continue
@@ -118,7 +119,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 					}
 					taskRetryTimes[noSuccessfulTask.TaskId] = retryTimes + 1
 					if taskRetryTimes[noSuccessfulTask.TaskId] > constants.MaxTaskRetryTimes {
-						err := UpdateNotificationStatus(notificationId, constants.StatusFailed)
+						err := rs.UpdateNotificationStatus(notificationId, constants.StatusFailed)
 						if err != nil {
 							logger.Errorf(ctx, "Update notification status to [failed] failed, [%+v]", err)
 							continue
@@ -145,13 +146,13 @@ func (c *Controller) HandleTask(handlerNum string) {
 
 		logger.Debugf(ctx, time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:"+taskId)
 
-		err := UpdateTaskStatus(taskId, constants.StatusSending)
+		err := rs.UpdateTaskStatus(taskId, constants.StatusSending)
 		if err != nil {
 			logger.Errorf(ctx, "Update task status to [sending] failed, [%+v]", err)
 			continue
 		}
 
-		task, err := GetTask(taskId)
+		task, err := rs.GetTask(taskId)
 		if err != nil {
 			logger.Errorf(ctx, "Get task failed, [%+v]", err)
 			continue
@@ -166,13 +167,13 @@ func (c *Controller) HandleTask(handlerNum string) {
 		err = notifier.Send(ctx, task)
 		if err != nil {
 			logger.Errorf(ctx, "Notifier Send failed, [%+v]", err)
-			err = UpdateTaskStatus(taskId, constants.StatusFailed)
+			err = rs.UpdateTaskStatus(taskId, constants.StatusFailed)
 			if err != nil {
 				logger.Errorf(ctx, "Update task status to [failed] failed, [%+v]", err)
 				continue
 			}
 		} else {
-			err = UpdateTaskStatus(taskId, constants.StatusSuccessful)
+			err = rs.UpdateTaskStatus(taskId, constants.StatusSuccessful)
 			if err != nil {
 				logger.Errorf(ctx, "Update task status to [successful] failed, [%+v]", err)
 				continue

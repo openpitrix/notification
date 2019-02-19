@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -29,7 +29,8 @@ type Config struct {
 		Password string `default:"password"`
 		Database string `default:"notification"`
 		Disable  bool   `default:"false"`
-		LogMode  bool   `default:"false"`
+		//LogMode  bool   `default:"false"`
+		LogMode bool `default:"true"`
 	}
 
 	Etcd struct {
@@ -38,10 +39,11 @@ type Config struct {
 	}
 
 	Email struct {
-		Protocol     string `default:"SMTP"`
-		EmailHost    string `default:"mail.app-center.cn"`
-		Port         int    `default:"25"`
-		DisplayEmail string `default:"admin@openpitrix.io"`
+		Protocol  string `default:"SMTP"`
+		EmailHost string `default:"mail.app-center.cn"`
+		Port      int    `default:"25"`
+		//DisplayEmail string `default:"admin@openpitrix.io"`
+		DisplayEmail string `default:"admin_openpitrix"`
 		Email        string `default:"openpitrix@app-center.cn"`
 		Password     string `default:"openpitrix"`
 		SSLEnable    bool   `default:"false"`
@@ -78,10 +80,6 @@ type LogConfig struct {
 type GrpcConfig struct {
 	ShowErrorCause bool `default:"false"` // show grpc error cause to frontend
 }
-
-//func (m *MysqlConfig) GetUrl() string {
-//	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", m.User, m.Password, m.Host, m.Port, m.Database)
-//}
 
 func (c *Config) PrintUsage() {
 	fmt.Fprintf(os.Stdout, "Usage of %s:\n", os.Args[0])

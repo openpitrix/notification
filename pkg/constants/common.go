@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -14,16 +14,17 @@ const (
 )
 
 const (
-	NotificationIdPrefix = "nf-"
-	TaskIdPrefix         = "t-"
+	NotifyTypeEmail  = "email"
+	NotifyTypeWeb    = "web"
+	NotifyTypeMobile = "mobile"
+	NotifyTypeSms    = "sms"
+	NotifyTypeWeChat = "wechat"
 )
 
 const (
-	NotifyTypeWeb    = "web"
-	NotifyTypeMobile = "mobile"
-	NotifyTypeEmail  = "email"
-	NotifyTypeSms    = "sms"
-	NotifyTypeWeChat = "wechat"
+	ServiceTypeEmail  = "email"
+	ServiceTypeSms    = "sms"
+	ServiceTypeWeChat = "wechat"
 )
 
 const (
@@ -38,14 +39,25 @@ const (
 )
 
 const (
-	ServiceTypeEmail = "email"
-)
-
-const (
 	ServiceCfgProtocol     = "protocol"
 	ServiceCfgEmailHost    = "email_host"
 	ServiceCfgPort         = "port"
 	ServiceCfgDisplayEmail = "display_email"
 	ServiceCfgEmail        = "email"
 	ServiceCfgPassword     = "password"
+)
+
+const (
+	DESC = "desc"
+	ASC  = "asc"
+)
+
+const (
+	TagName = "json"
+)
+
+const (
+	StatusActive   = "active"
+	StatusDisabled = "disabled"
+	StatusDeleted  = "deleted"
 )

@@ -1,4 +1,4 @@
-// Copyright 2017 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -7,11 +7,12 @@ package pbutil
 import (
 	"time"
 
-	"openpitrix.io/logger"
-
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
+
+	"openpitrix.io/logger"
+	"openpitrix.io/openpitrix/pkg/db"
 )
 
 type RequestHadOffset interface {
@@ -60,4 +61,20 @@ func ToProtoBool(bool bool) *wrappers.BoolValue {
 
 func ToProtoBytes(bytes []byte) *wrappers.BytesValue {
 	return &wrappers.BytesValue{Value: bytes}
+}
+
+func GetOffsetFromRequest(req RequestHadOffset) uint64 {
+	n := req.GetOffset()
+	if n == 0 {
+		return DefaultOffset
+	}
+	return db.GetOffset(uint64(n))
+}
+
+func GetLimitFromRequest(req RequestHadLimit) uint64 {
+	n := req.GetLimit()
+	if n == 0 {
+		return DefaultLimit
+	}
+	return db.GetLimit(uint64(n))
 }
