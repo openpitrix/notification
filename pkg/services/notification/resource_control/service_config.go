@@ -56,6 +56,6 @@ func SetServiceConfig(req *pb.ServiceConfig) {
 	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", strconv.FormatBool(sslEnable))
 
 	config.GetInstance().LoadConf()
-	logger.Infof(nil, "Set ServiceConfig successfully. %+v", config.GetInstance().Email)
+	logger.Infof(nil, "Set ServiceConfig successfully, [%+v].", config.GetInstance().Email)
 
 }

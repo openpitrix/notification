@@ -366,7 +366,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "name",
+            "name": "address_list_name",
             "in": "query",
             "required": false,
             "type": "array",
@@ -807,6 +807,9 @@ var Files = map[string]string{
           "items": {
             "$ref": "#/definitions/pbAddress"
           }
+        },
+        "address_list_name": {
+          "type": "string"
         }
       }
     },
@@ -824,6 +827,9 @@ var Files = map[string]string{
           "items": {
             "type": "string"
           }
+        },
+        "address_list_name": {
+          "type": "string"
         }
       }
     },
@@ -838,9 +844,6 @@ var Files = map[string]string{
     "pbCreateAddressRequest": {
       "type": "object",
       "properties": {
-        "address_list_id": {
-          "type": "string"
-        },
         "address": {
           "type": "string"
         },
@@ -851,6 +854,9 @@ var Files = map[string]string{
           "type": "string"
         },
         "notify_type": {
+          "type": "string"
+        },
+        "address_list_id": {
           "type": "string"
         }
       }
@@ -1051,6 +1057,9 @@ var Files = map[string]string{
         },
         "extra": {
           "type": "string"
+        },
+        "address_list_name": {
+          "type": "string"
         }
       }
     },
@@ -1066,9 +1075,6 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_id": {
-          "type": "string"
-        },
-        "address_list_id": {
           "type": "string"
         },
         "address": {

@@ -357,7 +357,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "name",
+            "name": "address_list_name",
             "in": "query",
             "required": false,
             "type": "array",
@@ -798,6 +798,9 @@
           "items": {
             "$ref": "#/definitions/pbAddress"
           }
+        },
+        "address_list_name": {
+          "type": "string"
         }
       }
     },
@@ -815,6 +818,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "address_list_name": {
+          "type": "string"
         }
       }
     },
@@ -829,9 +835,6 @@
     "pbCreateAddressRequest": {
       "type": "object",
       "properties": {
-        "address_list_id": {
-          "type": "string"
-        },
         "address": {
           "type": "string"
         },
@@ -842,6 +845,9 @@
           "type": "string"
         },
         "notify_type": {
+          "type": "string"
+        },
+        "address_list_id": {
           "type": "string"
         }
       }
@@ -1042,6 +1048,9 @@
         },
         "extra": {
           "type": "string"
+        },
+        "address_list_name": {
+          "type": "string"
         }
       }
     },
@@ -1057,9 +1066,6 @@
       "type": "object",
       "properties": {
         "address_id": {
-          "type": "string"
-        },
-        "address_list_id": {
           "type": "string"
         },
         "address": {

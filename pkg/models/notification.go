@@ -38,13 +38,17 @@ const (
 //field name
 //Nf is short for notification.
 const (
-	NfColId          = "notification_id"
-	NfColStatus      = "status"
-	NfColContentType = "content_type"
-	NfColOwner       = "owner"
-	NfColTitle       = "title"
-	NfColAddressInfo = "address_info"
-	NfColCreateTime  = "create_time"
+	NfColId           = "notification_id"
+	NfColContentType  = "content_type"
+	NfColTitle        = "title"
+	NfColContent      = "content"
+	NfColShortContent = "short_content"
+	NfColExpiredDays  = "expired_days"
+	NfColAddressInfo  = "address_info"
+	NfColOwner        = "owner"
+	NfColStatus       = "status"
+	NfColCreateTime   = "create_time"
+	NfColStatusTime   = "status_time"
 )
 
 func NewNotificationId() string {

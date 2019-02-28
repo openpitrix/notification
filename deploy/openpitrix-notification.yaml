@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification
+  namespace: openpitrix-system
+  labels:
+    app: notification
+    component: notification
+    version: test-1.0.0-alpha
+spec:
+  selector:
+    app: notification
+    component: notification
+  ports:
+  - name:  notification
+    protocol: TCP
+    port: 9201
+    targetPort: 9201
+  - name:  swagger
+    protocol: TCP
+    port: 9200
+    targetPort: 9200
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: notification-deployment
+  namespace: openpitrix-system
+  labels:
+    app: notification
+    component: notification
+    version: test-1.0.0-alpha
+spec:
+  selector:
+    matchLabels:
+      app: notification
+      component: notification
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: notification
+        component: notification
+        version: test-1.0.0-alpha
+    spec:
+      initContainers:
+      - name: wait-mysql
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z notification-db.openpitrix-system.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
+      - name: wait-etcd
+        image: busybox:1.28.4
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c', 'until nc -z notification-etcd.openpitrix-system.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+      containers:
+      - name: notification
+        image: huojiao2006/public_repodev:v0.0.1
+        imagePullPolicy: Always
+        command:
+          - notification
+        ports:
+        - containerPort: 9201
+          name: notification
+        - containerPort: 9200
+          name: swagger
+        env:
+        - name: NOTIFICATION_GRPC_SHOW_ERROR_CAUSE
+          value: 'true'
+        - name: NOTIFICATION_APP_HOST
+          value: 'notification.openpitrix-system'
+        - name: NOTIFICATION_APP_API_HOST
+          value: 'notification.openpitrix-system'
+        resources:
+          limits:
+            cpu: 500m
+            memory: 500Mi
+          requests:
+            cpu: 500m
+            memory: 100Mi
