@@ -27,13 +27,13 @@ func TestSetServiceConfig(t *testing.T) {
 	defer cancel()
 
 	emailcfg := &pb.EmailServiceConfig{
-		Protocol:     pbutil.ToProtoString("xx"),
-		EmailHost:    pbutil.ToProtoString("testhost"),
-		Port:         pbutil.ToProtoString("111"),
-		DisplayEmail: pbutil.ToProtoString("test@op.notification.com"),
-		Email:        pbutil.ToProtoString("test@op.notification.com"),
-		Password:     pbutil.ToProtoString("Email"),
-		SslEnable:    pbutil.ToProtoBool(false),
+		Protocol:      pbutil.ToProtoString("xx"),
+		EmailHost:     pbutil.ToProtoString("testhost"),
+		Port:          pbutil.ToProtoString("111"),
+		DisplaySender: pbutil.ToProtoString("tester"),
+		Email:         pbutil.ToProtoString("test@op.notification.com"),
+		Password:      pbutil.ToProtoString("passwordtest"),
+		SslEnable:     pbutil.ToProtoBool(false),
 	}
 
 	var req = &pb.ServiceConfig{
@@ -73,9 +73,8 @@ func TestCreateNotification(t *testing.T) {
 	defer cancel()
 
 	testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
-
 	var req = &pb.CreateNotificationRequest{
-		ContentType:  pbutil.ToProtoString("ContentType"),
+		ContentType:  pbutil.ToProtoString("other"),
 		Title:        pbutil.ToProtoString("handler_test.go sends an email."),
 		Content:      pbutil.ToProtoString("Content:handler_test.go sends an email."),
 		ShortContent: pbutil.ToProtoString("ShortContent"),
@@ -87,7 +86,7 @@ func TestCreateNotification(t *testing.T) {
 
 }
 
-func TestDescribeNotifications4Handler(t *testing.T) {
+func TestDescribeNotifications(t *testing.T) {
 	if !*pkg.LocalDevEnvEnabled {
 		t.Skip("Local Dev testing env disabled.")
 	}
@@ -98,11 +97,10 @@ func TestDescribeNotifications4Handler(t *testing.T) {
 	defer cancel()
 
 	var nfIds []string
-	nfIds = append(nfIds, "nf-yM793AqkEmnj")
-	nfIds = append(nfIds, "nf-p1J10q82WnZO")
+	nfIds = append(nfIds, "nf-VLjBx1nMOB94")
 
 	var contentTypes []string
-	contentTypes = append(contentTypes, "email")
+	contentTypes = append(contentTypes, "other")
 
 	var owners []string
 	owners = append(owners, "HuoJiao")
@@ -110,23 +108,19 @@ func TestDescribeNotifications4Handler(t *testing.T) {
 	var statuses []string
 	statuses = append(statuses, "successful")
 
-	var displayCols []string
-	displayCols = append(displayCols, "")
-
 	var req = &pb.DescribeNotificationsRequest{
 		NotificationId: nfIds,
 		ContentType:    contentTypes,
 		Owner:          owners,
 		Status:         statuses,
-		Limit:          20,
-		Offset:         0,
-		SearchWord:     nil,
-		SortKey:        pbutil.ToProtoString("status"),
-		Reverse:        pbutil.ToProtoBool(false),
-		DisplayColumns: displayCols,
+		//Limit:      20,
+		//Offset:     0,
+		SearchWord: nil,
+		SortKey:    pbutil.ToProtoString("status"),
+		Reverse:    pbutil.ToProtoBool(false),
 	}
 	resp, _ := s.DescribeNotifications(ctx, req)
-	logger.Infof(nil, "Test Passed,TestDescribeNotifications4Handler TotalCount = %d", resp.GetTotalCount())
+	logger.Infof(nil, "Test Passed,TestDescribeNotifications Notifications = [%+v]", resp)
 
 }
 
@@ -141,30 +135,77 @@ func TestDescribeTasks(t *testing.T) {
 	defer cancel()
 
 	var nfIds []string
-	nfIds = append(nfIds, "nf-yM793AqkEmnj")
-	nfIds = append(nfIds, "nf-p1J10q82WnZO")
+	nfIds = append(nfIds, "nf-6YoKxDk9BLWZ")
+	nfIds = append(nfIds, "nf-WpQ8pmVBvJ98")
+
+	var taskIds []string
+	taskIds = append(taskIds, "t-7k1BMPnAq3zn")
 
 	var statuses []string
 	statuses = append(statuses, "successful")
 
-	var displayCols []string
-	displayCols = append(displayCols, "")
-
 	var req = &pb.DescribeTasksRequest{
 		NotificationId: nfIds,
-		TaskId:         nil,
+		TaskId:         taskIds,
 		TaskAction:     nil,
 		ErrorCode:      nil,
 		Status:         statuses,
-		Limit:          20,
-		Offset:         0,
 		SearchWord:     nil,
 		SortKey:        nil,
 		Reverse:        nil,
-		DisplayColumns: nil,
 	}
 	resp, _ := s.DescribeTasks(ctx, req)
-	logger.Infof(nil, "Test Passed,Test DescribeTasks TotalCount = %d", resp.GetTotalCount())
+	logger.Infof(nil, "Test Passed,Test DescribeTasks Tasks = [%+v]", resp)
+
+}
+
+func TestRetryNotifications(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var nfIds []string
+	nfIds = append(nfIds, "nf-41ZYN9zyx3Yr1")
+
+	var statuses []string
+	statuses = append(statuses, "successful")
+
+	var req = &pb.RetryNotificationsRequest{
+		NotificationId: nfIds,
+	}
+	resp, _ := s.RetryNotifications(ctx, req)
+
+	logger.Infof(nil, "Test Passed,Test RetryNotifications[%+v]", resp.NotificationSet)
+
+}
+
+func TestRetryTasks(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var taskIds []string
+	taskIds = append(taskIds, "t-l32A2Yvnq3zn")
+
+	var statuses []string
+	statuses = append(statuses, "successful")
+
+	var req = &pb.RetryTasksRequest{
+		TaskId: taskIds,
+	}
+	resp, _ := s.RetryTasks(ctx, req)
+
+	logger.Infof(nil, "Test Passed,Test RetryTasks,Tasks=[%+v]", resp)
 
 }
 
@@ -178,40 +219,14 @@ func TestCreateAddress(t *testing.T) {
 	defer cancel()
 
 	var req = &pb.CreateAddressRequest{
-		//AddressListId:    nil,
-		Address:          pbutil.ToProtoString("sss1"),
+		Address:          pbutil.ToProtoString("openpitrix@163.com"),
 		Remarks:          pbutil.ToProtoString("sss2"),
 		VerificationCode: pbutil.ToProtoString("sss3"),
-		NotifyType:       pbutil.ToProtoString("sss4"),
+		NotifyType:       pbutil.ToProtoString("email"),
 	}
 	_, e := s.CreateAddress(ctx, req)
 	if e != nil {
 		logger.Criticalf(nil, "Test CreateAddress failed...")
-	}
-
-}
-
-func TestModifyAddress(t *testing.T) {
-	if !*pkg.LocalDevEnvEnabled {
-		t.Skip("Local Dev testing env disabled.")
-	}
-	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
-	var req = &pb.ModifyAddressRequest{
-		AddressId:        pbutil.ToProtoString("addr-BPrjMv8Qr4Yr"),
-		AddressListId:    pbutil.ToProtoString("xxAddressListId"),
-		Address:          pbutil.ToProtoString("hello@openpitrix.com"),
-		Remarks:          pbutil.ToProtoString("测试Remarks"),
-		VerificationCode: pbutil.ToProtoString("VerificationCode test"),
-		NotifyType:       pbutil.ToProtoString("email"),
-	}
-
-	_, e := s.ModifyAddress(ctx, req)
-	if e != nil {
-		logger.Criticalf(nil, "Test ModifyAddress failed...")
 	}
 
 }
@@ -226,29 +241,172 @@ func TestDescribeAddresses(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	var AddressId []string
-	AddressId = append(AddressId, "addr-BPrjMv8Qr4Yr")
+	var AddressIds []string
+	AddressIds = append(AddressIds, "addr-RGN5PwjjDp6K")
 
 	var statuses []string
 	statuses = append(statuses, "active")
 
-	var displayCols []string
-	displayCols = append(displayCols, "")
+	var nfTypes []string
+	nfTypes = append(nfTypes, "email")
 
 	var req = &pb.DescribeAddressesRequest{
-		AddressId:      AddressId,
-		AddressListId:  nil,
-		Address:        nil,
-		NotifyType:     nil,
-		Status:         statuses,
-		Limit:          20,
-		Offset:         0,
-		SearchWord:     nil,
-		SortKey:        nil,
-		Reverse:        nil,
-		DisplayColumns: nil,
+		AddressId:     AddressIds,
+		AddressListId: nil,
+		Address:       nil,
+		Status:        statuses,
+		NotifyType:    nfTypes,
+		SearchWord:    nil,
+		SortKey:       nil,
+		Reverse:       nil,
 	}
 	resp, _ := s.DescribeAddresses(ctx, req)
-	logger.Infof(nil, "Test Passed,Test DescribeAddresses TotalCount = %d", resp.GetTotalCount())
+	logger.Infof(nil, "Test Passed,Test DescribeAddresses Addresses = [%+v]", resp)
+
+}
+
+func TestModifyAddress(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var req = &pb.ModifyAddressRequest{
+		AddressId:        pbutil.ToProtoString("addr-573m9PqZE3nj"),
+		AddressListId:    pbutil.ToProtoString("adl-lzq16npmB3zn"),
+		Address:          pbutil.ToProtoString("hello@openpitrix.com"),
+		Remarks:          pbutil.ToProtoString("测试Remarks"),
+		VerificationCode: pbutil.ToProtoString("VerificationCode test"),
+		NotifyType:       pbutil.ToProtoString("email"),
+	}
+
+	_, e := s.ModifyAddress(ctx, req)
+	if e != nil {
+		logger.Criticalf(nil, "Test ModifyAddress failed...")
+	}
+
+}
+
+func TestDeleteAddresses(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var addressIds []string
+	addressIds = append(addressIds, "addr-106wppjyPB94")
+
+	var req = &pb.DeleteAddressesRequest{
+		AddressId: addressIds,
+	}
+
+	_, e := s.DeleteAddresses(ctx, req)
+	if e != nil {
+		logger.Criticalf(nil, "Test DeleteAddresses failed...")
+	}
+
+}
+
+func TestCreateAddressList(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var addressIds []string
+	addressIds = append(addressIds, "addr-BPrjMv8Qr4Yr")
+
+	var req = &pb.CreateAddressListRequest{
+		AddressListName: pbutil.ToProtoString("邮件通知列表1"),
+		Extra:           pbutil.ToProtoString("{\"email\": [\"openpitrix@163.com\", \"513590612@qq.com\"]}"),
+		AddressId:       addressIds,
+	}
+	_, e := s.CreateAddressList(ctx, req)
+	if e != nil {
+		logger.Criticalf(nil, "Test CreateAddressList failed...")
+	}
+}
+
+func TestDescribeAddressList(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var addressListIds []string
+	addressListIds = append(addressListIds, "adl-6ODJlDYg3LWZ")
+
+	var statuses []string
+	statuses = append(statuses, "active")
+
+	var req = &pb.DescribeAddressListRequest{
+		AddressListId:   addressListIds,
+		AddressListName: nil,
+		Extra:           nil,
+		Status:          statuses,
+		SearchWord:      nil,
+		SortKey:         nil,
+		Reverse:         nil,
+	}
+	resp, _ := s.DescribeAddressList(ctx, req)
+	logger.Infof(nil, "Test Passed,Test DescribeAddressesList AddressList = [%+v]", resp)
+
+}
+
+func TestModifyAddressList(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var req = &pb.ModifyAddressListRequest{
+		AddressListId:   pbutil.ToProtoString("adl-6ODJlDYg3LWZ"),
+		AddressListName: pbutil.ToProtoString("测试修改邮件通知列表1"),
+		Extra:           nil,
+	}
+
+	_, e := s.ModifyAddressList(ctx, req)
+	if e != nil {
+		logger.Criticalf(nil, "Test ModifyAddressList failed...")
+	}
+
+}
+
+func TestDeleteAddressList(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var adls []string
+	adls = append(adls, "adl-6ODJlDYg3LWZ")
+
+	var req = &pb.DeleteAddressListRequest{
+		AddressListId: adls,
+	}
+
+	_, e := s.DeleteAddressList(ctx, req)
+	if e != nil {
+		logger.Criticalf(nil, "Test DeleteAddressList failed...")
+	}
 
 }

@@ -8,8 +8,8 @@ import (
 	"strconv"
 
 	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/manager"
 	"openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/manager"
 )
 
 type Client struct {

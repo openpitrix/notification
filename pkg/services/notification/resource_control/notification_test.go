@@ -13,7 +13,7 @@ import (
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
 
-func TestDescribeNotifications(t *testing.T) {
+func TestDescribeNotifications4rc(t *testing.T) {
 	if !*pkg.LocalDevEnvEnabled {
 		t.Skip("Local Dev testing env disabled.")
 	}

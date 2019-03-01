@@ -73,4 +73,39 @@ var (
 		en:   "unsupported parameter [%s] value [%s]",
 		zhCN: "参数[%s]不支持值[%s]",
 	}
+	ErrorInternalError = ErrorMessage{
+		Name: "internal_error",
+		en:   "internal error",
+		zhCN: "内部错误",
+	}
+	ErrorValidateFailed = ErrorMessage{
+		Name: "validate_failed",
+		en:   "validate failed",
+		zhCN: "校验失败",
+	}
+	ErrorDeleteResourceFailed = ErrorMessage{
+		Name: "delete_resource_failed",
+		en:   "delete resource [%s] failed",
+		zhCN: "删除资源[%s]失败",
+	}
+	ErrorRetryTaskFailed = ErrorMessage{
+		Name: "retry_task_failed",
+		en:   "retry task [%s] failed",
+		zhCN: "重试任务[%s]失败",
+	}
+	ErrorRetryTaskNotExist = ErrorMessage{
+		Name: "retry_task_not_exist",
+		en:   "retry task [%s] not exist",
+		zhCN: "重试任务[%s]不存在",
+	}
+	ErrorRetryNotificationsFailed = ErrorMessage{
+		Name: "retry_notification_failed",
+		en:   "retry notification[%s] failed",
+		zhCN: "重发通知[%s]失败",
+	}
+	ErrorRetryNotificationtNotExist = ErrorMessage{
+		Name: "retry_notification_not_exist",
+		en:   "retry notification [%s] not exist",
+		zhCN: "重试通知[%s]不存在",
+	}
 )
