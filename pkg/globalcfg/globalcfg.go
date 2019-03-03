@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package global
+package globalcfg
 
 import (
 	"os"
@@ -15,8 +15,8 @@ import (
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
-	nfdb "openpitrix.io/notification/pkg/db"
-	"openpitrix.io/notification/pkg/etcd"
+	"openpitrix.io/notification/pkg/util/dbutil"
+	"openpitrix.io/openpitrix/pkg/etcd"
 )
 
 type GlobalCfg struct {
@@ -56,7 +56,7 @@ func (g *GlobalCfg) openDatabase() *GlobalCfg {
 		logger.Debugf(nil, "%+s", "Database setting for Mysql.Disable is true.")
 		return g
 	}
-	isSucc := nfdb.GetInstance().InitDataPool()
+	isSucc := dbutil.GetInstance().InitDataPool()
 
 	if !isSucc {
 		logger.Criticalf(nil, "%+s", "Init database pool failure...")
@@ -64,7 +64,7 @@ func (g *GlobalCfg) openDatabase() *GlobalCfg {
 	}
 	logger.Debugf(nil, "%+s", "Init database pool successfully.")
 
-	db := nfdb.GetInstance().GetMysqlDB()
+	db := dbutil.GetInstance().GetMysqlDB()
 	g.database = db
 	logger.Debugf(nil, "%+s", "Set globalcfg database value.")
 	return g

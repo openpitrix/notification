@@ -366,7 +366,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "address_list_name",
+            "name": "name",
             "in": "query",
             "required": false,
             "type": "array",
@@ -785,7 +785,7 @@ var Files = map[string]string{
         "address_list_id": {
           "type": "string"
         },
-        "address_list_name": {
+        "name": {
           "type": "string"
         },
         "extra": {
@@ -813,7 +813,7 @@ var Files = map[string]string{
     "pbCreateAddressListRequest": {
       "type": "object",
       "properties": {
-        "address_list_name": {
+        "name": {
           "type": "string"
         },
         "extra": {
@@ -1014,7 +1014,7 @@ var Files = map[string]string{
         "port": {
           "type": "string"
         },
-        "display_sender": {
+        "display_email": {
           "type": "string"
         },
         "email": {
@@ -1046,7 +1046,7 @@ var Files = map[string]string{
         "address_list_id": {
           "type": "string"
         },
-        "address_list_name": {
+        "name": {
           "type": "string"
         },
         "extra": {
