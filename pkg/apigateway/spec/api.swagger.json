@@ -357,7 +357,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "name",
+            "name": "address_list_name",
             "in": "query",
             "required": false,
             "type": "array",
@@ -776,7 +776,7 @@
         "address_list_id": {
           "type": "string"
         },
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {
@@ -804,7 +804,7 @@
     "pbCreateAddressListRequest": {
       "type": "object",
       "properties": {
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {
@@ -1005,7 +1005,7 @@
         "port": {
           "type": "string"
         },
-        "display_email": {
+        "display_sender": {
           "type": "string"
         },
         "email": {
@@ -1037,7 +1037,7 @@
         "address_list_id": {
           "type": "string"
         },
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {

@@ -47,7 +47,7 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_PROTOCOL : %+v", mycfg.Email.Protocol)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_EMAIL_HOST : %+v", mycfg.Email.EmailHost)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_PORT : %+v", mycfg.Email.Port)
-	logger.Debugf(nil, "NOTIFICATION_EMAIL_DISPLAY_EMAIL : %+v", mycfg.Email.DisplayEmail)
+	logger.Debugf(nil, "NOTIFICATION_EMAIL_DISPLAY_SENDER : %+v", mycfg.Email.DisplaySender)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_EMAIL : %+v", mycfg.Email.Email)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_PASSWORD : %+v", mycfg.Email.Password)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_SSL_ENABLE : %+v", mycfg.Email.SSLEnable)
