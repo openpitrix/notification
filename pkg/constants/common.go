@@ -5,19 +5,6 @@
 package constants
 
 const (
-	DefaultSelectLimit = 200
-)
-
-const (
-	ServiceType = "service_type"
-)
-
-const (
-	DefaultOffset = uint32(0)
-	DefaultLimit  = uint32(20)
-)
-
-const (
 	EtcdPrefix                  = "notification/"
 	NotificationTaskTopicPrefix = "nf-task"
 	NotificationTopicPrefix     = "nf-job"
@@ -73,12 +60,4 @@ const (
 	StatusActive   = "active"
 	StatusDisabled = "disabled"
 	StatusDeleted  = "deleted"
-)
-
-const (
-	ContentTypeInvite   = "invite"
-	ContentTypeverify   = "verify"
-	ContentTypeFee      = "fee"
-	ContentTypeBusiness = "business"
-	ContentTypeOther    = "other"
 )

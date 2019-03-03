@@ -11,11 +11,11 @@ import (
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/constants"
-	"openpitrix.io/notification/pkg/etcd"
-	"openpitrix.io/notification/pkg/global"
+	"openpitrix.io/notification/pkg/globalcfg"
 	"openpitrix.io/notification/pkg/plugins"
 	rs "openpitrix.io/notification/pkg/services/notification/resource_control"
-	"openpitrix.io/notification/pkg/util/ctxutil"
+	"openpitrix.io/openpitrix/pkg/etcd"
+	"openpitrix.io/openpitrix/pkg/util/ctxutil"
 )
 
 type Controller struct {
@@ -27,8 +27,8 @@ type Controller struct {
 
 func NewController() *Controller {
 	return &Controller{
-		taskQueue:              global.GetInstance().GetEtcd().NewQueue(constants.NotificationTaskTopicPrefix),
-		notificationQueue:      global.GetInstance().GetEtcd().NewQueue(constants.NotificationTopicPrefix),
+		taskQueue:              globalcfg.GetInstance().GetEtcd().NewQueue(constants.NotificationTaskTopicPrefix),
+		notificationQueue:      globalcfg.GetInstance().GetEtcd().NewQueue(constants.NotificationTopicPrefix),
 		runningTaskIds:         make(chan string),
 		runningNotificationIds: make(chan string),
 	}
