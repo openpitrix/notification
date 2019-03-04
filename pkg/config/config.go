@@ -39,13 +39,14 @@ type Config struct {
 	}
 
 	Email struct {
-		Protocol      string `default:"SMTP"`
-		EmailHost     string `default:"mail.app-center.cn"`
-		Port          string `default:"25"`
-		DisplaySender string `default:"admin_openpitrix"`
-		Email         string `default:"openpitrix@app-center.cn"`
-		Password      string `default:"openpitrix"`
-		SSLEnable     bool   `default:"false"`
+		Protocol  string `default:"SMTP"`
+		EmailHost string `default:"mail.app-center.cn"`
+		Port      int    `default:"25"`
+		//DisplayEmail string `default:"admin@openpitrix.io"`
+		DisplayEmail string `default:"admin_openpitrix"`
+		Email        string `default:"openpitrix@app-center.cn"`
+		Password     string `default:"openpitrix"`
+		SSLEnable    bool   `default:"false"`
 	}
 
 	App struct {

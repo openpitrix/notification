@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -66,12 +66,3 @@ func (j *fakeJson) CheckGet(key string) (Json, bool) {
 	result, ok := j.Json.CheckGet(key)
 	return &fakeJson{result}, ok
 }
-
-//
-//func (j *fakeJson) UnmarshalJSON(p []byte) error {
-//	return j.Json.UnmarshalJSON(p)
-//}
-//
-//func (j *fakeJson) MarshalJSON() ([]byte, error) {
-//	return j.Json.MarshalJSON()
-//}

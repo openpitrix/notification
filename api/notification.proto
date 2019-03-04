@@ -169,7 +169,7 @@ message DeleteAddressesResponse {
 }
 
 message CreateAddressListRequest {
-	google.protobuf.StringValue address_list_name = 1;
+	google.protobuf.StringValue name = 1;
 	google.protobuf.StringValue extra = 2;
 	repeated string address_id = 3;
 }
@@ -180,7 +180,7 @@ message CreateAddressListResponse {
 
 message DescribeAddressListRequest {
 	repeated string address_list_id = 1;
-	repeated string address_list_name = 2;
+	repeated string name = 2;
 	repeated string extra = 3;
 	repeated string status = 4;
 	uint32 limit = 5;
@@ -193,7 +193,7 @@ message DescribeAddressListRequest {
 
 message AddressList {
 	google.protobuf.StringValue address_list_id = 1;
-	google.protobuf.StringValue address_list_name = 2;
+	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue extra = 3;
 	google.protobuf.StringValue status = 4;
 	google.protobuf.Timestamp create_time = 5;
@@ -208,7 +208,7 @@ message DescribeAddressListResponse {
 
 message ModifyAddressListRequest {
 	google.protobuf.StringValue address_list_id = 1;
-	google.protobuf.StringValue address_list_name = 2;
+	google.protobuf.StringValue name = 2;
 	google.protobuf.StringValue extra = 3;
 }
 
@@ -228,7 +228,7 @@ message EmailServiceConfig {
 	google.protobuf.StringValue protocol = 1;
 	google.protobuf.StringValue email_host = 2;
 	google.protobuf.StringValue port = 3;
-	google.protobuf.StringValue display_sender = 4;
+	google.protobuf.StringValue display_email = 4;
 	google.protobuf.StringValue email = 5;
 	google.protobuf.StringValue password = 6;
 	google.protobuf.BoolValue ssl_enable = 7;
