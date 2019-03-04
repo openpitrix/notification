@@ -73,7 +73,6 @@ func NewAddress(req *pb.CreateAddressRequest) *Address {
 func AddressToPb(address *Address) *pb.Address {
 	pbAddress := pb.Address{}
 	pbAddress.AddressId = pbutil.ToProtoString(address.AddressId)
-	pbAddress.AddressListId = pbutil.ToProtoString(address.AddressListId)
 	pbAddress.Address = pbutil.ToProtoString(address.Address)
 	pbAddress.Remarks = pbutil.ToProtoString(address.Remarks)
 	pbAddress.VerificationCode = pbutil.ToProtoString(address.VerificationCode)

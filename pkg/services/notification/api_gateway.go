@@ -24,12 +24,11 @@ import (
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
 
+	"openpitrix.io/logger"
 	staticSpec "openpitrix.io/notification/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/notification/pkg/apigateway/swagger-ui"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/version"
 )
 
 type register struct {
@@ -38,9 +37,9 @@ type register struct {
 }
 
 func ServeApiGateway() {
-	version.PrintVersionInfo(func(s string, i ...interface{}) {
-		logger.Info(nil, s, i...)
-	})
+	//version.PrintVersionInfo(func(s string, i ...interface{}) {
+	//	logger.Infof(nil, s, i...)
+	//})
 
 	cfg := config.GetInstance()
 	notificationManagerHost := cfg.App.Host
@@ -49,13 +48,13 @@ func ServeApiGateway() {
 	notificationApiHost := cfg.App.ApiHost
 	notificationApiPort, _ := strconv.Atoi(cfg.App.ApiPort)
 
-	logger.Info(nil, "Notification service http://%s:%d", notificationManagerHost, notificationManagerPort)
-	logger.Info(nil, "Api service start http://%s:%d/swagger-ui/", notificationApiHost, notificationApiPort)
+	logger.Infof(nil, "Notification service http://%s:%d", notificationManagerHost, notificationManagerPort)
+	logger.Infof(nil, "Api service start http://%s:%d/swagger-ui/", notificationApiHost, notificationApiPort)
 
 	s := Server{}
 
 	if err := s.run(); err != nil {
-		logger.Critical(nil, "Api gateway run failed: %+v", err)
+		logger.Criticalf(nil, "Api gateway run failed: %+v", err)
 		panic(err)
 	}
 }
@@ -66,8 +65,8 @@ func ServeApiGateway() {
 //)
 
 func log() gin.HandlerFunc {
-	l := logger.NewLogger()
-	l.HideCallstack()
+	//l := logger.NewLogger()
+	//l.HideCallstack()
 	return func(c *gin.Context) {
 		requestID := uuid.New()
 		//c.Request.Header.Set(RequestIdKey, requestID)
@@ -95,11 +94,11 @@ func log() gin.HandlerFunc {
 
 		switch {
 		case statusCode >= 400 && statusCode <= 499:
-			l.Warn(nil, logStr)
+			logger.Warnf(nil, logStr)
 		case statusCode >= 500:
-			l.Error(nil, logStr)
+			logger.Errorf(nil, logStr)
 		default:
-			l.Info(nil, logStr)
+			logger.Infof(nil, logStr)
 		}
 	}
 }
@@ -109,7 +108,7 @@ func recovery() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				httprequest, _ := httputil.DumpRequest(c.Request, false)
-				logger.Critical(nil, "Panic recovered: %+v\n%s", err, string(httprequest))
+				logger.Criticalf(nil, "Panic recovered: %+v\n%s", err, string(httprequest))
 				c.JSON(500, gin.H{
 					"title": "Error",
 					"err":   err,
@@ -160,7 +159,7 @@ func (s *Server) mainHandler() http.Handler {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {
 			err = errors.WithStack(err)
-			logger.Error(nil, "Dial [%s] failed: %+v", r.endpoint, err)
+			logger.Errorf(nil, "Dial [%s] failed: %+v", r.endpoint, err)
 		}
 	}
 
