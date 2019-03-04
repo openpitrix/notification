@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc"
 
 	"openpitrix.io/notification/pkg/config"
-	"openpitrix.io/notification/pkg/manager"
 	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/manager"
 )
 
 type Server struct {

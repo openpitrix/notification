@@ -7,7 +7,6 @@ package emailutil
 import (
 	"context"
 	"crypto/tls"
-	"strconv"
 
 	gomail "gopkg.in/gomail.v2"
 
@@ -17,14 +16,14 @@ import (
 
 func SendMail(ctx context.Context, emailAddr string, header string, body string) error {
 	host := config.GetInstance().Email.EmailHost
-	port, _ := strconv.Atoi(config.GetInstance().Email.Port)
+	port := config.GetInstance().Email.Port
 	email := config.GetInstance().Email.Email
 	password := config.GetInstance().Email.Password
-	displaySender := config.GetInstance().Email.DisplaySender
+	displayEmail := config.GetInstance().Email.DisplayEmail
 
 	m := gomail.NewMessage()
 	//m.SetHeader("From", "openpitrix@app-center.cn")
-	m.SetAddressHeader("From", email, displaySender)
+	m.SetAddressHeader("From", email, displayEmail)
 	m.SetHeader("To", emailAddr)
 	m.SetHeader("Subject", header)
 	m.SetBody("text/html", body)

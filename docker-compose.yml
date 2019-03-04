@@ -43,6 +43,7 @@ services:
     #build: .
     #image: "notification:v0.0.1-dev"
     image: "notification:latest"
+    #command: "notification-manager"
     command: "notification"
     links:
     - notification-db:notification-db
