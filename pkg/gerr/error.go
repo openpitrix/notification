@@ -12,8 +12,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"openpitrix.io/notification/pkg/logger"
-	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/logger"
+	"openpitrix.io/openpitrix/pkg/pb"
 )
 
 const En = "en"

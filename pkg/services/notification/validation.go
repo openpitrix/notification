@@ -9,26 +9,31 @@ import (
 	"regexp"
 	"strconv"
 
-	"openpitrix.io/notification/pkg/constants"
-
 	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/openpitrix/pkg/gerr"
 )
 
 func ValidateSetServiceConfigParams(ctx context.Context, req *pb.ServiceConfig) error {
 	email := req.GetEmailServiceConfig().GetEmail().GetValue()
 	err := VerifyEmailFmt(ctx, email)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to validate SetServiceConfig Params [%s], %+v", email, err)
+		logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", email, err)
 		return err
 	}
+
+	//displayEmail := req.GetEmailServiceConfig().GetDisplayEmail().GetValue()
+	//err = VerifyEmailFmt(ctx, displayEmail)
+	//if err != nil {
+	//	logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", displayEmail, err)
+	//	return err
+	//}
 
 	portStr := req.GetEmailServiceConfig().GetPort().GetValue()
 	portNum, err := strconv.ParseInt(portStr, 10, 64)
 	err = VerifyPortFmt(ctx, portNum)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to validate SetServiceConfig Params [%s], %+v", portStr, err)
+		logger.Errorf(ctx, "Failed to validateSetServiceConfigParams [%s], %+v", portStr, err)
 		return err
 	}
 	return nil
@@ -55,32 +60,4 @@ func VerifyPortFmt(ctx context.Context, port int64) error {
 		return nil
 	}
 
-}
-
-func ValidateCreateAddressParams(ctx context.Context, req *pb.CreateAddressRequest) error {
-	address := req.GetAddress().GetValue()
-	notifyType := req.GetNotifyType().GetValue()
-
-	if notifyType == constants.NotifyTypeEmail {
-		err := VerifyEmailFmt(ctx, address)
-		if err != nil {
-			logger.Errorf(ctx, "Failed to Validate CreateAddress Params [%s], %+v", address, err)
-			return err
-		}
-	}
-	return nil
-}
-
-func ValidateModifyAddressParams(ctx context.Context, req *pb.ModifyAddressRequest) error {
-	address := req.GetAddress().GetValue()
-	notifyType := req.GetNotifyType().GetValue()
-
-	if notifyType == constants.NotifyTypeEmail {
-		err := VerifyEmailFmt(ctx, address)
-		if err != nil {
-			logger.Errorf(ctx, "Failed to Validate ModifyAddress Params [%s], %+v", address, err)
-			return err
-		}
-	}
-	return nil
 }

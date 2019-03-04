@@ -12,7 +12,7 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 
 	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/openpitrix/pkg/db"
 )
 
 type RequestHadOffset interface {
@@ -23,19 +23,15 @@ type RequestHadLimit interface {
 	GetLimit() uint32
 }
 
-func GetTime(t *timestamp.Timestamp) (tt time.Time) {
-	if t == nil {
-		return time.Now()
-	} else {
-		return FromProtoTimestamp(t)
-	}
-}
+const (
+	DefaultOffset = uint64(0)
+	DefaultLimit  = uint64(20)
+)
 
 func FromProtoTimestamp(t *timestamp.Timestamp) (tt time.Time) {
 	tt, err := ptypes.Timestamp(t)
 	if err != nil {
 		logger.Criticalf(nil, "Cannot convert timestamp [T] to time.Time [%+v]: %+v", t, err)
-		panic(err)
 	}
 	return
 }
@@ -47,7 +43,6 @@ func ToProtoTimestamp(t time.Time) (tt *timestamp.Timestamp) {
 	tt, err := ptypes.TimestampProto(t)
 	if err != nil {
 		logger.Criticalf(nil, "Cannot convert time.Time [%+v] to ToProtoTimestamp[T]: %+v", t, err)
-		panic(err)
 	}
 	return
 }
@@ -60,10 +55,6 @@ func ToProtoUInt32(uint32 uint32) *wrappers.UInt32Value {
 	return &wrappers.UInt32Value{Value: uint32}
 }
 
-func ToProtoInt32(i int32) *wrappers.Int32Value {
-	return &wrappers.Int32Value{Value: i}
-}
-
 func ToProtoBool(bool bool) *wrappers.BoolValue {
 	return &wrappers.BoolValue{Value: bool}
 }
@@ -72,36 +63,18 @@ func ToProtoBytes(bytes []byte) *wrappers.BytesValue {
 	return &wrappers.BytesValue{Value: bytes}
 }
 
-func GetOffsetFromRequest(req RequestHadOffset) uint32 {
+func GetOffsetFromRequest(req RequestHadOffset) uint64 {
 	n := req.GetOffset()
 	if n == 0 {
-		return constants.DefaultOffset
+		return DefaultOffset
 	}
-
-	return GetOffset(uint32(n))
+	return db.GetOffset(uint64(n))
 }
 
-func GetLimitFromRequest(req RequestHadLimit) uint32 {
+func GetLimitFromRequest(req RequestHadLimit) uint64 {
 	n := req.GetLimit()
 	if n == 0 {
-		return constants.DefaultLimit
+		return DefaultLimit
 	}
-	return GetLimit(uint32(n))
-}
-
-func GetLimit(n uint32) uint32 {
-	if n < 0 {
-		n = 0
-	}
-	if n > constants.DefaultSelectLimit {
-		n = constants.DefaultSelectLimit
-	}
-	return n
-}
-
-func GetOffset(n uint32) uint32 {
-	if n < 0 {
-		n = 0
-	}
-	return n
+	return db.GetLimit(uint64(n))
 }

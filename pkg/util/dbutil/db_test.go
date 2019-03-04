@@ -38,4 +38,10 @@ func TestGetMysqlDB(t *testing.T) {
 
 	db = GetInstance().GetMysqlDB()
 
+	//// query
+	//var product Product
+	//db.First(&product, 1)
+	//db.First(&product, "code = ?", "L1212")
+	//fmt.Println(product)
+
 }
