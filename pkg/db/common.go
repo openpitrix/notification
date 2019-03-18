@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package dbutil
+package db
 
 import (
 	"strings"
@@ -16,23 +16,6 @@ import (
 	"openpitrix.io/notification/pkg/util/stringutil"
 )
 
-func GetLimit(n uint32) uint32 {
-	if n < 0 {
-		n = 0
-	}
-	if n > models.DefaultSelectLimit {
-		n = models.DefaultSelectLimit
-	}
-	return n
-}
-
-func GetOffset(n uint32) uint32 {
-	if n < 0 {
-		n = 0
-	}
-	return n
-}
-
 type Request interface {
 	Reset()
 	String() string
@@ -41,11 +24,11 @@ type Request interface {
 }
 type RequestWithSortKey interface {
 	Request
-	GetSortKey() string
+	GetSortKey() *wrappers.StringValue
 }
 type RequestWithReverse interface {
 	RequestWithSortKey
-	GetReverse() bool
+	GetReverse() *wrappers.BoolValue
 }
 
 const (
@@ -171,12 +154,13 @@ func (c *Chain) buildFilterConditions(req Request, tableName string, exclude ...
 func (c *Chain) AddQueryOrderDir(req Request, defaultColumn string) *Chain {
 	order := "DESC"
 	if r, ok := req.(RequestWithReverse); ok {
-		if r.GetReverse() {
+
+		if r.GetReverse().GetValue() {
 			order = "ASC"
 		}
 	}
 	if r, ok := req.(RequestWithSortKey); ok {
-		s := r.GetSortKey()
+		s := r.GetSortKey().GetValue()
 		if s != "" {
 			defaultColumn = s
 		}

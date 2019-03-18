@@ -15,7 +15,6 @@ import (
 
 type Address struct {
 	AddressId        string    `gorm:"column:address_id"`
-	AddressListId    string    `gorm:"column:address_list_id"`
 	Address          string    `gorm:"column:address"`
 	Remarks          string    `gorm:"column:remarks"`
 	VerificationCode string    `gorm:"column:verification_code"`
@@ -39,7 +38,6 @@ const (
 //Addr is short for Address.
 const (
 	AddrColId               = "address_id"
-	AddrColAddrListId       = "address_list_id"
 	AddrColAddress          = "address"
 	AddrColRemarks          = "remarks"
 	AddrColVerificationCode = "verification_code"
@@ -57,7 +55,6 @@ func NewAddressId() string {
 func NewAddress(req *pb.CreateAddressRequest) *Address {
 	address := &Address{
 		AddressId:        NewAddressId(),
-		AddressListId:    req.GetAddressListId().GetValue(),
 		Address:          req.GetAddress().GetValue(),
 		Remarks:          req.GetRemarks().GetValue(),
 		VerificationCode: req.GetVerificationCode().GetValue(),
@@ -73,7 +70,6 @@ func NewAddress(req *pb.CreateAddressRequest) *Address {
 func AddressToPb(address *Address) *pb.Address {
 	pbAddress := pb.Address{}
 	pbAddress.AddressId = pbutil.ToProtoString(address.AddressId)
-	pbAddress.AddressListId = pbutil.ToProtoString(address.AddressListId)
 	pbAddress.Address = pbutil.ToProtoString(address.Address)
 	pbAddress.Remarks = pbutil.ToProtoString(address.Remarks)
 	pbAddress.VerificationCode = pbutil.ToProtoString(address.VerificationCode)
@@ -85,7 +81,7 @@ func AddressToPb(address *Address) *pb.Address {
 	return &pbAddress
 }
 
-func ParseAddressSet2PbSet(inAddrs []*Address) []*pb.Address {
+func AddressSet2PbSet(inAddrs []*Address) []*pb.Address {
 	var pbAddrs []*pb.Address
 	for _, inAddr := range inAddrs {
 		pbAddr := AddressToPb(inAddr)

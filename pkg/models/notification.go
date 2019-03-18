@@ -31,6 +31,8 @@ type Notification struct {
 const (
 	TableNotification = "notification"
 )
+
+//ID Prefix
 const (
 	NotificationIdPrefix = "nf-"
 )
@@ -38,14 +40,35 @@ const (
 //field name
 //Nf is short for notification.
 const (
-	NfColId          = "notification_id"
-	NfColStatus      = "status"
-	NfColContentType = "content_type"
-	NfColOwner       = "owner"
-	NfColTitle       = "title"
-	NfColAddressInfo = "address_info"
-	NfColCreateTime  = "create_time"
+	NfColId           = "notification_id"
+	NfColContentType  = "content_type"
+	NfColTitle        = "title"
+	NfColContent      = "content"
+	NfColShortContent = "short_content"
+	NfColExpiredDays  = "expired_days"
+	NfColAddressInfo  = "address_info"
+	NfColOwner        = "owner"
+	NfColStatus       = "status"
+	NfColCreateTime   = "create_time"
+	NfColStatusTime   = "status_time"
 )
+
+//constants
+const (
+	ContentTypeInvite   = "invite"
+	ContentTypeVerify   = "verify"
+	ContentTypeFee      = "fee"
+	ContentTypeBusiness = "business"
+	ContentTypeOther    = "other"
+)
+
+var ContentTypes = []string{
+	ContentTypeInvite,
+	ContentTypeVerify,
+	ContentTypeFee,
+	ContentTypeBusiness,
+	ContentTypeOther,
+}
 
 func NewNotificationId() string {
 	return idutil.GetUuid(NotificationIdPrefix)
@@ -84,7 +107,7 @@ func NotificationToPb(notification *Notification) *pb.Notification {
 	return &pbNotification
 }
 
-func ParseNfSet2PbSet(inNfs []*Notification) []*pb.Notification {
+func NotificationSet2PbSet(inNfs []*Notification) []*pb.Notification {
 	var pbNfs []*pb.Notification
 	for _, inNf := range inNfs {
 		pbNf := NotificationToPb(inNf)

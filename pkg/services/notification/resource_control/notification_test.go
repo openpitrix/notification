@@ -13,7 +13,7 @@ import (
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
 
-func TestDescribeNotifications(t *testing.T) {
+func TestDescribeNotifications4rc(t *testing.T) {
 	if !*pkg.LocalDevEnvEnabled {
 		t.Skip("Local Dev testing env disabled.")
 	}
@@ -49,8 +49,8 @@ func TestDescribeNotifications(t *testing.T) {
 	notifications, cnt, err := DescribeNotifications(nil, req)
 
 	if err != nil {
-		logger.Errorf(nil, "Failed to describe Notifications, error: %+v", err)
+		logger.Errorf(nil, "Failed to describe notifications, error, %+v.", err)
 	}
 
-	logger.Infof(nil, "Test Describe Notifications:,cnt = %d，notifications=[%+v]", cnt, notifications)
+	logger.Infof(nil, "Test describe notifications:,cnt = %d，notifications=[%+v]", cnt, notifications)
 }

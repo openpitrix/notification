@@ -96,7 +96,7 @@ func TaskToPb(task *Task) *pb.Task {
 	return &pbTask
 }
 
-func ParseTaskSet2PbSet(inTasks []*Task) []*pb.Task {
+func TaskSet2PbSet(inTasks []*Task) []*pb.Task {
 	var pbTasks []*pb.Task
 	for _, inTask := range inTasks {
 		pbTask := TaskToPb(inTask)

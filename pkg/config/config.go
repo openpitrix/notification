@@ -22,9 +22,9 @@ type Config struct {
 
 	Mysql struct {
 		Host string `default:"notification-db"`
-		Port string `default:"3306"`
-		//Host     string `default:"192.168.0.10"`
-		//Port     string `default:"13306"`
+		Port int    `default:"3306"`
+		//Host     string `default:"192.168.0.3"`
+		//Port     int    `default:"13306"`
 		User     string `default:"root"`
 		Password string `default:"password"`
 		Database string `default:"notification"`
@@ -39,26 +39,25 @@ type Config struct {
 	}
 
 	Email struct {
-		Protocol  string `default:"SMTP"`
-		EmailHost string `default:"mail.app-center.cn"`
-		Port      int    `default:"25"`
-		//DisplayEmail string `default:"admin@openpitrix.io"`
-		DisplayEmail string `default:"admin_openpitrix"`
-		Email        string `default:"openpitrix@app-center.cn"`
-		Password     string `default:"openpitrix"`
-		SSLEnable    bool   `default:"false"`
+		Protocol      string `default:"SMTP"`
+		EmailHost     string `default:"mail.app-center.cn"`
+		Port          int    `default:"25"`
+		DisplaySender string `default:"admin_openpitrix"`
+		Email         string `default:"openpitrix@app-center.cn"`
+		Password      string `default:"openpitrix"`
+		SSLEnable     bool   `default:"false"`
 	}
 
 	App struct {
 		//Host string `default:"localhost"`
-		//Port string `default:"9201"`
+		//Port int    `default:"9201"`
 		Host string `default:"notification-manager"`
-		Port string `default:"9201"`
+		Port int    `default:"9201"`
 
 		//ApiHost string `default:"localhost"`
-		//ApiPort string `default:"9200"`
+		//ApiPort int    `default:"9200"`
 		ApiHost string `default:"notification-manager"`
-		ApiPort string `default:"9200"`
+		ApiPort int    `default:"9200"`
 	}
 }
 

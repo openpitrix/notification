@@ -11,11 +11,11 @@ import (
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/constants"
-	"openpitrix.io/notification/pkg/globalcfg"
+	"openpitrix.io/notification/pkg/etcd"
+	"openpitrix.io/notification/pkg/global"
 	"openpitrix.io/notification/pkg/plugins"
 	rs "openpitrix.io/notification/pkg/services/notification/resource_control"
-	"openpitrix.io/openpitrix/pkg/etcd"
-	"openpitrix.io/openpitrix/pkg/util/ctxutil"
+	"openpitrix.io/notification/pkg/util/ctxutil"
 )
 
 type Controller struct {
@@ -27,8 +27,8 @@ type Controller struct {
 
 func NewController() *Controller {
 	return &Controller{
-		taskQueue:              globalcfg.GetInstance().GetEtcd().NewQueue(constants.NotificationTaskTopicPrefix),
-		notificationQueue:      globalcfg.GetInstance().GetEtcd().NewQueue(constants.NotificationTopicPrefix),
+		taskQueue:              global.GetInstance().GetEtcd().NewQueue(constants.NotificationTaskTopicPrefix),
+		notificationQueue:      global.GetInstance().GetEtcd().NewQueue(constants.NotificationTopicPrefix),
 		runningTaskIds:         make(chan string),
 		runningNotificationIds: make(chan string),
 	}
@@ -81,7 +81,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 
 		logger.Debugf(ctx, time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:"+notificationId)
 
-		err := rs.UpdateNotificationStatus(notificationId, constants.StatusSending)
+		err := rs.UpdateNotificationsStatus(ctx, []string{notificationId}, constants.StatusSending)
 		if err != nil {
 			logger.Errorf(ctx, "Update notification status to [sending] failed, [%+v]", err)
 			continue
@@ -93,7 +93,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 			if isNotificationFinished {
 				break
 			}
-			noSuccessfulTasks := rs.GetTasksByStatus(
+			noSuccessfulTasks := rs.GetTasksByStatus(ctx,
 				notificationId,
 				[]string{
 					constants.StatusFailed,
@@ -101,8 +101,9 @@ func (c *Controller) HandleNotification(handlerNum string) {
 					constants.StatusSending,
 				},
 			)
+
 			if len(noSuccessfulTasks) == 0 {
-				err := rs.UpdateNotificationStatus(notificationId, constants.StatusSuccessful)
+				err := rs.UpdateNotificationsStatus(ctx, []string{notificationId}, constants.StatusSuccessful)
 				if err != nil {
 					logger.Errorf(ctx, "Update notification status to [successful] failed, [%+v]", err)
 					continue
@@ -119,7 +120,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 					}
 					taskRetryTimes[noSuccessfulTask.TaskId] = retryTimes + 1
 					if taskRetryTimes[noSuccessfulTask.TaskId] > constants.MaxTaskRetryTimes {
-						err := rs.UpdateNotificationStatus(notificationId, constants.StatusFailed)
+						err := rs.UpdateNotificationsStatus(ctx, []string{notificationId}, constants.StatusFailed)
 						if err != nil {
 							logger.Errorf(ctx, "Update notification status to [failed] failed, [%+v]", err)
 							continue
@@ -146,17 +147,24 @@ func (c *Controller) HandleTask(handlerNum string) {
 
 		logger.Debugf(ctx, time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:"+taskId)
 
-		err := rs.UpdateTaskStatus(taskId, constants.StatusSending)
+		taskIds := []string{taskId}
+		err := rs.UpdateTasksStatus(ctx, taskIds, constants.StatusPending)
 		if err != nil {
 			logger.Errorf(ctx, "Update task status to [sending] failed, [%+v]", err)
 			continue
 		}
 
-		task, err := rs.GetTask(taskId)
+		tasks, err := rs.GetTasksByTaskIds(ctx, taskIds)
 		if err != nil {
 			logger.Errorf(ctx, "Get task failed, [%+v]", err)
 			continue
 		}
+		if len(tasks) == 0 {
+			logger.Errorf(ctx, "Get task failed, [%+v]", err)
+			continue
+		}
+
+		task := tasks[0]
 
 		notifier, err := plugins.GetNotifier(task)
 		if err != nil {
@@ -166,14 +174,15 @@ func (c *Controller) HandleTask(handlerNum string) {
 
 		err = notifier.Send(ctx, task)
 		if err != nil {
-			logger.Errorf(ctx, "Notifier Send failed, [%+v]", err)
-			err = rs.UpdateTaskStatus(taskId, constants.StatusFailed)
+			logger.Errorf(ctx, "Notifier Sends failed, [%+v]", err)
+
+			err := rs.UpdateTasksStatus(ctx, taskIds, constants.StatusFailed)
 			if err != nil {
 				logger.Errorf(ctx, "Update task status to [failed] failed, [%+v]", err)
 				continue
 			}
 		} else {
-			err = rs.UpdateTaskStatus(taskId, constants.StatusSuccessful)
+			err := rs.UpdateTasksStatus(ctx, taskIds, constants.StatusSuccessful)
 			if err != nil {
 				logger.Errorf(ctx, "Update task status to [successful] failed, [%+v]", err)
 				continue

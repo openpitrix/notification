@@ -2,7 +2,7 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package dbutil
+package db
 
 import (
 	"os"
@@ -37,11 +37,5 @@ func TestGetMysqlDB(t *testing.T) {
 	}
 
 	db = GetInstance().GetMysqlDB()
-
-	//// query
-	//var product Product
-	//db.First(&product, 1)
-	//db.First(&product, "code = ?", "L1212")
-	//fmt.Println(product)
 
 }

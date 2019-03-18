@@ -2,12 +2,13 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package dbutil
+package db
 
 import (
 	"fmt"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -65,7 +66,9 @@ func (m *MysqlConnPool) InitDataPool() (isSucc bool) {
 		return false
 	}
 
-	db.DB().SetMaxIdleConns(10)
+	db.DB().SetMaxIdleConns(100)
+	db.DB().SetMaxOpenConns(100)
+	db.DB().SetConnMaxLifetime(10 * time.Second)
 	db.LogMode(cfg.Mysql.LogMode)
 
 	// table name should be singular

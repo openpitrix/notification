@@ -357,7 +357,7 @@
             "collectionFormat": "multi"
           },
           {
-            "name": "name",
+            "name": "address_list_name",
             "in": "query",
             "required": false,
             "type": "array",
@@ -776,7 +776,7 @@
         "address_list_id": {
           "type": "string"
         },
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {
@@ -804,7 +804,7 @@
     "pbCreateAddressListRequest": {
       "type": "object",
       "properties": {
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {
@@ -829,9 +829,6 @@
     "pbCreateAddressRequest": {
       "type": "object",
       "properties": {
-        "address_list_id": {
-          "type": "string"
-        },
         "address": {
           "type": "string"
         },
@@ -1003,9 +1000,10 @@
           "type": "string"
         },
         "port": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
-        "display_email": {
+        "display_sender": {
           "type": "string"
         },
         "email": {
@@ -1037,11 +1035,20 @@
         "address_list_id": {
           "type": "string"
         },
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "address_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1057,9 +1064,6 @@
       "type": "object",
       "properties": {
         "address_id": {
-          "type": "string"
-        },
-        "address_list_id": {
           "type": "string"
         },
         "address": {

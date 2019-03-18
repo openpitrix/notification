@@ -4,31 +4,41 @@
 
 package models
 
-const (
-	DefaultSelectLimit = 200
-)
-
 var SearchWordColumnTable = []string{
 	TableNotification,
 	TableTask,
+	TableAddress,
+	TableAddressList,
 }
 
 // columns that can be search through sql 'like' operator
 var SearchColumns = map[string][]string{
 	TableNotification: {
-		NfColId, NfColContentType, NfColTitle, NfColAddressInfo, NfColStatus,
+		NfColContentType, NfColTitle, NfColAddressInfo, NfColStatus, NfColOwner,
 	},
 	TableTask: {
-		TaskColNfId, TaskColTaskId, TaskColStatus, TaskColErrorCode,
+		TaskColTaskId, TaskColStatus, TaskColErrorCode,
+	},
+	TableAddress: {
+		AddrColAddress, AddrColRemarks,
+	},
+	TableAddressList: {
+		AddrLsColName, AddrLsColExtra,
 	},
 }
 
 // columns that can be search through sql '=' operator
 var IndexedColumns = map[string][]string{
 	TableNotification: {
-		NfColId, NfColStatus,
+		NfColId, NfColStatus, NfColContentType, NfColOwner,
 	},
 	TableTask: {
-		TaskColNfId, TaskColStatus,
+		TaskColTaskId, TaskColStatus, TaskColNfId,
+	},
+	TableAddress: {
+		AddrColId, AddrColStatus, AddrColNotifyType,
+	},
+	TableAddressList: {
+		AddrLsColId, AddrLsColStatus,
 	},
 }

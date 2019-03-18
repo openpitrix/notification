@@ -5,11 +5,9 @@
 package notification
 
 import (
-	"strconv"
-
 	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/manager"
 	"openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/openpitrix/pkg/manager"
 )
 
 type Client struct {
@@ -18,10 +16,7 @@ type Client struct {
 
 func NewClient() (*Client, error) {
 	cfg := config.GetInstance().LoadConf()
-	notificationManagerHost := cfg.App.Host
-	notificationManagerPort, _ := strconv.Atoi(cfg.App.Port)
-
-	conn, err := manager.NewClient(notificationManagerHost, notificationManagerPort)
+	conn, err := manager.NewClient(cfg.App.Host, cfg.App.Port)
 	if err != nil {
 		return nil, err
 	}
