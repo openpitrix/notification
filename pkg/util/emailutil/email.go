@@ -22,13 +22,11 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string)
 	displaySender := config.GetInstance().Email.DisplaySender
 
 	m := gomail.NewMessage()
-	//m.SetHeader("From", "openpitrix@app-center.cn")
 	m.SetAddressHeader("From", email, displaySender)
 	m.SetHeader("To", emailAddr)
 	m.SetHeader("Subject", header)
 	m.SetBody("text/html", body)
 
-	//portNum, _ := strconv.Atoi(port)
 	d := gomail.NewDialer(host, port, email, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	if err := d.DialAndSend(m); err != nil {

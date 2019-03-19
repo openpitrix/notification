@@ -246,6 +246,11 @@ message GetServiceConfigRequest {
 	repeated string service_type = 1;
 }
 
+message ValidateEmailServiceResponse{
+	google.protobuf.BoolValue is_succ = 1;
+}
+
+
 service notification {
 	rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
@@ -382,6 +387,9 @@ service notification {
 			body: "*"
 		};
 	}
+
+
+
 	rpc GetServiceConfig (GetServiceConfigRequest) returns (ServiceConfig) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "get service configration"
@@ -391,4 +399,17 @@ service notification {
 			body: "*"
 		};
 	}
+
+
+	rpc ValidateEmailService(ServiceConfig)  returns (ValidateEmailServiceResponse){
+	option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "validate email service"
+		};
+	option (google.api.http) = {
+			post: "/v1/notifications/validate_email_service"
+			body: "*"
+		};
+	}
+
+
 }
