@@ -453,3 +453,35 @@ func TestDeleteAddressList(t *testing.T) {
 	t.Log(nil, "Test Passed, TestDeleteAddressList", resp)
 
 }
+
+func TestValidateEmailService(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+
+	config.GetInstance().LoadConf()
+	s := &Server{controller: NewController()}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	emailcfg := &pb.EmailServiceConfig{
+		Protocol:      pbutil.ToProtoString("POP3"),
+		EmailHost:     pbutil.ToProtoString("smtp.qq.com"),
+		Port:          pbutil.ToProtoUInt32(25),
+		DisplaySender: pbutil.ToProtoString("OpenPitrix"),
+		Email:         pbutil.ToProtoString("openpitrix@foxmail.com"),
+		Password:      pbutil.ToProtoString("*********"),
+		SslEnable:     pbutil.ToProtoBool(false),
+	}
+
+	var req = &pb.ServiceConfig{
+		EmailServiceConfig: emailcfg,
+	}
+	resp, err := s.ValidateEmailService(ctx, req)
+	if err != nil {
+		t.Fatalf("Test ValidateEmailService failed")
+	}
+
+	t.Log(nil, "Test Passed, Test ValidateEmailService", resp.IsSucc)
+
+}

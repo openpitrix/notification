@@ -35,7 +35,7 @@ type Config struct {
 
 	Etcd struct {
 		Endpoints string `default:"notification-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
-		//Endpoints string `default:"192.168.0.7:2379"`
+		//Endpoints string `default:"192.168.0.3:12379"`
 	}
 
 	Email struct {

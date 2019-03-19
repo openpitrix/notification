@@ -6,7 +6,10 @@ package notification
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+
+	gomail "gopkg.in/gomail.v2"
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/constants"
@@ -440,6 +443,38 @@ func (s *Server) DeleteAddressList(ctx context.Context, req *pb.DeleteAddressLis
 
 	return &pb.DeleteAddressListResponse{
 		AddressListId: addressListIds,
+	}, nil
+
+}
+
+func (s *Server) ValidateEmailService(ctx context.Context, req *pb.ServiceConfig) (*pb.ValidateEmailServiceResponse, error) {
+	host := req.GetEmailServiceConfig().GetEmailHost().GetValue()
+	port := req.GetEmailServiceConfig().GetPort().GetValue()
+	email := req.GetEmailServiceConfig().GetEmail().GetValue()
+	password := req.GetEmailServiceConfig().GetPassword().GetValue()
+	displaySender := req.GetEmailServiceConfig().GetDisplaySender().GetValue()
+
+	emailAddr := email
+	header := "ValidateEmailService"
+	body := "<p>Email Service Config is working!</p>"
+
+	m := gomail.NewMessage()
+	m.SetAddressHeader("From", email, displaySender)
+	m.SetHeader("To", emailAddr)
+	m.SetHeader("Subject", header)
+	m.SetBody("text/html", body)
+
+	d := gomail.NewDialer(host, int(port), email, password)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	if err := d.DialAndSend(m); err != nil {
+		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
+		return &pb.ValidateEmailServiceResponse{
+			IsSucc: pbutil.ToProtoBool(false),
+		}, err
+	}
+
+	return &pb.ValidateEmailServiceResponse{
+		IsSucc: pbutil.ToProtoBool(true),
 	}, nil
 
 }
