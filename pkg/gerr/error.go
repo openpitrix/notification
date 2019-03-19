@@ -12,8 +12,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"openpitrix.io/openpitrix/pkg/logger"
-	"openpitrix.io/openpitrix/pkg/pb"
+	"openpitrix.io/logger"
+	"openpitrix.io/notification/pkg/pb"
 )
 
 const En = "en"
@@ -29,13 +29,13 @@ func newStatus(ctx context.Context, code codes.Code, err error, errMsg ErrorMess
 	if err != nil {
 		errorDetail.Cause = fmt.Sprintf("%+v", err)
 	}
-	logger.NewLogger().WithDepth(5).Error(ctx, "err: %+v, errMsg: %s", err, errMsg.Message(locale, err, a...))
+	logger.New().WithDepth(2).Errorf(ctx, "err: %+v, errMsg: %s", err, errMsg.Message(locale, err, a...))
 
 	sd, e := s.WithDetails(errorDetail)
 	if e == nil {
 		return sd
 	} else {
-		logger.NewLogger().WithDepth(5).Error(ctx, "%+v", errors.WithStack(e))
+		logger.New().WithDepth(2).Errorf(ctx, "%+v", errors.WithStack(e))
 	}
 	return s
 }

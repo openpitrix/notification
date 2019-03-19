@@ -49,6 +49,6 @@ func TestNotification(t *testing.T) {
 	t.Log(nfID)
 	//t.Log("CreateNotification successfully,nfID = [%s]", nfID)
 
-	t.Log("test AppVendor finish, all test is ok")
+	t.Log("test notification finish, all tests is ok")
 
 }

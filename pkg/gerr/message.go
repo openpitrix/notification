@@ -73,4 +73,49 @@ var (
 		en:   "unsupported parameter [%s] value [%s]",
 		zhCN: "参数[%s]不支持值[%s]",
 	}
+	ErrorInternalError = ErrorMessage{
+		Name: "internal_error",
+		en:   "internal error",
+		zhCN: "内部错误",
+	}
+	ErrorValidateFailed = ErrorMessage{
+		Name: "validate_failed",
+		en:   "validate failed",
+		zhCN: "校验失败",
+	}
+	ErrorDeleteResourceFailed = ErrorMessage{
+		Name: "delete_resource_failed",
+		en:   "delete resource [%s] failed",
+		zhCN: "删除资源[%s]失败",
+	}
+	ErrorRetryTaskFailed = ErrorMessage{
+		Name: "retry_task_failed",
+		en:   "retry task [%s] failed",
+		zhCN: "重试任务[%s]失败",
+	}
+	ErrorTaskNotExist = ErrorMessage{
+		Name: "task_not_exist",
+		en:   "task [%s] not exist",
+		zhCN: "任务[%s]不存在",
+	}
+	ErrorRetryNotificationsFailed = ErrorMessage{
+		Name: "retry_notification_failed",
+		en:   "retry notification[%s] failed",
+		zhCN: "重试通知[%s]失败",
+	}
+	ErrorNotificationNotExist = ErrorMessage{
+		Name: "notification_not_exist",
+		en:   "notification [%s] not exist",
+		zhCN: "通知[%s]不存在",
+	}
+	ErrorAddressNotExist = ErrorMessage{
+		Name: "address_not_exist",
+		en:   "address [%s] not exist",
+		zhCN: "地址[%s]不存在",
+	}
+	ErrorAddressListNotExist = ErrorMessage{
+		Name: "address_list_not_exist",
+		en:   "address_list [%s] not exist",
+		zhCN: "地址列表[%s]不存在",
+	}
 )

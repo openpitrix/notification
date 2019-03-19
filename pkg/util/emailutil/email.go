@@ -19,15 +19,16 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string)
 	port := config.GetInstance().Email.Port
 	email := config.GetInstance().Email.Email
 	password := config.GetInstance().Email.Password
-	displayEmail := config.GetInstance().Email.DisplayEmail
+	displaySender := config.GetInstance().Email.DisplaySender
 
 	m := gomail.NewMessage()
 	//m.SetHeader("From", "openpitrix@app-center.cn")
-	m.SetAddressHeader("From", email, displayEmail)
+	m.SetAddressHeader("From", email, displaySender)
 	m.SetHeader("To", emailAddr)
 	m.SetHeader("Subject", header)
 	m.SetBody("text/html", body)
 
+	//portNum, _ := strconv.Atoi(port)
 	d := gomail.NewDialer(host, port, email, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	if err := d.DialAndSend(m); err != nil {

@@ -18,8 +18,8 @@ func TestLoadConf(t *testing.T) {
 	os.Setenv("NOTIFICATION_LOG_LEVEL", "debug")
 	os.Setenv("NOTIFICATION_GRPC_SHOW_ERROR_CAUSE", "false")
 
-	//os.Setenv("NOTIFICATION_MYSQL_HOST", "MYSQL_HOST_test")
-	//os.Setenv("NOTIFICATION_MYSQL_PORT", "8888")
+	os.Setenv("NOTIFICATION_MYSQL_HOST", "MYSQL_HOST_test")
+	os.Setenv("NOTIFICATION_MYSQL_PORT", "13306")
 
 	mycfg := GetInstance()
 	mycfg.LoadConf()
@@ -47,7 +47,7 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_PROTOCOL : %+v", mycfg.Email.Protocol)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_EMAIL_HOST : %+v", mycfg.Email.EmailHost)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_PORT : %+v", mycfg.Email.Port)
-	logger.Debugf(nil, "NOTIFICATION_EMAIL_DISPLAY_EMAIL : %+v", mycfg.Email.DisplayEmail)
+	logger.Debugf(nil, "NOTIFICATION_EMAIL_DISPLAY_SENDER : %+v", mycfg.Email.DisplaySender)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_EMAIL : %+v", mycfg.Email.Email)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_PASSWORD : %+v", mycfg.Email.Password)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_SSL_ENABLE : %+v", mycfg.Email.SSLEnable)

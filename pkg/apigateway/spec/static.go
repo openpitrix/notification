@@ -366,7 +366,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "name",
+            "name": "address_list_name",
             "in": "query",
             "required": false,
             "type": "array",
@@ -785,7 +785,7 @@ var Files = map[string]string{
         "address_list_id": {
           "type": "string"
         },
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {
@@ -813,7 +813,7 @@ var Files = map[string]string{
     "pbCreateAddressListRequest": {
       "type": "object",
       "properties": {
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {
@@ -838,9 +838,6 @@ var Files = map[string]string{
     "pbCreateAddressRequest": {
       "type": "object",
       "properties": {
-        "address_list_id": {
-          "type": "string"
-        },
         "address": {
           "type": "string"
         },
@@ -1012,9 +1009,10 @@ var Files = map[string]string{
           "type": "string"
         },
         "port": {
-          "type": "string"
+          "type": "integer",
+          "format": "int64"
         },
-        "display_email": {
+        "display_sender": {
           "type": "string"
         },
         "email": {
@@ -1046,11 +1044,20 @@ var Files = map[string]string{
         "address_list_id": {
           "type": "string"
         },
-        "name": {
+        "address_list_name": {
           "type": "string"
         },
         "extra": {
           "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "address_id": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1066,9 +1073,6 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_id": {
-          "type": "string"
-        },
-        "address_list_id": {
           "type": "string"
         },
         "address": {
