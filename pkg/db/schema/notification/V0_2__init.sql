@@ -18,3 +18,4 @@ alter table address_list_binding
 
 
 
+alter table notification alter column short_content text   null comment 'used by sms, mobile';

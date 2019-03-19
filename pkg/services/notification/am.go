@@ -26,7 +26,7 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.CreateNotificationRequest:
 		return manager.NewChecker(ctx, r).
-			Required(models.NfColContentType, models.NfColTitle, models.NfColShortContent, models.NfColAddressInfo).
+			Required(models.NfColContentType, models.NfColTitle, models.NfColAddressInfo).
 			StringChosen(models.NfColContentType, models.ContentTypes).
 			Exec()
 	case *pb.DescribeNotificationsRequest:
