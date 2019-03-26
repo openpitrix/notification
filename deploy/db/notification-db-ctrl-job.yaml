@@ -30,7 +30,7 @@ spec:
         - name: FLYWAY_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: password.txt
+              key: password
               name: mysql-pass
         image: openpitrix/notification:flyway
         imagePullPolicy: Always

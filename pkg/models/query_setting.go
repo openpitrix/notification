@@ -11,34 +11,34 @@ var SearchWordColumnTable = []string{
 	TableAddressList,
 }
 
-// columns that can be search through sql 'like' operator
-var SearchColumns = map[string][]string{
-	TableNotification: {
-		NfColContentType, NfColTitle, NfColAddressInfo, NfColStatus, NfColOwner,
-	},
-	TableTask: {
-		TaskColTaskId, TaskColStatus, TaskColErrorCode,
-	},
-	TableAddress: {
-		AddrColAddress, AddrColRemarks,
-	},
-	TableAddressList: {
-		AddrLsColName, AddrLsColExtra,
-	},
-}
-
 // columns that can be search through sql '=' operator
 var IndexedColumns = map[string][]string{
 	TableNotification: {
-		NfColId, NfColStatus, NfColContentType, NfColOwner,
+		NfColId, NfColContentType, NfColOwner, NfColStatus,
 	},
 	TableTask: {
-		TaskColTaskId, TaskColStatus, TaskColNfId,
+		TaskColTaskId, TaskColNfId, TaskColErrorCode, TaskColStatus,
 	},
 	TableAddress: {
-		AddrColId, AddrColStatus, AddrColNotifyType,
+		AddrColId, AddrColAddress, AddrColNotifyType, AddrColStatus,
 	},
 	TableAddressList: {
-		AddrLsColId, AddrLsColStatus,
+		AddrLsColId, AddrLsColName, AddrLsColExtra, AddrLsColStatus,
+	},
+}
+
+// columns that can be search through sql 'like' operator
+var SearchColumns = map[string][]string{
+	TableNotification: {
+		NfColId, NfColContentType, NfColTitle, NfColShortContent, NfColAddressInfo, NfColStatus, NfColOwner,
+	},
+	TableTask: {
+		TaskColTaskId, TaskColNfId, TaskColStatus, TaskColErrorCode,
+	},
+	TableAddress: {
+		AddrColId, AddrColAddress, AddrColNotifyType, AddrColStatus, AddrColRemarks,
+	},
+	TableAddressList: {
+		AddrLsColId, AddrLsColName, AddrLsColName, AddrLsColExtra,
 	},
 }

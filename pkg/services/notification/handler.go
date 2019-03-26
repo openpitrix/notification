@@ -66,6 +66,11 @@ func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 }
 
 func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificationRequest) (*pb.CreateNotificationResponse, error) {
+	err := ValidateCreateNotificationParams(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
 	notification := models.NewNotification(
 		req.GetContentType().GetValue(),
 		req.GetTitle().GetValue(),
@@ -74,9 +79,11 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 		req.GetAddressInfo().GetValue(),
 		req.GetOwner().GetValue(),
 		req.GetExpiredDays().GetValue(),
+		req.GetAvailableStartTime().GetValue(),
+		req.GetAvailableEndTime().GetValue(),
 	)
 
-	err := rs.RegisterNotification(ctx, notification)
+	err = rs.RegisterNotification(ctx, notification)
 	if err != nil {
 		logger.Errorf(ctx, "Failed to register notification, %+v.", err)
 		return nil, err
@@ -275,6 +282,35 @@ func (s *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 }
 
 func (s *Server) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
+	//Step1:check Address existed or not, if exist just return the address id
+	addr := req.GetAddress().GetValue()
+	var addrs []string
+	addrs = append(addrs, addr)
+
+	var reqDescribeAddresses = &pb.DescribeAddressesRequest{
+		Address: addrs,
+	}
+	respDescribeAddresses, err := s.DescribeAddresses(ctx, reqDescribeAddresses)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to describe addresses, %+v.", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+	}
+	if respDescribeAddresses.GetTotalCount() != 0 {
+		return &pb.CreateAddressResponse{
+			AddressId: respDescribeAddresses.GetAddressSet()[0].AddressId,
+		}, nil
+	}
+
+	//Step2:if address does not exist,create it.
+	resp, err := s.createAddress(ctx, req)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to create address, %+v.", err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+	}
+	return resp, nil
+}
+
+func (s *Server) createAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
 	err := ValidateCreateAddressParams(ctx, req)
 	if err != nil {
 		return nil, err
@@ -288,7 +324,6 @@ func (s *Server) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest
 	}
 
 	logger.Debugf(ctx, "Create address [%s] successfully.", addr.AddressId)
-
 	return &pb.CreateAddressResponse{
 		AddressId: pbutil.ToProtoString(addrId),
 	}, nil

@@ -9,10 +9,9 @@ import (
 	"testing"
 	"time"
 
-	"openpitrix.io/notification/pkg/constants"
-
 	pkg "openpitrix.io/notification/pkg"
 	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
@@ -83,18 +82,24 @@ func TestCreateNotification(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"513590612@qq.com\"]}"
-	//testAddrsStr := "{\"email\": [ \"513590612@qq.com\"]}"
+	testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
+	//testAddrsStr := "{\"email\": [ \"openpitrix@163.com"]}"
 	//testAddrListIds := "[\"adl-RWAZ8kZ39wzn\"]"
+
+	//TimeFormat := "15:04:05"
+	//availableStartTime, _ := time.Parse(TimeFormat, "00:00:00")
+	//availableEndTime, _ := time.Parse(TimeFormat, "24:00:00")
+
 	var req = &pb.CreateNotificationRequest{
-		ContentType:  pbutil.ToProtoString("other"),
-		Title:        pbutil.ToProtoString("handler_test.go sends an email."),
-		Content:      pbutil.ToProtoString("Content:handler_test.go sends an email."),
-		ShortContent: pbutil.ToProtoString("ShortContent"),
-		ExpiredDays:  pbutil.ToProtoUInt32(0),
-		Owner:        pbutil.ToProtoString("HuoJiao"),
-		//AddressInfo:  pbutil.ToProtoString(testAddrListIds),
-		AddressInfo: pbutil.ToProtoString(testAddrsStr),
+		ContentType:        pbutil.ToProtoString("other"),
+		Title:              pbutil.ToProtoString("handler_test.go sends an email."),
+		Content:            pbutil.ToProtoString("Content:handler_test.go sends an email."),
+		ShortContent:       pbutil.ToProtoString("ShortContent"),
+		ExpiredDays:        pbutil.ToProtoUInt32(0),
+		Owner:              pbutil.ToProtoString("HuoJiao"),
+		AddressInfo:        pbutil.ToProtoString(testAddrsStr),
+		AvailableStartTime: pbutil.ToProtoString(""),
+		AvailableEndTime:   pbutil.ToProtoString(""),
 	}
 	resp, err := s.CreateNotification(ctx, req)
 	if err != nil {
@@ -115,7 +120,7 @@ func TestRetryNotifications(t *testing.T) {
 	defer cancel()
 
 	var nfIds []string
-	nfIds = append(nfIds, "nf-ByERxoV2lAZO")
+	nfIds = append(nfIds, "nf-R3E9xWV7yXnj")
 	var req = &pb.RetryNotificationsRequest{
 		NotificationId: nfIds,
 	}
@@ -138,7 +143,7 @@ func TestRetryTasks(t *testing.T) {
 	defer cancel()
 
 	var taskIds []string
-	taskIds = append(taskIds, "t-o4WE3lPx8R98")
+	taskIds = append(taskIds, "t-Plj28mV7yXnj")
 
 	var req = &pb.RetryTasksRequest{
 		TaskId: taskIds,
@@ -163,28 +168,29 @@ func TestDescribeNotifications(t *testing.T) {
 	defer cancel()
 
 	var nfIds []string
-	nfIds = append(nfIds, "nf-0YK516ArgM94")
+	nfIds = append(nfIds, "nf-YA4v2ANNMX0D")
 
-	var contentTypes []string
-	contentTypes = append(contentTypes, "other")
+	//var contentTypes []string
+	//contentTypes = append(contentTypes, "other")
 
-	var owners []string
-	owners = append(owners, "HuoJiao")
+	//var owners []string
+	//owners = append(owners, "HuoJiao")
 
 	var statuses []string
 	statuses = append(statuses, "successful")
 	statuses = append(statuses, "pending")
+	statuses = append(statuses, "failed")
 
 	var req = &pb.DescribeNotificationsRequest{
 		NotificationId: nfIds,
-		ContentType:    contentTypes,
-		Owner:          owners,
-		Status:         statuses,
-		//Limit:      20,
-		//Offset:     0,
-		SearchWord: pbutil.ToProtoString("successful"),
-		SortKey:    pbutil.ToProtoString("status"),
-		Reverse:    pbutil.ToProtoBool(true),
+		//ContentType:    contentTypes,
+		//Owner:          owners,
+		Status: statuses,
+		Limit:  20,
+		Offset: 0,
+		//SearchWord: pbutil.ToProtoString("successful"),
+		SortKey: pbutil.ToProtoString("status"),
+		Reverse: pbutil.ToProtoBool(true),
 	}
 	resp, err := s.DescribeNotifications(ctx, req)
 	if err != nil {
@@ -205,24 +211,25 @@ func TestDescribeTasks(t *testing.T) {
 	defer cancel()
 
 	var nfIds []string
-	nfIds = append(nfIds, "nf-6YoKxDk9BLWZ")
-	nfIds = append(nfIds, "nf-WpQ8pmVBvJ98")
+	nfIds = append(nfIds, "nf-EwMK3Kn55AWZ")
+	nfIds = append(nfIds, "nf-PnWMnjJGyXnj")
 
 	var taskIds []string
-	taskIds = append(taskIds, "t-7k1BMPnAq3zn")
+	taskIds = append(taskIds, "t-B10JwjJGyXnj")
 
 	var statuses []string
 	statuses = append(statuses, "successful")
 
 	var req = &pb.DescribeTasksRequest{
-		NotificationId: nfIds,
 		TaskId:         taskIds,
-		TaskAction:     nil,
+		NotificationId: nfIds,
 		ErrorCode:      nil,
 		Status:         statuses,
-		SearchWord:     nil,
-		SortKey:        nil,
-		Reverse:        nil,
+		Limit:          20,
+		Offset:         0,
+		SearchWord:     pbutil.ToProtoString("successful"),
+		SortKey:        pbutil.ToProtoString("status"),
+		Reverse:        pbutil.ToProtoBool(true),
 	}
 	resp, err := s.DescribeTasks(ctx, req)
 	if err != nil {
@@ -243,7 +250,7 @@ func TestCreateAddress(t *testing.T) {
 	defer cancel()
 
 	var req = &pb.CreateAddressRequest{
-		Address:          pbutil.ToProtoString("openpitrix@163.com"),
+		Address:          pbutil.ToProtoString("huojiao2006@163.com"),
 		Remarks:          pbutil.ToProtoString("sss2"),
 		VerificationCode: pbutil.ToProtoString("sss3"),
 		NotifyType:       pbutil.ToProtoString("email"),
@@ -275,15 +282,20 @@ func TestDescribeAddresses(t *testing.T) {
 	var nfTypes []string
 	nfTypes = append(nfTypes, "email")
 
+	var addrs []string
+	addrs = append(addrs, "huojiao@163.com")
+
 	var req = &pb.DescribeAddressesRequest{
 		AddressId:     AddressIds,
 		AddressListId: nil,
-		Address:       nil,
-		Status:        statuses,
+		Address:       addrs,
 		NotifyType:    nfTypes,
-		SearchWord:    nil,
-		SortKey:       nil,
-		Reverse:       nil,
+		Status:        statuses,
+		Limit:         20,
+		Offset:        0,
+		SearchWord:    pbutil.ToProtoString("successful"),
+		SortKey:       pbutil.ToProtoString("status"),
+		Reverse:       pbutil.ToProtoBool(true),
 	}
 	resp, err := s.DescribeAddresses(ctx, req)
 	if err != nil {
@@ -303,8 +315,8 @@ func TestModifyAddress(t *testing.T) {
 	defer cancel()
 
 	var req = &pb.ModifyAddressRequest{
-		AddressId:        pbutil.ToProtoString("addr-W2LE6NoKGpnj"),
-		Address:          pbutil.ToProtoString("hello1@openpitrix.com"),
+		AddressId:        pbutil.ToProtoString("addr-wRKQzOy7jAWZ"),
+		Address:          pbutil.ToProtoString("hello@openpitrix.com"),
 		Remarks:          pbutil.ToProtoString("测试Remarks2211"),
 		VerificationCode: pbutil.ToProtoString("VerificationCode test"),
 		NotifyType:       pbutil.ToProtoString("email"),
@@ -328,7 +340,7 @@ func TestDeleteAddresses(t *testing.T) {
 	defer cancel()
 
 	var addressIds []string
-	addressIds = append(addressIds, "addr-xPgQPnOJM36K11")
+	addressIds = append(addressIds, "addr-wRKQzOy7jAWZ")
 
 	var req = &pb.DeleteAddressesRequest{
 		AddressId: addressIds,
@@ -384,14 +396,22 @@ func TestDescribeAddressList(t *testing.T) {
 	var statuses []string
 	statuses = append(statuses, "active")
 
+	var addressListNames []string
+	addressListNames = append(addressListNames, "test")
+
+	var extras []string
+	extras = append(extras, "test")
+
 	var req = &pb.DescribeAddressListRequest{
 		AddressListId:   addressListIds,
-		AddressListName: nil,
-		Extra:           nil,
+		AddressListName: addressListNames,
+		Extra:           extras,
 		Status:          statuses,
-		SearchWord:      nil,
-		SortKey:         nil,
-		Reverse:         nil,
+		Limit:           20,
+		Offset:          0,
+		SearchWord:      pbutil.ToProtoString("successful"),
+		SortKey:         pbutil.ToProtoString("status"),
+		Reverse:         pbutil.ToProtoBool(true),
 	}
 	resp, err := s.DescribeAddressList(ctx, req)
 	if err != nil {

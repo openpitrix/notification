@@ -118,4 +118,14 @@ var (
 		en:   "address_list [%s] not exist",
 		zhCN: "地址列表[%s]不存在",
 	}
+	ErrorIllegalTimeFormat = ErrorMessage{
+		Name: "illegal_time_format",
+		en:   "illegal time format [%s]",
+		zhCN: "错误的时间格式[%s]",
+	}
+	ErrorNotAvailableTimeRange = ErrorMessage{
+		Name: "not_available_time",
+		en:   "not available time [%s]-[%s]",
+		zhCN: "不在有效时间范围内[%s]-[%s]",
+	}
 )

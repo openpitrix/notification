@@ -19,6 +19,8 @@ message CreateNotificationRequest {
 	google.protobuf.UInt32Value expired_days = 5;
 	google.protobuf.StringValue owner = 6;
 	google.protobuf.StringValue address_info = 7;
+	google.protobuf.StringValue available_start_time = 8;
+	google.protobuf.StringValue available_end_time = 9;
 }
 
 message CreateNotificationResponse {
@@ -37,6 +39,8 @@ message Notification {
 	google.protobuf.Timestamp status_time = 9;
 	google.protobuf.StringValue owner = 10;
 	google.protobuf.StringValue address_info = 11;
+	google.protobuf.StringValue available_start_time = 12;
+	google.protobuf.StringValue available_end_time = 13;
 }
 
 message DescribeNotificationsRequest {
@@ -66,28 +70,26 @@ message RetryNotificationsResponse {
 }
 
 message Task {
-	google.protobuf.StringValue notification_id = 1;
-	google.protobuf.StringValue task_id = 2;
-	google.protobuf.StringValue task_action = 3;
-	google.protobuf.UInt32Value error_code = 4;
-	google.protobuf.StringValue status = 5;
-	google.protobuf.Timestamp create_time = 6;
-	google.protobuf.Timestamp status_time = 7;
-	google.protobuf.StringValue directive = 8;
+	google.protobuf.StringValue task_id = 1;
+	google.protobuf.StringValue notification_id = 2;
+	google.protobuf.UInt32Value error_code = 3;
+	google.protobuf.StringValue status = 4;
+	google.protobuf.Timestamp create_time = 5;
+	google.protobuf.Timestamp status_time = 6;
+	google.protobuf.StringValue directive = 7;
 }
 
 message DescribeTasksRequest {
-	repeated string notification_id = 1;
-	repeated string task_id = 2;
-	repeated string task_action = 3;
-	repeated string error_code = 4;
-	repeated string status = 5;
-	uint32 limit = 6;
-	uint32 offset = 7;
-	google.protobuf.StringValue search_word = 8;
-	google.protobuf.StringValue sort_key = 9;
-	google.protobuf.BoolValue reverse = 10;
-	repeated string display_columns = 11;
+	repeated string task_id = 1;
+	repeated string notification_id = 2;
+	repeated string error_code = 3;
+	repeated string status = 4;
+	uint32 limit = 5;
+	uint32 offset = 6;
+	google.protobuf.StringValue search_word = 7;
+	google.protobuf.StringValue sort_key = 8;
+	google.protobuf.BoolValue reverse = 9;
+	repeated string display_columns = 10;
 }
 
 message DescribeTasksResponse {

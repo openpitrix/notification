@@ -7,6 +7,7 @@ package stringutil
 import (
 	"regexp"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -84,3 +85,13 @@ func SimplifyString(s string) string {
 }
 
 var reMoreSpace = regexp.MustCompile(`\s+`)
+
+func CheckTimeAvailable(availableStartTimeStr string, availableEndTimeStr string) bool {
+	timeFmt := "15:04:05"
+	currentTime := time.Now().Format(timeFmt)
+	currentTime1, _ := time.Parse(timeFmt, currentTime)
+
+	availableStartTime, _ := time.Parse(timeFmt, availableStartTimeStr)
+	availableEndTime, _ := time.Parse(timeFmt, availableEndTimeStr)
+	return availableStartTime.Before(currentTime1) && availableEndTime.After(currentTime1)
+}
