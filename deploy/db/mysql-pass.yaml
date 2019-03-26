@@ -1,0 +1,8 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: mysql-pass
+  namespace: notification-system
+data:
+  password: cGFzc3dvcmQ=
+type: Opaque

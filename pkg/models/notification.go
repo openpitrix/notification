@@ -14,17 +14,19 @@ import (
 )
 
 type Notification struct {
-	NotificationId string    `gorm:"column:notification_id"`
-	ContentType    string    `gorm:"column:content_type"`
-	Title          string    `gorm:"column:title"`
-	Content        string    `gorm:"column:content"`
-	ShortContent   string    `gorm:"column:short_content"`
-	ExpiredDays    uint32    `gorm:"column:expired_days"`
-	AddressInfo    string    `gorm:"column:address_info"`
-	Owner          string    `gorm:"column:owner"`
-	Status         string    `gorm:"column:status"`
-	CreateTime     time.Time `gorm:"column:create_time"`
-	StatusTime     time.Time `gorm:"column:status_time"`
+	NotificationId     string    `gorm:"column:notification_id"`
+	ContentType        string    `gorm:"column:content_type"`
+	Title              string    `gorm:"column:title"`
+	Content            string    `gorm:"column:content"`
+	ShortContent       string    `gorm:"column:short_content"`
+	ExpiredDays        uint32    `gorm:"column:expired_days"`
+	AddressInfo        string    `gorm:"column:address_info"`
+	Owner              string    `gorm:"column:owner"`
+	Status             string    `gorm:"column:status"`
+	CreateTime         time.Time `gorm:"column:create_time"`
+	StatusTime         time.Time `gorm:"column:status_time"`
+	AvailableStartTime string    `gorm:"column:available_start_time"`
+	AvailableEndTime   string    `gorm:"column:available_end_time"`
 }
 
 //table name
@@ -74,19 +76,21 @@ func NewNotificationId() string {
 	return idutil.GetUuid(NotificationIdPrefix)
 }
 
-func NewNotification(contentType, title, content, shortContent, addressInfo, owner string, expiredDays uint32) *Notification {
+func NewNotification(contentType, title, content, shortContent, addressInfo, owner string, expiredDays uint32, availableStartTimeStr string, availableEndTimeStr string) *Notification {
 	notification := &Notification{
-		NotificationId: NewNotificationId(),
-		ContentType:    contentType,
-		Title:          title,
-		Content:        content,
-		ShortContent:   shortContent,
-		ExpiredDays:    expiredDays,
-		AddressInfo:    addressInfo,
-		Owner:          owner,
-		Status:         constants.StatusPending,
-		CreateTime:     time.Now(),
-		StatusTime:     time.Now(),
+		NotificationId:     NewNotificationId(),
+		ContentType:        contentType,
+		Title:              title,
+		Content:            content,
+		ShortContent:       shortContent,
+		ExpiredDays:        expiredDays,
+		AddressInfo:        addressInfo,
+		Owner:              owner,
+		Status:             constants.StatusPending,
+		CreateTime:         time.Now(),
+		StatusTime:         time.Now(),
+		AvailableStartTime: availableStartTimeStr,
+		AvailableEndTime:   availableEndTimeStr,
 	}
 	return notification
 }
@@ -104,6 +108,8 @@ func NotificationToPb(notification *Notification) *pb.Notification {
 	pbNotification.Status = pbutil.ToProtoString(notification.Status)
 	pbNotification.CreateTime = pbutil.ToProtoTimestamp(notification.CreateTime)
 	pbNotification.StatusTime = pbutil.ToProtoTimestamp(notification.StatusTime)
+	pbNotification.AvailableStartTime = pbutil.ToProtoString(notification.AvailableStartTime)
+	pbNotification.AvailableEndTime = pbutil.ToProtoString(notification.AvailableEndTime)
 	return &pbNotification
 }
 

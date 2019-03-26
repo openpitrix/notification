@@ -62,13 +62,15 @@ func NewTaskId() string {
 }
 
 type TaskDirective struct {
-	Address      string
-	NotifyType   string
-	ContentType  string
-	Title        string
-	Content      string
-	ShortContent string
-	ExpiredDays  uint32
+	Address            string
+	NotifyType         string
+	ContentType        string
+	Title              string
+	Content            string
+	ShortContent       string
+	ExpiredDays        uint32
+	AvailableStartTime string
+	AvailableEndTime   string
 }
 
 func DecodeTaskDirective(data string) (*TaskDirective, error) {

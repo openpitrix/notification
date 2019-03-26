@@ -127,13 +127,15 @@ func SplitNotificationIntoTasks(ctx context.Context, notification *models.Notifi
 		var tasks []*models.Task
 		for _, address := range addresses {
 			directive := &models.TaskDirective{
-				Address:      address.Address,
-				NotifyType:   constants.NotifyTypeEmail,
-				ContentType:  notification.ContentType,
-				Title:        notification.Title,
-				Content:      notification.Content,
-				ShortContent: notification.ShortContent,
-				ExpiredDays:  notification.ExpiredDays,
+				Address:            address.Address,
+				NotifyType:         constants.NotifyTypeEmail,
+				ContentType:        notification.ContentType,
+				Title:              notification.Title,
+				Content:            notification.Content,
+				ShortContent:       notification.ShortContent,
+				ExpiredDays:        notification.ExpiredDays,
+				AvailableStartTime: notification.AvailableStartTime,
+				AvailableEndTime:   notification.AvailableEndTime,
 			}
 			task := models.NewTask(
 				notification.NotificationId,
@@ -149,13 +151,15 @@ func SplitNotificationIntoTasks(ctx context.Context, notification *models.Notifi
 	for notifyType, addresses := range *addressInfo {
 		for _, address := range addresses {
 			directive := &models.TaskDirective{
-				Address:      address,
-				NotifyType:   notifyType,
-				ContentType:  notification.ContentType,
-				Title:        notification.Title,
-				Content:      notification.Content,
-				ShortContent: notification.ShortContent,
-				ExpiredDays:  notification.ExpiredDays,
+				Address:            address,
+				NotifyType:         notifyType,
+				ContentType:        notification.ContentType,
+				Title:              notification.Title,
+				Content:            notification.Content,
+				ShortContent:       notification.ShortContent,
+				ExpiredDays:        notification.ExpiredDays,
+				AvailableStartTime: notification.AvailableStartTime,
+				AvailableEndTime:   notification.AvailableEndTime,
 			}
 			task := models.NewTask(
 				notification.NotificationId,

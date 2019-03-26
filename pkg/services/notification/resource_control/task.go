@@ -81,7 +81,6 @@ func GetTaskIdsByNfIds(ctx context.Context, nfIds []string) ([]string, error) {
 func DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) ([]*models.Task, uint64, error) {
 	req.NotificationId = stringutil.SimplifyStringList(req.NotificationId)
 	req.TaskId = stringutil.SimplifyStringList(req.TaskId)
-	req.TaskAction = stringutil.SimplifyStringList(req.TaskAction)
 	req.ErrorCode = stringutil.SimplifyStringList(req.ErrorCode)
 	req.Status = stringutil.SimplifyStringList(req.Status)
 	offset := pbutil.GetOffsetFromRequest(req)

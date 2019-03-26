@@ -30,7 +30,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 10Gi
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
@@ -73,7 +73,7 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: password.txt
+              key: password
               name: mysql-pass
         - name: MYSQL_ROOT_HOST
           value: "%"

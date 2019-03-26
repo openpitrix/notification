@@ -8,6 +8,7 @@ import (
 	"context"
 	"regexp"
 	"strconv"
+	"time"
 
 	"openpitrix.io/logger"
 	"openpitrix.io/notification/pkg/constants"
@@ -28,6 +29,26 @@ func ValidateSetServiceConfigParams(ctx context.Context, req *pb.ServiceConfig) 
 	if err != nil {
 		logger.Errorf(ctx, "Failed to validate port [%d]: %+v", port, err)
 		return err
+	}
+	return nil
+}
+
+func ValidateCreateNotificationParams(ctx context.Context, req *pb.CreateNotificationRequest) error {
+	if req.GetAvailableStartTime().GetValue() != "" {
+		availableStartTimeStr := req.GetAvailableStartTime().GetValue()
+		err := VerifyAvailableTimeStr(ctx, availableStartTimeStr)
+		if err != nil {
+			logger.Errorf(ctx, "Failed to validate available start time [%s]: %+v", availableStartTimeStr, err)
+			return err
+		}
+	}
+	if req.GetAvailableStartTime().GetValue() != "" {
+		availableEndTimeStr := req.AvailableEndTime.GetValue()
+		err := VerifyAvailableTimeStr(ctx, availableEndTimeStr)
+		if err != nil {
+			logger.Errorf(ctx, "Failed to validate available end time [%s]: %+v", availableEndTimeStr, err)
+			return err
+		}
 	}
 	return nil
 }
@@ -86,4 +107,13 @@ func VerifyPortFmt(ctx context.Context, port int32) error {
 		return nil
 	}
 
+}
+
+func VerifyAvailableTimeStr(ctx context.Context, timeStr string) error {
+	timeFmt := "15:04:05"
+	_, e := time.Parse(timeFmt, timeStr)
+	if e != nil {
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalTimeFormat, timeStr)
+	}
+	return nil
 }
