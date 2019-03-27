@@ -143,7 +143,7 @@ func (s *Server) mainHandler() http.Handler {
 	cfg := config.GetInstance()
 	for _, r := range []register{{
 		pb.RegisterNotificationHandlerFromEndpoint,
-		fmt.Sprintf("%s:%d", cfg.App.Host, cfg.App.Port),
+		fmt.Sprintf("localhost:%d", cfg.App.Port),
 	}} {
 		err = r.f(context.Background(), gwmux, r.endpoint, opts)
 		if err != nil {
