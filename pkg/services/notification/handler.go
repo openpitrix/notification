@@ -27,6 +27,17 @@ func (s *Server) SetServiceConfig(ctx context.Context, req *pb.ServiceConfig) (*
 		return nil, err
 	}
 
+	respValidate, err := s.ValidateEmailService(ctx, req)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to set service config, %+v.", err)
+		return nil, err
+	}
+
+	if !respValidate.IsSucc.GetValue() {
+		logger.Errorf(ctx, "Failed to set service config.")
+		return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateEmailService)
+	}
+
 	rs.SetServiceConfig(req)
 	logger.Debugf(ctx, "Set service config successfully, %+v.", req)
 
@@ -342,6 +353,7 @@ func (s *Server) DescribeAddresses(ctx context.Context, req *pb.DescribeAddresse
 	}
 	logger.Debugf(ctx, "Describe addresses successfully, addrs = [%+v].", res)
 	return res, nil
+
 }
 
 func (s *Server) ModifyAddress(ctx context.Context, req *pb.ModifyAddressRequest) (*pb.ModifyAddressResponse, error) {
@@ -505,7 +517,7 @@ func (s *Server) ValidateEmailService(ctx context.Context, req *pb.ServiceConfig
 		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
 		return &pb.ValidateEmailServiceResponse{
 			IsSucc: pbutil.ToProtoBool(false),
-		}, err
+		}, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateEmailService)
 	}
 
 	return &pb.ValidateEmailServiceResponse{
