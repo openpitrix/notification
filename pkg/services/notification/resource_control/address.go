@@ -19,7 +19,6 @@ import (
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/pbutil"
-	"openpitrix.io/notification/pkg/util/stringutil"
 )
 
 func CreateAddress(ctx context.Context, addr *models.Address) (string, error) {
@@ -31,33 +30,37 @@ func CreateAddress(ctx context.Context, addr *models.Address) (string, error) {
 	}
 	return addr.AddressId, nil
 }
-func DescribeAddresses(ctx context.Context, req *pb.DescribeAddressesRequest) ([]*models.Address, uint64, error) {
-	req.AddressId = stringutil.SimplifyStringList(req.AddressId)
-	req.AddressListId = stringutil.SimplifyStringList(req.AddressListId)
-	req.Address = stringutil.SimplifyStringList(req.Address)
-	req.NotifyType = stringutil.SimplifyStringList(req.NotifyType)
-	req.Status = stringutil.SimplifyStringList(req.Status)
+
+func DescribeAddressesWithAddrListId(ctx context.Context, req *pb.DescribeAddressesRequest) ([]*models.AddressWithListId, uint64, error) {
+	dbChain := nfdb.GetChain(global.GetInstance().GetDB().Table("address ").
+		Select("address.address_id,address.address,address.remarks,address.verification_code,address.create_time,address.verify_time,address.status_time,address.notify_type,address.status,address_list.address_list_id").
+		Joins("left join address_list_binding on address.address_id=address_list_binding.address_id").
+		Joins("left join address_list on address_list_binding.address_list_id=address_list.address_list_id"))
 
 	offset := pbutil.GetOffsetFromRequest(req)
 	limit := pbutil.GetLimitFromRequest(req)
 
-	var addrs []*models.Address
+	var addrs []*models.AddressWithListId
 	var count uint64
 
-	if err := nfdb.GetChain(global.GetInstance().GetDB().Table(models.TableAddress)).
-		AddQueryOrderDir(req, models.AddrColCreateTime).
-		BuildFilterConditions(req, models.TableAddress).
+	dbChain = dbChain.
+		BuildFilterConditionsWithPrefix(req, models.TableAddress).
+		BuildFilterConditionsWithPrefix(req, models.TableAddressList, models.AddrLsColStatus).
+		AddQueryOrderDirWithPrefix(models.TableAddress, req, models.AddrColCreateTime)
+
+	err := dbChain.
 		Offset(offset).
 		Limit(limit).
-		Find(&addrs).Error; err != nil {
-		logger.Errorf(ctx, "Describe address failed, %+v.", err)
+		Find(&addrs).Error
+
+	if err != nil {
+		logger.Errorf(nil, "Failed to describe addresses [%v], error: %+v.", req, err)
 		return nil, 0, err
 	}
 
-	if err := nfdb.GetChain(global.GetInstance().GetDB().Table(models.TableAddress)).
-		BuildFilterConditions(req, models.TableAddress).
-		Count(&count).Error; err != nil {
-		logger.Errorf(ctx, "Describe address count failed, %+v.", err)
+	err = dbChain.Count(&count).Error
+	if err != nil {
+		logger.Errorf(nil, "Failed to describe addresses [%v], error: %+v.", req, err)
 		return nil, 0, err
 	}
 

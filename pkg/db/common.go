@@ -68,22 +68,6 @@ func getReqValue(param interface{}) interface{} {
 	return nil
 }
 
-func GetDisplayColumns(displayColumns []string, wholeColumns []string) []string {
-	if displayColumns == nil {
-		return wholeColumns
-	} else if len(displayColumns) == 0 {
-		return nil
-	} else {
-		var newDisplayColumns []string
-		for _, column := range displayColumns {
-			if stringutil.Contains(wholeColumns, column) {
-				newDisplayColumns = append(newDisplayColumns, column)
-			}
-		}
-		return newDisplayColumns
-	}
-}
-
 func GetFieldName(field *structs.Field) string {
 	tag := field.Tag(TagName)
 	t := strings.Split(tag, ",")
@@ -104,39 +88,11 @@ func GetChain(tx *gorm.DB) *Chain {
 }
 
 func (c *Chain) BuildFilterConditions(req Request, tableName string, exclude ...string) *Chain {
-	return c.buildFilterConditions(req, tableName, exclude...)
-}
-
-func (c *Chain) getSearchFilter(tableName string, value interface{}, exclude ...string) {
-	var conditions []string
-	if vs, ok := value.([]string); ok {
-		for _, v := range vs {
-			for _, column := range models.SearchColumns[tableName] {
-				if stringutil.Contains(exclude, column) {
-					continue
-				}
-				// if column suffix is _id, must exact match
-				if strings.HasSuffix(column, "_id") {
-					conditions = append(conditions, column+" = '"+v+"'")
-				} else {
-					likeV := "%" + stringutil.SimplifyString(v) + "%"
-					conditions = append(conditions, column+" LIKE '"+likeV+"'")
-				}
-			}
-		}
-	} else if value != nil {
-		logger.Warnf(nil, "search_word [%+v] is not string", value)
-	}
-	condition := strings.Join(conditions, " OR ")
-	c.DB = c.DB.Where(condition)
-}
-
-func (c *Chain) buildFilterConditions(req Request, tableName string, exclude ...string) *Chain {
 	for _, field := range structs.Fields(req) {
 		column := GetFieldName(field)
 		param := field.Value()
 		indexedColumns, ok := models.IndexedColumns[tableName]
-		if ok && stringutil.Contains(indexedColumns, column) {
+		if ok && stringutil.StringIn(column, indexedColumns) {
 			value := getReqValue(param)
 			if value != nil {
 				key := column
@@ -145,13 +101,38 @@ func (c *Chain) buildFilterConditions(req Request, tableName string, exclude ...
 		}
 		if column == SearchWordColumnName && stringutil.Contains(models.SearchWordColumnTable, tableName) {
 			value := getReqValue(param)
-			c.getSearchFilter(tableName, value, exclude...)
+			c.getSearchFilter(false, tableName, value, exclude...)
 		}
 	}
 	return c
 }
 
-func (c *Chain) AddQueryOrderDir(req Request, defaultColumn string) *Chain {
+func (c *Chain) BuildFilterConditionsWithPrefix(req Request, tableName string, exclude ...string) *Chain {
+	for _, field := range structs.Fields(req) {
+		column := GetFieldName(field)
+		param := field.Value()
+		indexedColumns, ok := models.IndexedColumns[tableName]
+		if stringutil.Contains(exclude, column) {
+			continue
+		}
+		if ok && stringutil.StringIn(column, indexedColumns) {
+			value := getReqValue(param)
+			if value != nil {
+				key := column
+				key = tableName + "." + key
+				c.DB = c.Where(key+" in (?)", value)
+			}
+		}
+
+		if column == SearchWordColumnName && stringutil.Contains(models.SearchWordColumnTable, tableName) {
+			value := getReqValue(param)
+			c.getSearchFilter(true, tableName, value, exclude...)
+		}
+	}
+	return c
+}
+
+func (c *Chain) AddQueryOrderDirWithPrefix(tableName string, req Request, defaultColumn string) *Chain {
 	order := "DESC"
 	if r, ok := req.(RequestWithReverse); ok {
 
@@ -165,6 +146,53 @@ func (c *Chain) AddQueryOrderDir(req Request, defaultColumn string) *Chain {
 			defaultColumn = s
 		}
 	}
+	c.DB = c.Order(tableName + "." + defaultColumn + " " + order)
+	return c
+}
+
+func (c *Chain) AddQueryOrderDir(req Request, defaultColumn string) *Chain {
+	order := "DESC"
+	if r, ok := req.(RequestWithReverse); ok {
+		if r.GetReverse().GetValue() {
+			order = "ASC"
+		}
+	}
+	if r, ok := req.(RequestWithSortKey); ok {
+		s := r.GetSortKey().GetValue()
+		if s != "" {
+			defaultColumn = s
+		}
+	}
 	c.DB = c.Order(defaultColumn + " " + order)
 	return c
+}
+
+func (c *Chain) getSearchFilter(withPrefix bool, tableName string, value interface{}, exclude ...string) {
+	var conditions []string
+	if vs, ok := value.([]string); ok {
+		for _, v := range vs {
+			for _, column := range models.SearchColumns[tableName] {
+				if stringutil.Contains(exclude, column) {
+					continue
+				}
+				// if column suffix is _id, must exact match
+				if strings.HasSuffix(column, "_id") {
+					if withPrefix {
+						column = tableName + "." + column
+					}
+					conditions = append(conditions, column+" = '"+v+"'")
+				} else {
+					likeV := "%" + stringutil.SimplifyString(v) + "%"
+					if withPrefix {
+						column = tableName + "." + column
+					}
+					conditions = append(conditions, column+" LIKE '"+likeV+"'")
+				}
+			}
+		}
+	} else if value != nil {
+		logger.Warnf(nil, "search_word [%+v] is not string", value)
+	}
+	condition := strings.Join(conditions, " OR ")
+	c.DB = c.DB.Where(condition)
 }

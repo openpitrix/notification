@@ -25,6 +25,19 @@ type Address struct {
 	Status           string    `gorm:"column:status"`
 }
 
+type AddressWithListId struct {
+	AddressId        string    `gorm:"column:address_id"`
+	AddressListId    string    `gorm:"column:address_list_id"`
+	Address          string    `gorm:"column:address"`
+	Remarks          string    `gorm:"column:remarks"`
+	VerificationCode string    `gorm:"column:verification_code"`
+	CreateTime       time.Time `gorm:"column:create_time"`
+	VerifyTime       time.Time `gorm:"column:verify_time"`
+	StatusTime       time.Time `gorm:"column:status_time"`
+	NotifyType       string    `gorm:"column:notify_type"`
+	Status           string    `gorm:"column:status"`
+}
+
 const (
 	AddressIdPrefix = "addr-"
 )
@@ -67,24 +80,25 @@ func NewAddress(req *pb.CreateAddressRequest) *Address {
 	return address
 }
 
-func AddressToPb(address *Address) *pb.Address {
+func AddressWithListIdToPb(addressWithListId *AddressWithListId) *pb.Address {
 	pbAddress := pb.Address{}
-	pbAddress.AddressId = pbutil.ToProtoString(address.AddressId)
-	pbAddress.Address = pbutil.ToProtoString(address.Address)
-	pbAddress.Remarks = pbutil.ToProtoString(address.Remarks)
-	pbAddress.VerificationCode = pbutil.ToProtoString(address.VerificationCode)
-	pbAddress.Status = pbutil.ToProtoString(address.Status)
-	pbAddress.CreateTime = pbutil.ToProtoTimestamp(address.CreateTime)
-	pbAddress.VerifyTime = pbutil.ToProtoTimestamp(address.VerifyTime)
-	pbAddress.StatusTime = pbutil.ToProtoTimestamp(address.StatusTime)
-	pbAddress.NotifyType = pbutil.ToProtoString(address.NotifyType)
+	pbAddress.AddressId = pbutil.ToProtoString(addressWithListId.AddressId)
+	pbAddress.AddressListId = pbutil.ToProtoString(addressWithListId.AddressListId)
+	pbAddress.Address = pbutil.ToProtoString(addressWithListId.Address)
+	pbAddress.Remarks = pbutil.ToProtoString(addressWithListId.Remarks)
+	pbAddress.VerificationCode = pbutil.ToProtoString(addressWithListId.VerificationCode)
+	pbAddress.Status = pbutil.ToProtoString(addressWithListId.Status)
+	pbAddress.CreateTime = pbutil.ToProtoTimestamp(addressWithListId.CreateTime)
+	pbAddress.VerifyTime = pbutil.ToProtoTimestamp(addressWithListId.VerifyTime)
+	pbAddress.StatusTime = pbutil.ToProtoTimestamp(addressWithListId.StatusTime)
+	pbAddress.NotifyType = pbutil.ToProtoString(addressWithListId.NotifyType)
 	return &pbAddress
 }
 
-func AddressSet2PbSet(inAddrs []*Address) []*pb.Address {
+func AddressWithListIdSet2PbSet(inAddrs []*AddressWithListId) []*pb.Address {
 	var pbAddrs []*pb.Address
 	for _, inAddr := range inAddrs {
-		pbAddr := AddressToPb(inAddr)
+		pbAddr := AddressWithListIdToPb(inAddr)
 		pbAddrs = append(pbAddrs, pbAddr)
 	}
 	return pbAddrs

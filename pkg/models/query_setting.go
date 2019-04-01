@@ -36,7 +36,7 @@ var SearchColumns = map[string][]string{
 		TaskColTaskId, TaskColNfId, TaskColStatus, TaskColErrorCode,
 	},
 	TableAddress: {
-		AddrColId, AddrColAddress, AddrColNotifyType, AddrColStatus, AddrColRemarks,
+		AddrColId, AddrColAddress, AddrColNotifyType, AddrColRemarks,
 	},
 	TableAddressList: {
 		AddrLsColId, AddrLsColName, AddrLsColName, AddrLsColExtra,
