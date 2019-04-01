@@ -267,7 +267,6 @@ func TestDescribeAddresses(t *testing.T) {
 	if !*pkg.LocalDevEnvEnabled {
 		t.Skip("Local Dev testing env disabled.")
 	}
-
 	config.GetInstance().LoadConf()
 	s := &Server{controller: NewController()}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
@@ -276,6 +275,9 @@ func TestDescribeAddresses(t *testing.T) {
 	var AddressIds []string
 	AddressIds = append(AddressIds, "addr-xPgQPnOJM36K")
 
+	var AddressListIds []string
+	AddressListIds = append(AddressListIds, "adl-lW4DmnoJWp98")
+
 	var statuses []string
 	statuses = append(statuses, "active")
 
@@ -283,11 +285,11 @@ func TestDescribeAddresses(t *testing.T) {
 	nfTypes = append(nfTypes, "email")
 
 	var addrs []string
-	addrs = append(addrs, "huojiao@163.com")
+	addrs = append(addrs, "openpitrix@foxmail.com")
 
 	var req = &pb.DescribeAddressesRequest{
 		AddressId:     AddressIds,
-		AddressListId: nil,
+		AddressListId: AddressListIds,
 		Address:       addrs,
 		NotifyType:    nfTypes,
 		Status:        statuses,

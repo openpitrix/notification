@@ -341,12 +341,12 @@ func (s *Server) createAddress(ctx context.Context, req *pb.CreateAddressRequest
 }
 
 func (s *Server) DescribeAddresses(ctx context.Context, req *pb.DescribeAddressesRequest) (*pb.DescribeAddressesResponse, error) {
-	addrs, addrCnt, err := rs.DescribeAddresses(ctx, req)
+	addrs, addrCnt, err := rs.DescribeAddressesWithAddrListId(ctx, req)
 	if err != nil {
 		logger.Errorf(ctx, "Failed to describe addresses, %+v.", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
-	addressPbSet := models.AddressSet2PbSet(addrs)
+	addressPbSet := models.AddressWithListIdSet2PbSet(addrs)
 	res := &pb.DescribeAddressesResponse{
 		TotalCount: uint32(addrCnt),
 		AddressSet: addressPbSet,
