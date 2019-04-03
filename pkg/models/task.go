@@ -95,6 +95,12 @@ type TaskWithNfInfo struct {
 func TaskToPb(task *Task) *pb.Task {
 	pbTask := pb.Task{}
 	pbTask.NotificationId = pbutil.ToProtoString(task.NotificationId)
+	pbTask.Status = pbutil.ToProtoString(task.Status)
+	pbTask.TaskId = pbutil.ToProtoString(task.TaskId)
+	pbTask.CreateTime = pbutil.ToProtoTimestamp(task.CreateTime)
+	pbTask.StatusTime = pbutil.ToProtoTimestamp(task.StatusTime)
+	pbTask.Directive = pbutil.ToProtoString(task.Directive)
+	pbTask.ErrorCode = pbutil.ToProtoUInt32(uint32(task.ErrorCode))
 	return &pbTask
 }
 
