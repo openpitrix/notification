@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notification-etcd
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     tier: etcd
@@ -21,7 +21,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: notification-etcd-pvc
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     tier: etcd
@@ -36,7 +36,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: notification-etcd-deployment
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     tier: etcd
@@ -59,7 +59,7 @@ spec:
       - name: notification-etcd
         image: quay.io/coreos/etcd:v3.2.18
         imagePullPolicy: IfNotPresent
-        command: ["etcd", "--data-dir=/data", "--listen-client-urls=http://0.0.0.0:2379", "--advertise-client-urls=http://notification-etcd.notification-system.svc:2379", "--max-snapshots=5", "--max-wals=5", "--auto-compaction-retention=168"]
+        command: ["etcd", "--data-dir=/data", "--listen-client-urls=http://0.0.0.0:2379", "--advertise-client-urls=http://notification-etcd.kubesphere-alerting-system.svc:2379", "--max-snapshots=5", "--max-wals=5", "--auto-compaction-retention=168"]
         ports:
         - containerPort: 2379
           name: etcd

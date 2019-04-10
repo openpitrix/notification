@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notification
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     component: notification
@@ -25,7 +25,7 @@ apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: notification-deployment
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     component: notification
@@ -47,11 +47,11 @@ spec:
       - name: wait-mysql
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z notification-db.notification-system.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z notification-db.kubesphere-alerting-system.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
       - name: wait-etcd
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z notification-etcd.notification-system.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z notification-etcd.kubesphere-alerting-system.svc 2379; do echo "waiting for etcd"; sleep 2; done;']
       containers:
       - name: notification
         image: openpitrix/notification:latest
@@ -67,9 +67,23 @@ spec:
         - name: NOTIFICATION_GRPC_SHOW_ERROR_CAUSE
           value: 'true'
         - name: NOTIFICATION_APP_HOST
-          value: 'notification.notification-system'
+          value: 'notification.kubesphere-alerting-system'
         - name: NOTIFICATION_APP_API_HOST
-          value: 'notification.notification-system'
+          value: 'notification.kubesphere-alerting-system'
+        - name: NOTIFICATION_EMAIL_PROTOCOL
+          value: 'SMTP'
+        - name: NOTIFICATION_EMAIL_EMAIL_HOST
+          value: 'mail.app-center.cn'
+        - name: NOTIFICATION_EMAIL_PORT
+          value: '25'
+        - name: NOTIFICATION_EMAIL_DISPLAY_SENDER
+          value: 'admin_openpitrix'
+        - name: NOTIFICATION_EMAIL_EMAIL
+          value: 'openpitrix@app-center.cn'
+        - name: NOTIFICATION_EMAIL_PASSWORD
+          value: 'openpitrix'
+        - name: NOTIFICATION_EMAIL_SSL_ENABLE
+          value: 'false'
         resources:
           limits:
             cpu: 500m

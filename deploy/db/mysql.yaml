@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notification-db
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     tier: db
@@ -21,7 +21,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: notification-db-pvc
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     tier: db
@@ -30,13 +30,13 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 10Gi
+      storage: 20Gi
 ---
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: notification-db-deployment
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     tier: db
