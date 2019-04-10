@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: notification-db-ctrl-job
-  namespace: notification-system
+  namespace: kubesphere-alerting-system
   labels:
     app: notification
     job: notification-db-ctrl
@@ -23,9 +23,9 @@ spec:
       - name: wait-mysql
         image: busybox:1.28.4
         imagePullPolicy: IfNotPresent
-        command: ['sh', '-c', 'until nc -z notification-db.notification-system.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z notification-db.kubesphere-alerting-system.svc 3306; do echo "waiting for mysql"; sleep 2; done;']
       containers:
-      - command: ["flyway", "-X", "-url=jdbc:mysql://notification-db.notification-system.svc/notification", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/notification", "migrate"]
+      - command: ["flyway", "-X", "-url=jdbc:mysql://notification-db.kubesphere-alerting-system.svc/notification", "-user=root", "-validateOnMigrate=false", "-locations=filesystem:/flyway/sql/notification", "migrate"]
         env:
         - name: FLYWAY_PASSWORD
           valueFrom:

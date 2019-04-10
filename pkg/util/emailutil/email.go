@@ -20,6 +20,7 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string)
 	email := config.GetInstance().Email.Email
 	password := config.GetInstance().Email.Password
 	displaySender := config.GetInstance().Email.DisplaySender
+	sslEnable := config.GetInstance().Email.SSLEnable
 
 	m := gomail.NewMessage()
 	m.SetAddressHeader("From", email, displaySender)
@@ -28,7 +29,8 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string)
 	m.SetBody("text/html", body)
 
 	d := gomail.NewDialer(host, port, email, password)
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
+
 	if err := d.DialAndSend(m); err != nil {
 		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
 		return err

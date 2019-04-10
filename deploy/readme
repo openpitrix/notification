@@ -1,0 +1,12 @@
+#部署Notification的顺序
+1.mysql-pass.yaml
+
+2.mysql.yaml
+
+3.notification-db-init-job.yaml
+
+4.notification-db-ctrl-job.yaml
+
+5.etcd.yaml
+
+6.notification.yaml
