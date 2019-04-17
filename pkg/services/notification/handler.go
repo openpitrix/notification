@@ -288,7 +288,7 @@ func (s *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		TotalCount: uint32(taskCnt),
 		TaskSet:    taskPbSet,
 	}
-	logger.Debugf(ctx, "Describe tasks successfully, tasks=%+v.", res)
+	//logger.Debugf(ctx, "Describe tasks successfully, tasks=%+v.", res)
 	return res, nil
 }
 
