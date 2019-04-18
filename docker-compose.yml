@@ -13,7 +13,7 @@ services:
     volumes:
     - ${DATA_PATH}/mysql:/var/lib/mysql
     - ./pkg/db/ddl:/docker-entrypoint-initdb.d
-    command: --lower_case_table_names=0
+    command: --lower_case_table_names=0 --max_allowed_packet=10485760
     ports:
     - "13306:3306" # for unit-test & debug
     container_name: "notification-db"
