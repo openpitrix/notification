@@ -273,7 +273,7 @@ func (s *Server) DescribeNotifications(ctx context.Context, req *pb.DescribeNoti
 		NotificationSet: nfPbSet,
 	}
 
-	logger.Debugf(ctx, "Describe notifications successfully, notifications=%+v.", res)
+	//logger.Debugf(ctx, "Describe notifications successfully, notifications=%+v.", res)
 	return res, nil
 }
 
@@ -288,7 +288,7 @@ func (s *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		TotalCount: uint32(taskCnt),
 		TaskSet:    taskPbSet,
 	}
-	logger.Debugf(ctx, "Describe tasks successfully, tasks=%+v.", res)
+	//logger.Debugf(ctx, "Describe tasks successfully, tasks=%+v.", res)
 	return res, nil
 }
 
