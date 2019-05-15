@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"openpitrix.io/logger"
+
 	nfdb "openpitrix.io/notification/pkg/db"
 	"openpitrix.io/notification/pkg/global"
 	"openpitrix.io/notification/pkg/models"

@@ -47,10 +47,14 @@ func NewAddressListId() string {
 }
 
 func NewAddressList(req *pb.CreateAddressListRequest) *AddressList {
+	extra := req.GetExtra().GetValue()
+	if extra == "" {
+		extra = "{}"
+	}
 	addressList := &AddressList{
 		AddressListId:   NewAddressListId(),
 		AddressListName: req.GetAddressListName().GetValue(),
-		Extra:           req.GetExtra().GetValue(),
+		Extra:           extra,
 		Status:          constants.StatusActive,
 		CreateTime:      time.Now(),
 		StatusTime:      time.Now(),

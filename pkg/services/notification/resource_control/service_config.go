@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/pbutil"

@@ -21,6 +21,7 @@ message CreateNotificationRequest {
 	google.protobuf.StringValue address_info = 7;
 	google.protobuf.StringValue available_start_time = 8;
 	google.protobuf.StringValue available_end_time = 9;
+	google.protobuf.StringValue extra = 10;
 }
 
 message CreateNotificationResponse {
@@ -41,6 +42,7 @@ message Notification {
 	google.protobuf.StringValue address_info = 11;
 	google.protobuf.StringValue available_start_time = 12;
 	google.protobuf.StringValue available_end_time = 13;
+	google.protobuf.StringValue extra = 14;
 }
 
 message DescribeNotificationsRequest {
@@ -251,6 +253,8 @@ message GetServiceConfigRequest {
 message ValidateEmailServiceResponse{
 	google.protobuf.BoolValue is_succ = 1;
 }
+
+
 
 
 service notification {

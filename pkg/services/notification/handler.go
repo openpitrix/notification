@@ -10,8 +10,8 @@ import (
 	"fmt"
 
 	gomail "gopkg.in/gomail.v2"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/models"
@@ -77,6 +77,7 @@ func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 }
 
 func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificationRequest) (*pb.CreateNotificationResponse, error) {
+	//Step0:Validate params.
 	err := ValidateCreateNotificationParams(ctx, req)
 	if err != nil {
 		return nil, err
@@ -92,8 +93,10 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 		req.GetExpiredDays().GetValue(),
 		req.GetAvailableStartTime().GetValue(),
 		req.GetAvailableEndTime().GetValue(),
+		req.GetExtra().GetValue(),
 	)
 
+	//Step1:Register Notification in DB as status="pending"
 	err = rs.RegisterNotification(ctx, notification)
 	if err != nil {
 		logger.Errorf(ctx, "Failed to register notification, %+v.", err)
@@ -101,6 +104,8 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 	}
 	logger.Debugf(ctx, "Create notification [%s] in DB successfully.", notification.NotificationId)
 
+	//Step2:Process Task data.
+	//including 2.1.SplitNotificationIntoTasks, 2.2.createTasks in db, 2.3.Enqueue task id to etcd queue.
 	_, err = s.createTasksByNotification(ctx, notification)
 	if err != nil {
 		logger.Errorf(ctx, "Failed to create tasks by notification, %+v.", err)
@@ -108,7 +113,7 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 	}
 	logger.Debugf(ctx, "Create tasks by notification [%s] in DB successfully.", notification.NotificationId)
 
-	// Enqueue notification after create tasks.
+	//Step3:Enqueue notification id to etcd queue.
 	err = s.controller.notificationQueue.Enqueue(notification.NotificationId)
 	if err != nil {
 		logger.Errorf(ctx, "Push notification [%s] into etcd failed, %+v.", notification.NotificationId, err)
@@ -146,12 +151,14 @@ func (s *Server) createTasks(ctx context.Context, tasks []*models.Task) error {
 		}
 		logger.Debugf(ctx, "Create task [%s] in DB successfully.", task.TaskId)
 
-		err = s.controller.taskQueue.Enqueue(task.TaskId)
-		if err != nil {
-			logger.Errorf(ctx, "Failed to push task [%s] into etcd, %+v.", task.TaskId, err)
-			return err
+		if task.NotifyType == constants.NotifyTypeEmail {
+			err = s.controller.taskQueue.Enqueue(task.TaskId)
+			if err != nil {
+				logger.Errorf(ctx, "Failed to push task [%s] into etcd, %+v.", task.TaskId, err)
+				return err
+			}
+			logger.Debugf(ctx, "Push task [%s] into etcd successfully.", task.TaskId)
 		}
-		logger.Debugf(ctx, "Push task [%s] into etcd successfully.", task.TaskId)
 	}
 
 	return nil
@@ -273,7 +280,7 @@ func (s *Server) DescribeNotifications(ctx context.Context, req *pb.DescribeNoti
 		NotificationSet: nfPbSet,
 	}
 
-	//logger.Debugf(ctx, "Describe notifications successfully, notifications=%+v.", res)
+	logger.Debugf(ctx, "Describe notifications successfully, notifications count=%+v.", res.TotalCount)
 	return res, nil
 }
 
@@ -288,7 +295,8 @@ func (s *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 		TotalCount: uint32(taskCnt),
 		TaskSet:    taskPbSet,
 	}
-	//logger.Debugf(ctx, "Describe tasks successfully, tasks=%+v.", res)
+	logger.Debugf(ctx, "Describe tasks successfully, tasks count=%+v.", res.TotalCount)
+
 	return res, nil
 }
 

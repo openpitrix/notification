@@ -5,11 +5,16 @@
 package models
 
 import (
+	"context"
 	"time"
 
+	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/idutil"
+	"openpitrix.io/notification/pkg/util/jsonutil"
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
 
@@ -27,6 +32,7 @@ type Notification struct {
 	StatusTime         time.Time `gorm:"column:status_time"`
 	AvailableStartTime string    `gorm:"column:available_start_time"`
 	AvailableEndTime   string    `gorm:"column:available_end_time"`
+	Extra              string    `gorm:"column:extra"`
 }
 
 //table name
@@ -61,7 +67,9 @@ const (
 	ContentTypeVerify   = "verify"
 	ContentTypeFee      = "fee"
 	ContentTypeBusiness = "business"
+	ContentTypeAlerting = "alert"
 	ContentTypeOther    = "other"
+	ContentTypeEvent    = "event"
 )
 
 var ContentTypes = []string{
@@ -69,14 +77,20 @@ var ContentTypes = []string{
 	ContentTypeVerify,
 	ContentTypeFee,
 	ContentTypeBusiness,
+	ContentTypeAlerting,
 	ContentTypeOther,
+	ContentTypeEvent,
 }
 
 func NewNotificationId() string {
 	return idutil.GetUuid(NotificationIdPrefix)
 }
 
-func NewNotification(contentType, title, content, shortContent, addressInfo, owner string, expiredDays uint32, availableStartTimeStr string, availableEndTimeStr string) *Notification {
+func NewNotification(contentType, title, content, shortContent, addressInfo, owner string, expiredDays uint32, availableStartTimeStr string, availableEndTimeStr string, extra string) *Notification {
+	if extra == "" {
+		extra = "{}"
+	}
+
 	notification := &Notification{
 		NotificationId:     NewNotificationId(),
 		ContentType:        contentType,
@@ -91,6 +105,7 @@ func NewNotification(contentType, title, content, shortContent, addressInfo, own
 		StatusTime:         time.Now(),
 		AvailableStartTime: availableStartTimeStr,
 		AvailableEndTime:   availableEndTimeStr,
+		Extra:              extra,
 	}
 	return notification
 }
@@ -110,6 +125,7 @@ func NotificationToPb(notification *Notification) *pb.Notification {
 	pbNotification.StatusTime = pbutil.ToProtoTimestamp(notification.StatusTime)
 	pbNotification.AvailableStartTime = pbutil.ToProtoString(notification.AvailableStartTime)
 	pbNotification.AvailableEndTime = pbutil.ToProtoString(notification.AvailableEndTime)
+	pbNotification.Extra = pbutil.ToProtoString(notification.Extra)
 	return &pbNotification
 }
 
@@ -120,4 +136,36 @@ func NotificationSet2PbSet(inNfs []*Notification) []*pb.Notification {
 		pbNfs = append(pbNfs, pbNf)
 	}
 	return pbNfs
+}
+
+type NotificationExtra map[string]string
+
+func DecodeNotificationExtra(data string) (*map[string]string, error) {
+	extra := new(map[string]string)
+	err := jsonutil.Decode([]byte(data), extra)
+	if err != nil {
+		logger.Errorf(nil, "Decode [%s] into notification extra failed: %+v", data, err)
+	}
+	return extra, err
+}
+
+func CheckExtra(ctx context.Context, notification *Notification) error {
+	extraStr := notification.Extra
+	if extraStr == "" {
+		logger.Errorf(ctx, "Failed to validate addressInfo, extra is blank: [%s].", extraStr)
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationExtra, extraStr)
+	} else {
+		//check Extra:  "extra": "{\"ws_message_type\": \"ws_op_nf\"}"
+		nfExtraMap, err := DecodeNotificationExtra(extraStr)
+		if err != nil {
+			logger.Errorf(ctx, "Failed to validate notification extra [%s], should be: {\"ws_message_type\": \"xxx\"}", extraStr)
+			return err
+		}
+		_, ok := (*nfExtraMap)[constants.WsMessageType]
+		if !ok {
+			logger.Errorf(ctx, "Failed to validate notification extra [%s], should be: {\"ws_message_type\": \"xxx\"}", extraStr)
+			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationExtra, extraStr)
+		}
+	}
+	return nil
 }

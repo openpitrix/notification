@@ -10,8 +10,8 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 )
 

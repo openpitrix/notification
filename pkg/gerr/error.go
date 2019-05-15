@@ -11,8 +11,8 @@ import (
 	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/pb"
 )
 

@@ -70,6 +70,12 @@ spec:
           value: 'notification.kubesphere-alerting-system'
         - name: NOTIFICATION_APP_API_HOST
           value: 'notification.kubesphere-alerting-system'
+        - name: NOTIFICATION_MYSQL_HOST
+          value: 'openpitrix-db.openpitrix-system.svc'
+        - name: NOTIFICATION_MYSQL_PORT
+          value: '3306'
+        - name: NOTIFICATION_ETCD_ENDPOINTS
+          value: 'openpitrix-etcd.openpitrix-system.svc:2379'
         - name: NOTIFICATION_EMAIL_PROTOCOL
           value: 'SMTP'
         - name: NOTIFICATION_EMAIL_EMAIL_HOST
@@ -84,6 +90,14 @@ spec:
           value: 'openpitrix'
         - name: NOTIFICATION_EMAIL_SSL_ENABLE
           value: 'false'
+        - name: NOTIFICATION_LOG_LEVEL
+          value: "error"
+        - name: NOTIFICATION_MYSQL_LOG_MODE
+          value: "false"
+        - name: NOTIFICATION_APP_MAX_WORKING_NOTIFICATIONS
+          value: "5"
+        - name: NOTIFICATION_APP_MAX_WORKING_TASKS
+          value: "5"
         resources:
           limits:
             cpu: 500m

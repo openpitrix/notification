@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -23,11 +23,10 @@ import (
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/util/ctxutil"
-	//"openpitrix.io/notification/pkg/version"
 )
 
 type checkerT func(ctx context.Context, req interface{}) error
@@ -165,7 +164,8 @@ func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 			if content, err := jsonPbMarshaller.MarshalToString(p); err != nil {
 				logger.Errorf(ctx, "Failed to marshal proto message to string [%s] [%+v] [%+v]", action, nil, err)
 			} else {
-				logger.Infof(ctx, "Request received [%s] [%+v] [%s]", action, nil, content)
+				//logger.Infof(ctx, "Request received [%s] [%+v] [%s]", action, nil, content)
+				logger.Debugf(ctx, "Request received [%s] [%+v] [%s]", action, nil, content)
 			}
 		}
 		start := time.Now()
@@ -173,7 +173,8 @@ func (g *GrpcServer) unaryServerLogInterceptor() grpc.UnaryServerInterceptor {
 		resp, err := handler(ctx, req)
 
 		elapsed := time.Since(start)
-		logger.Infof(ctx, "Handled request [%s] [%+v] exec_time is [%s]", action, nil, elapsed)
+		//logger.Infof(ctx, "Handled request [%s] [%+v] exec_time is [%s]", action, nil, elapsed)
+		logger.Debugf(ctx, "Handled request [%s] [%+v] exec_time is [%s]", action, nil, elapsed)
 		if e, ok := status.FromError(err); ok {
 			if e.Code() != codes.OK {
 				logger.Debugf(ctx, "Response is error: %s, %s", e.Code().String(), e.Message())

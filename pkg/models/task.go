@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/idutil"
@@ -23,6 +24,7 @@ type Task struct {
 	CreateTime     time.Time `gorm:"column:create_time"`
 	StatusTime     time.Time `gorm:"column:status_time"`
 	Directive      string    `gorm:"column:directive"`
+	NotifyType     string    `gorm:"column:notify_type"`
 }
 
 //table name
@@ -44,7 +46,7 @@ const (
 	TaskColCreateTime = "create_time"
 )
 
-func NewTask(notificationId, directive string) *Task {
+func NewTask(notificationId, directive string, notifyType string) *Task {
 	task := &Task{
 		TaskId:         NewTaskId(),
 		NotificationId: notificationId,
@@ -53,6 +55,7 @@ func NewTask(notificationId, directive string) *Task {
 		CreateTime:     time.Now(),
 		StatusTime:     time.Now(),
 		Directive:      directive,
+		NotifyType:     notifyType,
 	}
 	return task
 }
@@ -62,6 +65,7 @@ func NewTaskId() string {
 }
 
 type TaskDirective struct {
+	NotificationId     string
 	Address            string
 	NotifyType         string
 	ContentType        string

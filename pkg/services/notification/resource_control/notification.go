@@ -9,11 +9,13 @@ import (
 	"time"
 
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 	nfdb "openpitrix.io/notification/pkg/db"
 	"openpitrix.io/notification/pkg/global"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/notification/pkg/services/websocket"
 	"openpitrix.io/notification/pkg/util/jsonutil"
 	"openpitrix.io/notification/pkg/util/pbutil"
 	"openpitrix.io/notification/pkg/util/stringutil"
@@ -22,14 +24,17 @@ import (
 func RegisterNotification(ctx context.Context, notification *models.Notification) error {
 	tx := global.GetInstance().GetDB().Begin()
 	addressInfo := notification.AddressInfo
+	//Step1: check addressInfo format is like address_info = {"email": ["xxx@abc.com", "xxx@xxx.com"],"websocket": ["system", "huojiao"]}
 	_, err := models.DecodeAddressInfo(addressInfo)
+
+	//Step2: check addressInfo format is like address_info = ["adl-xxxx1", "adl-xxxx2"]
 	if err != nil {
 		addressListIds, err := models.DecodeAddressListIds(addressInfo)
 		if err != nil {
 			return err
 		}
-		notification.AddressInfo = "{}"
 
+		//Step3: insert data into nf_address_list
 		for _, listId := range []string(*addressListIds) {
 			nfAddressList := &models.NFAddressList{
 				NFAddressListId: models.NewNFAddressListId(),
@@ -45,8 +50,8 @@ func RegisterNotification(ctx context.Context, notification *models.Notification
 		}
 	}
 
+	//Step4: insert data into notification
 	err = tx.Create(&notification).Error
-	notification.AddressInfo = addressInfo
 	if err != nil {
 		tx.Rollback()
 		logger.Errorf(ctx, "Failed to insert notification, %+v.", err)
@@ -114,43 +119,87 @@ func GetNfsByNfIds(ctx context.Context, nfIds []string) ([]*models.Notification,
 }
 
 func SplitNotificationIntoTasks(ctx context.Context, notification *models.Notification) ([]*models.Task, error) {
-	addressInfo, err := models.DecodeAddressInfo(notification.AddressInfo)
+
+	//Step1: check addressInfo format is like address_info = {"email": ["xxx@abc.com", "xxx@xxx.com"],"websocket": ["system", "huojiao"]}
+	_, decodeMapErr := models.DecodeAddressInfo(notification.AddressInfo)
+
+	//Step2: check addressInfo format is like address_info = ["adl-xxxx1", "adl-xxxx2"]
+	if decodeMapErr == nil {
+		tasks, err := processsAddressInfo4AddressMap(ctx, notification)
+		if err != nil {
+			return nil, err
+		} else {
+			return tasks, nil
+		}
+	} else {
+		tasks, err := processsAddressInfo4AddressListIds(ctx, notification)
+		if err != nil {
+			return nil, err
+		} else {
+			return tasks, nil
+		}
+
+	}
+}
+
+//address_info = ["adl-xxxx1", "adl-xxxx2"]
+func processsAddressInfo4AddressListIds(ctx context.Context, notification *models.Notification) ([]*models.Task, error) {
+	addressListIds, err := models.DecodeAddressListIds(notification.AddressInfo)
 	if err != nil {
-		addressListIds, err := models.DecodeAddressListIds(notification.AddressInfo)
-		if err != nil {
-			return nil, err
+		return nil, err
+	}
+	addresses, err := GetAddressesByListIds(ctx, []string(*addressListIds))
+	if err != nil {
+		return nil, err
+	}
+	var tasks []*models.Task
+
+	for _, address := range addresses {
+		directive := &models.TaskDirective{
+			NotificationId:     notification.NotificationId,
+			Address:            address.Address,
+			NotifyType:         address.NotifyType,
+			ContentType:        notification.ContentType,
+			Title:              notification.Title,
+			Content:            notification.Content,
+			ShortContent:       notification.ShortContent,
+			ExpiredDays:        notification.ExpiredDays,
+			AvailableStartTime: notification.AvailableStartTime,
+			AvailableEndTime:   notification.AvailableEndTime,
 		}
-		addresses, err := GetAddressesByListIds(ctx, []string(*addressListIds))
-		if err != nil {
-			return nil, err
-		}
-		var tasks []*models.Task
-		for _, address := range addresses {
-			directive := &models.TaskDirective{
-				Address:            address.Address,
-				NotifyType:         constants.NotifyTypeEmail,
-				ContentType:        notification.ContentType,
-				Title:              notification.Title,
-				Content:            notification.Content,
-				ShortContent:       notification.ShortContent,
-				ExpiredDays:        notification.ExpiredDays,
-				AvailableStartTime: notification.AvailableStartTime,
-				AvailableEndTime:   notification.AvailableEndTime,
+		task := models.NewTask(
+			notification.NotificationId,
+			jsonutil.ToString(directive),
+			address.NotifyType,
+		)
+		//if websocket message,just push to ws Queue,no need to create task record in DB.
+		if address.NotifyType == constants.NotifyTypeWebsocket {
+			err := models.CheckExtra(ctx, notification)
+			if err != nil {
+				return nil, err
 			}
-			task := models.NewTask(
-				notification.NotificationId,
-				jsonutil.ToString(directive),
-			)
+
+			err = pushTask2WsQueue(ctx, task, notification)
+			if err != nil {
+				return nil, err
+			}
+		} else {
 			logger.Debugf(ctx, "Split notification into task[%s] successfully. ", task.TaskId)
 			tasks = append(tasks, task)
 		}
-		return tasks, nil
-	}
 
+	}
+	return tasks, nil
+}
+
+func processsAddressInfo4AddressMap(ctx context.Context, notification *models.Notification) ([]*models.Task, error) {
+	addressInfo, err := models.DecodeAddressInfo(notification.AddressInfo)
 	var tasks []*models.Task
+	//address_info = {"email": ["xxx@abc.com", "xxx@xxx.com"],"websocket": ["system", "huojiao"]}
 	for notifyType, addresses := range *addressInfo {
 		for _, address := range addresses {
 			directive := &models.TaskDirective{
+				NotificationId:     notification.NotificationId,
 				Address:            address,
 				NotifyType:         notifyType,
 				ContentType:        notification.ContentType,
@@ -161,14 +210,62 @@ func SplitNotificationIntoTasks(ctx context.Context, notification *models.Notifi
 				AvailableStartTime: notification.AvailableStartTime,
 				AvailableEndTime:   notification.AvailableEndTime,
 			}
+
 			task := models.NewTask(
 				notification.NotificationId,
 				jsonutil.ToString(directive),
+				notifyType,
 			)
-			logger.Debugf(ctx, "Split notification into task[%s] successfully. ", task.TaskId)
-			tasks = append(tasks, task)
 
+			if notifyType == constants.NotifyTypeWebsocket {
+				err = pushTask2WsQueue(ctx, task, notification)
+				if err != nil {
+					return nil, err
+				}
+			} else {
+				logger.Debugf(ctx, "Split notification into task[%s] successfully. ", task.TaskId)
+				tasks = append(tasks, task)
+			}
 		}
 	}
 	return tasks, nil
+}
+
+func pushTask2WsQueue(ctx context.Context, task *models.Task, nf *models.Notification) error {
+	nfExtraMap, err := models.DecodeNotificationExtra(nf.Extra)
+	if err != nil {
+		return err
+	}
+
+	messageType := ""
+	nfExtraType, ok := (*nfExtraMap)[constants.WsMessageType]
+	if ok {
+		messageType = nfExtraType
+	}
+	//if notify type is websocket,call websocket PushWsMessage to websocket etcd queue.
+	if task.NotifyType == constants.NotifyTypeWebsocket {
+		taskDirective, err := models.DecodeTaskDirective(task.Directive)
+		if err != nil {
+			return err
+		}
+		userId := taskDirective.Address
+
+		msg := websocket.Message{
+			MessageId:   websocket.NewWsMessageId(),
+			MessageType: messageType,
+			Message:     task.Directive,
+			UserId:      userId,
+		}
+
+		err = websocket.PushWsMessage(context.Background(), global.GetInstance().GetEtcd(), messageType, userId, msg)
+
+		if err != nil {
+			logger.Errorf(ctx, "Push user [%s] websocket message id [%s] failed: %+v", userId, task.TaskId, err)
+			return err
+		}
+		logger.Infof(ctx, "Push user [%s] websocket message id [%s] ,Directive[%s] to etcd .", userId, task.TaskId, task.Directive)
+
+	}
+	return nil
+
 }

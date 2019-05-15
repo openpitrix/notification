@@ -21,6 +21,11 @@ func TestLoadConf(t *testing.T) {
 	os.Setenv("NOTIFICATION_MYSQL_HOST", "MYSQL_HOST_test")
 	os.Setenv("NOTIFICATION_MYSQL_PORT", "13306")
 
+	os.Setenv("NOTIFICATION_APP_API_HOST", "TESTAPP_API_HOST")
+
+	os.Setenv("NOTIFICATION_APP_MAX_WORKING_NOTIFICATIONS", "11")
+	os.Setenv("NOTIFICATION_APP_MAX_WORKING_TASKS", "11")
+
 	mycfg := GetInstance()
 	mycfg.LoadConf()
 
@@ -56,8 +61,10 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "App=========================================")
 	logger.Debugf(nil, "NOTIFICATION_APP_HOST : %+v", mycfg.App.Host)
 	logger.Debugf(nil, "NOTIFICATION_APP_PORT : %+v", mycfg.App.Port)
-	logger.Debugf(nil, "NOTIFICATION_APP_APIHOST : %+v", mycfg.App.ApiHost)
-	logger.Debugf(nil, "NOTIFICATION_APP_APIPORT : %+v", mycfg.App.ApiPort)
+	logger.Debugf(nil, "NOTIFICATION_APP_API_HOST : %+v", mycfg.App.ApiHost)
+	logger.Debugf(nil, "NOTIFICATION_APP_API_PORT : %+v", mycfg.App.ApiPort)
+	logger.Debugf(nil, "NOTIFICATION_APP_MAX_WORKING_NOTIFICATIONS : %+v", mycfg.App.MaxWorkingNotifications)
+	logger.Debugf(nil, "NOTIFICATION_APP_MAX_WORKING_TASKS : %+v", mycfg.App.MaxWorkingTasks)
 	logger.Debugf(nil, "")
 
 	mycfg.PrintUsage()

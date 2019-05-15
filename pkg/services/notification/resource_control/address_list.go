@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 	nfdb "openpitrix.io/notification/pkg/db"
 	"openpitrix.io/notification/pkg/gerr"

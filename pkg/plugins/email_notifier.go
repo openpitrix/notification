@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/util/emailutil"

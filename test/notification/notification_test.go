@@ -8,8 +8,11 @@ package notification
 
 import (
 	"context"
+	"strconv"
 	"testing"
 	"time"
+
+	"openpitrix.io/logger"
 
 	nfclient "openpitrix.io/notification/pkg/client/notification"
 	"openpitrix.io/notification/pkg/pb"
@@ -24,16 +27,15 @@ func TestNotification(t *testing.T) {
 		t.Fatalf("failed to create nfclient.")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
-	testAddrsStr := "{\"email\": [\"huojiao2006@163.com\", \"513590612@qq.com\"]}"
-	contentStr := "{\"threshold\":80,\"time_series_metrics\":[{\"T\":1243465,\"V\":\"435.4354\"},{\"T\":1243465,\"V\":\"435.4354\"}]}"
+	testAddrsStr := "{\"email\": [\"openpitrix@163.com\"]}"
+	contentStr := "test content"
 
 	var req = &pb.CreateNotificationRequest{
-		ContentType: pbutil.ToProtoString("ContentType"),
-		Title:       pbutil.ToProtoString("notification_test.go sends an email."),
-		//Content:      pbutil.ToProtoString("Content:handler_test.go sends an email."),
+		ContentType:  pbutil.ToProtoString("other"),
+		Title:        pbutil.ToProtoString("handler_test.go Title_test."),
 		Content:      pbutil.ToProtoString(contentStr),
 		ShortContent: pbutil.ToProtoString("ShortContent"),
 		ExpiredDays:  pbutil.ToProtoUInt32(0),
@@ -41,14 +43,57 @@ func TestNotification(t *testing.T) {
 		AddressInfo:  pbutil.ToProtoString(testAddrsStr),
 	}
 
-	nfID, err := client.CreateNotification(ctx, req)
+	_, err = client.CreateNotification(ctx, req)
 	if err != nil {
 		t.Log(err)
 		t.Fatalf("failed to CreateNotification.")
 	}
-	t.Log(nfID)
-	//t.Log("CreateNotification successfully,nfID = [%s]", nfID)
 
-	t.Log("test notification finish, all tests is ok")
+	t.Log("create notification successfully.")
 
+}
+
+func createNF2(i string) {
+	client, err := nfclient.NewClient()
+	if err != nil {
+		logger.Errorf(nil, "failed to create nfclient.")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
+	defer cancel()
+
+	testAddrsStr := "{\"email\": [\"admin@app-center.com.cn\"]}"
+	contentStr := "content for pressure Testing"
+	var req = &pb.CreateNotificationRequest{
+		ContentType:  pbutil.ToProtoString("other"),
+		Title:        pbutil.ToProtoString("Pressure Testing"),
+		Content:      pbutil.ToProtoString(contentStr),
+		ShortContent: pbutil.ToProtoString("ShortContent"),
+		ExpiredDays:  pbutil.ToProtoUInt32(0),
+		Owner:        pbutil.ToProtoString("HuoJiao"),
+		AddressInfo:  pbutil.ToProtoString(testAddrsStr),
+	}
+
+	s := req.Content.GetValue() + ",第" + i + "封邮件"
+	req.Content = pbutil.ToProtoString(s)
+	_, err = client.CreateNotification(ctx, req)
+	if err != nil {
+		logger.Errorf(nil, "failed to CreateNotification,err= %+v", err)
+	}
+	logger.Infof(nil, "create notification successfully,i= %+v", i)
+
+}
+
+const (
+	Maxtasks2 = 1000
+)
+
+func TestCreateNotificationByPressure(t *testing.T) {
+	for i := 0; i < Maxtasks2; i++ {
+		go createNF2(strconv.Itoa(i))
+	}
+
+	for {
+		time.Sleep(time.Second * 1)
+	}
 }

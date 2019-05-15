@@ -587,16 +587,6 @@ var Files = map[string]string{
         },
         "parameters": [
           {
-            "name": "notification_id",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
             "name": "task_id",
             "in": "query",
             "required": false,
@@ -607,7 +597,7 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "task_action",
+            "name": "notification_id",
             "in": "query",
             "required": false,
             "type": "array",
@@ -704,6 +694,33 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbRetryTasksRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/notifications/validate_email_service": {
+      "post": {
+        "summary": "validate email service",
+        "operationId": "ValidateEmailService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbValidateEmailServiceResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbServiceConfig"
             }
           }
         ],
@@ -883,6 +900,15 @@ var Files = map[string]string{
           "type": "string"
         },
         "address_info": {
+          "type": "string"
+        },
+        "available_start_time": {
+          "type": "string"
+        },
+        "available_end_time": {
+          "type": "string"
+        },
+        "extra": {
           "type": "string"
         }
       }
@@ -1135,6 +1161,15 @@ var Files = map[string]string{
         },
         "address_info": {
           "type": "string"
+        },
+        "available_start_time": {
+          "type": "string"
+        },
+        "available_end_time": {
+          "type": "string"
+        },
+        "extra": {
+          "type": "string"
         }
       }
     },
@@ -1202,13 +1237,10 @@ var Files = map[string]string{
     "pbTask": {
       "type": "object",
       "properties": {
-        "notification_id": {
-          "type": "string"
-        },
         "task_id": {
           "type": "string"
         },
-        "task_action": {
+        "notification_id": {
           "type": "string"
         },
         "error_code": {
@@ -1228,6 +1260,15 @@ var Files = map[string]string{
         },
         "directive": {
           "type": "string"
+        }
+      }
+    },
+    "pbValidateEmailServiceResponse": {
+      "type": "object",
+      "properties": {
+        "is_succ": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     }

@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/etcd"
 	"openpitrix.io/notification/pkg/global"
@@ -35,6 +36,14 @@ func NewController() *Controller {
 }
 
 func (c *Controller) Serve() {
+	//for i := 0; i < 10; i++ {
+	//	go c.ExtractNotifications2()
+	//}
+	//
+	//for i := 0; i < 10; i++ {
+	//	go c.ExtractTasks2()
+	//}
+
 	go c.ExtractTasks()
 	go c.ExtractNotifications()
 
@@ -43,6 +52,34 @@ func (c *Controller) Serve() {
 	}
 	for i := 0; i < constants.MaxWorkingNotifications; i++ {
 		go c.HandleNotification(strconv.Itoa(i))
+	}
+}
+
+func (c *Controller) ExtractNotifications2() error {
+	for {
+		logger.Infof(nil, "Dequeue notification from etcd queue Start")
+		notificationId, err := c.notificationQueue.Dequeue()
+		if err != nil {
+			logger.Errorf(nil, "Failed to dequeue notification from etcd queue: %+v", err)
+			time.Sleep(3 * time.Second)
+			continue
+		}
+
+		logger.Infof(nil, "Dequeue notification [%s] from etcd queue succeed", notificationId)
+	}
+}
+
+func (c *Controller) ExtractTasks2() error {
+	for {
+		logger.Infof(nil, "Dequeue task from etcd queue Start")
+		taskId, err := c.taskQueue.Dequeue()
+		if err != nil {
+			logger.Errorf(nil, "Failed to dequeue task from etcd queue: %+v", err)
+			time.Sleep(3 * time.Second)
+			continue
+		}
+
+		logger.Infof(nil, "Dequeue task [%s] from etcd queue succeed", taskId)
 	}
 }
 
@@ -55,7 +92,7 @@ func (c *Controller) ExtractTasks() error {
 			continue
 		}
 
-		logger.Debugf(nil, "Dequeue task [%s] from etcd queue succeed", taskId)
+		logger.Infof(nil, "Dequeue task [%s] from etcd queue succeed", taskId)
 		c.runningTaskIds <- taskId
 	}
 }
@@ -69,7 +106,7 @@ func (c *Controller) ExtractNotifications() error {
 			continue
 		}
 
-		logger.Debugf(nil, "Dequeue notification [%s] from etcd queue succeed", notificationId)
+		logger.Infof(nil, "Dequeue notification [%s] from etcd queue succeed", notificationId)
 		c.runningNotificationIds <- notificationId
 	}
 }
@@ -137,6 +174,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 			}
 			time.Sleep(3 * time.Second)
 		}
+
 	}
 }
 
@@ -188,5 +226,7 @@ func (c *Controller) HandleTask(handlerNum string) {
 				continue
 			}
 		}
+
 	}
+
 }
