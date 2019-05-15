@@ -133,4 +133,24 @@ var (
 		en:   "validate email service failed",
 		zhCN: "验证邮件服务配置失败",
 	}
+	ErrorIllegalNotificationAddressInfo = ErrorMessage{
+		Name: "illegal_notification_address_format",
+		en:   "illegal notification address format [%s]",
+		zhCN: "错误的通知地址格式[%s]",
+	}
+	ErrorIllegalNotificationType = ErrorMessage{
+		Name: "illegal_notification_type",
+		en:   "illegal notification type [%s]",
+		zhCN: "错误的通知类型[%s]",
+	}
+	ErrorIllegalNotificationAddressList = ErrorMessage{
+		Name: "illegal_notification_address_list",
+		en:   "illegal notification address list [%s]",
+		zhCN: "错误的通知列表[%s]",
+	}
+	ErrorIllegalNotificationExtra = ErrorMessage{
+		Name: "illegal_notification_extra",
+		en:   "illegal notification extra [%s]",
+		zhCN: "错误的通知附加信息[%s]",
+	}
 )

@@ -11,8 +11,8 @@ import (
 
 	"github.com/google/gops/agent"
 	"github.com/jinzhu/gorm"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
 	nfdb "openpitrix.io/notification/pkg/db"

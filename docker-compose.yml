@@ -13,7 +13,7 @@ services:
     volumes:
     - ${DATA_PATH}/mysql:/var/lib/mysql
     - ./pkg/db/ddl:/docker-entrypoint-initdb.d
-    command: --lower_case_table_names=0 --max_allowed_packet=10485760
+    command: --lower_case_table_names=0 --max_allowed_packet=10485760 --max_connections=256
     ports:
     - "13306:3306" # for unit-test & debug
     container_name: "notification-db"
@@ -41,7 +41,6 @@ services:
   # notification service
   notification-manager:
     #build: .
-    #image: "notification:v0.0.1-dev"
     image: "notification:latest"
     command: "notification"
     links:
@@ -55,6 +54,10 @@ services:
     - NOTIFICATION_LOG_LEVEL=${NOTIFICATION_LOG_LEVEL}
     - NOTIFICATION_GRPC_SHOW_ERROR_CAUSE=${NOTIFICATION_GRPC_SHOW_ERROR_CAUSE}
     - NOTIFICATION_MYSQL_DATABASE=notification
+    - NOTIFICATION_MYSQL_LOG_MODE=false
+    - NOTIFICATION_LOG_LEVEL=error
+    - NOTIFICATION_APP_MAX_WORKING_NOTIFICATIONS=5
+    - NOTIFICATION_APP_MAX_WORKING_TASKS=5
     logging:
       driver: "json-file"
       options:
@@ -62,6 +65,7 @@ services:
         max-file: ${NOTIFICATION_LOG_MAX_FILE}
     ports:
     - "9200:9200"
+    - "9201:9201"
   notification-notification-db-ctrl:
     image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
     command: -url=jdbc:mysql://notification-db/notification -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate

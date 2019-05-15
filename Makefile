@@ -6,7 +6,8 @@ TRAG.Gopkg:=openpitrix.io/notification
 TRAG.Version:=$(TRAG.Gopkg)/pkg/version
 TARG.Name:=notification
 
-GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
+#GO_FMT:=goimports -l -w -e -local=openpitrix -srcdir=/go/src/$(TRAG.Gopkg)
+GO_FMT:=gofmt -w  /go/src/$(TRAG.Gopkg)
 GO_MOD_TIDY:=go mod tidy
 GO_RACE:=go build -race
 GO_VET:=go vet
@@ -58,7 +59,7 @@ tidy: ## Tidy go.mod
 	@echo "go mod tidy done"
 
 .PHONY: fmt-check
-fmt-check: fmt-all tidy ## Check whether all files be formatted
+fmt-check:fmt-all tidy ## Check whether all files be formatted
 	$(call get_diff_files)
 	$(if $(DIFF_FILES), \
 		exit 2 \

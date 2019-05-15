@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/config"
 )
 

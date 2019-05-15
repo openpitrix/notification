@@ -11,8 +11,8 @@ import (
 	"sync"
 
 	"github.com/koding/multiconfig"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 )
 
@@ -23,7 +23,7 @@ type Config struct {
 	Mysql struct {
 		Host string `default:"notification-db"`
 		Port int    `default:"3306"`
-		//Host     string `default:"192.168.0.3"`
+		//Host     string `default:"192.168.0.6"`
 		//Port     int    `default:"13306"`
 		User     string `default:"root"`
 		Password string `default:"password"`
@@ -35,7 +35,7 @@ type Config struct {
 
 	Etcd struct {
 		Endpoints string `default:"notification-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
-		//Endpoints string `default:"192.168.0.3:12379"`
+		//Endpoints string `default:"192.168.0.8:2379"`
 	}
 
 	Email struct {
@@ -49,15 +49,22 @@ type Config struct {
 	}
 
 	App struct {
-		//Host string `default:"localhost"`
+		//Host string `default:"127.0.0.1"`
 		//Port int    `default:"9201"`
 		Host string `default:"notification-manager"`
 		Port int    `default:"9201"`
 
-		//ApiHost string `default:"localhost"`
+		//ApiHost string `default:"127.0.0.1"`
 		//ApiPort int    `default:"9200"`
 		ApiHost string `default:"notification-manager"`
 		ApiPort int    `default:"9200"`
+
+		MaxWorkingNotifications int `default:"5"`
+		MaxWorkingTasks         int `default:"5"`
+	}
+
+	Websocket struct {
+		MessageTypes string `default:"nf,event"`
 	}
 }
 

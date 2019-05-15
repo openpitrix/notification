@@ -1,4 +1,4 @@
-// Copyright 2018 The OpenPitrix Authors. All rights reserved.
+// Copyright 2019 The OpenPitrix Authors. All rights reserved.
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
@@ -10,8 +10,8 @@ import (
 	"github.com/fatih/structs"
 	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/jinzhu/gorm"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/util/stringutil"
 )

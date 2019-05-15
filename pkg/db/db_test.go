@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/jinzhu/gorm"
-
 	"openpitrix.io/logger"
+
 	pkg "openpitrix.io/notification/pkg"
 	"openpitrix.io/notification/pkg/config"
 )

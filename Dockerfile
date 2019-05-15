@@ -19,6 +19,9 @@ RUN go build -v -a -installsuffix cgo -ldflags '-w' -o /openpitrix_bin/notificat
 
 
 FROM alpine:3.7
+# modify pod (container) timezone
+RUN apk add -U tzdata && ls /usr/share/zoneinfo && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && apk del tzdata
+
 COPY --from=builder /openpitrix_bin/notification /usr/local/bin/
 EXPOSE 9201
 CMD ["/usr/local/bin/notification"]

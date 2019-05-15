@@ -22,12 +22,14 @@ import (
 	"golang.org/x/tools/godoc/vfs/httpfs"
 	"golang.org/x/tools/godoc/vfs/mapfs"
 	"google.golang.org/grpc"
-
 	"openpitrix.io/logger"
+
 	staticSpec "openpitrix.io/notification/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/notification/pkg/apigateway/swagger-ui"
 	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/global"
 	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/notification/pkg/services/websocket"
 )
 
 type register struct {
@@ -41,7 +43,6 @@ func ServeApiGateway() {
 	//})
 
 	cfg := config.GetInstance()
-
 	logger.Infof(nil, "Notification service http://%s:%d", cfg.App.Host, cfg.App.Port)
 	logger.Infof(nil, "Api service start http://%s:%d/swagger-ui/", cfg.App.ApiHost, cfg.App.ApiPort)
 
@@ -153,8 +154,19 @@ func (s *Server) mainHandler() http.Handler {
 	}
 
 	mux := http.NewServeMux()
-
 	mux.Handle("/", gwmux)
+
+	/**********************************************************
+	** start websocket mananger service **
+	**********************************************************/
+	logger.Infof(nil, "[%s]", "/**********************************************************")
+	logger.Infof(nil, "[%s]", "** start websocket mananger service **")
+	logger.Infof(nil, "[%s]", "**********************************************************/")
+	global := global.GetInstance()
+	wsm := websocket.NewWsManager(global.GetEtcd())
+	go wsm.Run()
+
+	mux.HandleFunc("/v1/notifications/ws", wsm.HandleWsTask())
 
 	return formWrapper(mux)
 }

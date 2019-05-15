@@ -7,8 +7,10 @@ import (
 	"testing"
 
 	"openpitrix.io/logger"
+
 	pkg "openpitrix.io/notification/pkg"
 	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
@@ -53,4 +55,34 @@ func TestDescribeNotifications4rc(t *testing.T) {
 	}
 
 	logger.Infof(nil, "Test describe notifications:,cnt = %d，notifications=[%+v]", cnt, notifications)
+}
+
+func TestRegisterNotification4rc(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+	config.GetInstance().LoadConf()
+
+	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
+	testAddrListIds := "[\"adl-EgoLADQkwkEr\"]"
+
+	notification := models.NewNotification(
+		"alert",
+		"testing alert",
+		"test content",
+		"test short content",
+		//testAddrsStr,
+		testAddrListIds,
+		"testJo",
+		0,
+		"00:00:00",
+		"20:00:00", "ws_op_nf",
+	)
+
+	err := RegisterNotification(nil, notification)
+	if err != nil {
+		logger.Errorf(nil, "Failed to register notification, %+v.", err)
+	}
+	logger.Debugf(nil, "RegisterNotification [%s] in DB successfully.", notification.NotificationId)
+
 }

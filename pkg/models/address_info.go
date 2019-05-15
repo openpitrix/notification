@@ -6,6 +6,7 @@ package models
 
 import (
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/util/jsonutil"
 )
 

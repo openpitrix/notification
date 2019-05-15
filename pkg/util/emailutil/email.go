@@ -9,8 +9,8 @@ import (
 	"crypto/tls"
 
 	gomail "gopkg.in/gomail.v2"
-
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/config"
 )
 

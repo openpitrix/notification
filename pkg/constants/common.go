@@ -18,7 +18,7 @@ const (
 	NotificationTopicPrefix     = "nf-job"
 	MaxWorkingTasks             = 5
 	MaxWorkingNotifications     = 5
-	MaxTaskRetryTimes           = 5
+	MaxTaskRetryTimes           = 3
 )
 
 const (
@@ -36,17 +36,15 @@ const (
 )
 
 const (
-	NotifyTypeEmail  = "email"
-	NotifyTypeWeb    = "web"
-	NotifyTypeMobile = "mobile"
-	NotifyTypeSms    = "sms"
-	NotifyTypeWeChat = "wechat"
+	NotifyTypeEmail     = "email"
+	NotifyTypeWebsocket = "websocket"
+	NotifyTypeSms       = "sms"
+	NotifyTypeWeChat    = "wechat"
 )
 
 var NotifyTypes = []string{
 	NotifyTypeEmail,
-	NotifyTypeWeb,
-	NotifyTypeMobile,
+	NotifyTypeWebsocket,
 	NotifyTypeSms,
 	NotifyTypeWeChat,
 }
@@ -76,3 +74,8 @@ var RecordStatuses = []string{
 	StatusDisabled,
 	StatusDeleted,
 }
+
+const (
+	WsMessageType   = "ws_message_type"
+	WsMessagePrefix = "ws_"
+)

@@ -11,8 +11,10 @@ import (
 	"time"
 
 	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/gerr"
+	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 )
 
@@ -34,6 +36,45 @@ func ValidateSetServiceConfigParams(ctx context.Context, req *pb.ServiceConfig) 
 }
 
 func ValidateCreateNotificationParams(ctx context.Context, req *pb.CreateNotificationRequest) error {
+	//1.validate avaiblable time
+	err := validateAvaiblableTime(ctx, req)
+	if err != nil {
+		return err
+	}
+
+	//2.validate address info
+	notification := models.NewNotification(
+		req.GetContentType().GetValue(),
+		req.GetTitle().GetValue(),
+		req.GetContent().GetValue(),
+		req.GetShortContent().GetValue(),
+		req.GetAddressInfo().GetValue(),
+		req.GetOwner().GetValue(),
+		req.GetExpiredDays().GetValue(),
+		req.GetAvailableStartTime().GetValue(),
+		req.GetAvailableEndTime().GetValue(),
+		req.GetExtra().GetValue(),
+	)
+
+	_, decodeMapErr := models.DecodeAddressInfo(notification.AddressInfo)
+	if decodeMapErr == nil {
+		//2.1. check addressInfo format is like address_info = {"email": ["xxx@abc.com", "xxx@xxx.com"],"websocket": ["system", "huojiao"]}
+		err = validateAddressInfo4AddressMap(ctx, notification)
+		if err != nil {
+			return err
+		}
+	} else {
+		//2.2 check addressInfo format is like address_info = ["adl-xxxx1", "adl-xxxx2"]
+		err = validateAddressInfo4AddressListIds(ctx, notification)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func validateAvaiblableTime(ctx context.Context, req *pb.CreateNotificationRequest) error {
 	if req.GetAvailableStartTime().GetValue() != "" {
 		availableStartTimeStr := req.GetAvailableStartTime().GetValue()
 		err := VerifyAvailableTimeStr(ctx, availableStartTimeStr)
@@ -53,6 +94,66 @@ func ValidateCreateNotificationParams(ctx context.Context, req *pb.CreateNotific
 	return nil
 }
 
+func validateAddressInfo4AddressListIds(ctx context.Context, notification *models.Notification) error {
+	addressListIds, err := models.DecodeAddressListIds(notification.AddressInfo)
+	if err == nil {
+		if len(*addressListIds) == 0 {
+			logger.Errorf(ctx, "Failed to validate addressInfo, address list id is blank: %+v", err)
+			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationAddressList, notification.AddressInfo)
+		}
+		for _, addressListId := range *addressListIds {
+			//check addresslist id start with adl-, address_info = ["adl-xxxx1", "adl-xxxx2"]
+			prefix := string([]byte(addressListId)[:4])
+			if prefix != models.AddressListIdPrefix {
+				logger.Errorf(ctx, "Failed to validate addressInfo[%s], address list id is should be [\"adl-xxxx1\", \"adl-xxxx2\"] ", addressListId)
+				return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationAddressList, notification.AddressInfo)
+			}
+		}
+
+	} else {
+		logger.Errorf(ctx, "Failed to validate addressInfo[%s]: %+v", notification.AddressInfo, err)
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationAddressInfo, notification.AddressInfo)
+	}
+	return nil
+}
+
+func validateAddressInfo4AddressMap(ctx context.Context, notification *models.Notification) error {
+	addrInfoMap, err := models.DecodeAddressInfo(notification.AddressInfo)
+	if err == nil {
+		if len(*addrInfoMap) == 0 {
+			logger.Errorf(ctx, "Failed to validate addressInfo,address info is blank: [%s].", notification.AddressInfo)
+			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationAddressInfo, notification.AddressInfo)
+		}
+		//check addressInfo format is like address_info = {"email": ["xxx@abc.com", "xxx@xxx.com"],"websocket": ["system", "huojiao"]}
+		for notifyType, values := range *addrInfoMap {
+			if !(notifyType == constants.NotifyTypeEmail || notifyType == constants.NotifyTypeWebsocket) {
+				logger.Errorf(ctx, "Failed to validate addressInfo, notify type is invalid [%s].", notifyType)
+				return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationType, notifyType)
+			}
+			if notifyType == constants.NotifyTypeEmail {
+				for _, email := range values {
+					err := VerifyEmailFmt(ctx, email)
+					if err != nil {
+						logger.Errorf(ctx, "Failed to validate email [%s]: %+v", email, err)
+						return err
+					}
+				}
+			}
+			if notifyType == constants.NotifyTypeWebsocket {
+				err := models.CheckExtra(ctx, notification)
+				if err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+
+	} else {
+		return err
+	}
+
+}
+
 func ValidateCreateAddressParams(ctx context.Context, req *pb.CreateAddressRequest) error {
 	address := req.GetAddress().GetValue()
 	notifyType := req.GetNotifyType().GetValue()
@@ -64,10 +165,11 @@ func ValidateCreateAddressParams(ctx context.Context, req *pb.CreateAddressReque
 			return err
 		}
 		return nil
+	} else if notifyType == constants.NotifyTypeWebsocket {
+		return nil
 	} else {
 		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateFailed)
 	}
-
 }
 
 func ValidateModifyAddressParams(ctx context.Context, req *pb.ModifyAddressRequest) error {
