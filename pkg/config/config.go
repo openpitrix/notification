@@ -35,7 +35,8 @@ type Config struct {
 
 	Etcd struct {
 		Endpoints string `default:"notification-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
-		//Endpoints string `default:"192.168.0.8:2379"`
+		//Endpoints string `default:"192.168.0.6:12379"`
+		QueueNum string `default:"100"`
 	}
 
 	Email struct {
@@ -80,7 +81,7 @@ func GetInstance() *Config {
 }
 
 type LogConfig struct {
-	Level string `default:"debug"` // debug, info, warn, error, fatal
+	Level string `default:"error"` // debug, info, warn, error, fatal
 }
 
 type GrpcConfig struct {

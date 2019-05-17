@@ -8,11 +8,13 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"math/rand"
 
 	gomail "gopkg.in/gomail.v2"
 	"openpitrix.io/logger"
 
 	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/etcd"
 	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
@@ -114,7 +116,7 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 	logger.Debugf(ctx, "Create tasks by notification [%s] in DB successfully.", notification.NotificationId)
 
 	//Step3:Enqueue notification id to etcd queue.
-	err = s.controller.notificationQueue.Enqueue(notification.NotificationId)
+	err = s.controller.notificationQueue[rand.Intn(etcd.GetQueueNum())].Enqueue(notification.NotificationId)
 	if err != nil {
 		logger.Errorf(ctx, "Push notification [%s] into etcd failed, %+v.", notification.NotificationId, err)
 		return nil, err
@@ -152,7 +154,7 @@ func (s *Server) createTasks(ctx context.Context, tasks []*models.Task) error {
 		logger.Debugf(ctx, "Create task [%s] in DB successfully.", task.TaskId)
 
 		if task.NotifyType == constants.NotifyTypeEmail {
-			err = s.controller.taskQueue.Enqueue(task.TaskId)
+			err = s.controller.taskQueue[rand.Intn(etcd.GetQueueNum())].Enqueue(task.TaskId)
 			if err != nil {
 				logger.Errorf(ctx, "Failed to push task [%s] into etcd, %+v.", task.TaskId, err)
 				return err
@@ -185,7 +187,7 @@ func (s *Server) RetryNotifications(ctx context.Context, req *pb.RetryNotificati
 	}
 
 	for _, nfId := range nfIds {
-		err = s.controller.notificationQueue.Enqueue(nfId)
+		err = s.controller.notificationQueue[rand.Intn(etcd.GetQueueNum())].Enqueue(nfId)
 		if err != nil {
 			logger.Errorf(ctx, "Push notification [%s] into etcd failed, %+v.", nfId, err)
 			return nil, err
@@ -257,7 +259,7 @@ func (s *Server) retryTasksByTaskIds(ctx context.Context, taskIds []string) erro
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, taskIds)
 	}
 	for _, taskId := range taskIds {
-		err = s.controller.taskQueue.Enqueue(taskId)
+		err = s.controller.taskQueue[rand.Intn(etcd.GetQueueNum())].Enqueue(taskId)
 		if err != nil {
 			logger.Errorf(ctx, "Failed to push task [%+v] into etcd, %+v.", taskIds, err)
 			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, taskIds)
