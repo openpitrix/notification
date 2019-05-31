@@ -6,16 +6,15 @@ package notification
 
 import (
 	"context"
-	"fmt"
-	"math/rand"
 	"strconv"
 	"time"
 
+	lib "openpitrix.io/libqueue"
+	q "openpitrix.io/libqueue/queue"
 	"openpitrix.io/logger"
 
+	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
-	"openpitrix.io/notification/pkg/etcd"
-	"openpitrix.io/notification/pkg/global"
 	"openpitrix.io/notification/pkg/plugins"
 	rs "openpitrix.io/notification/pkg/services/notification/resource_control"
 	"openpitrix.io/notification/pkg/util/ctxutil"
@@ -24,36 +23,39 @@ import (
 type Controller struct {
 	runningTaskIds         chan string
 	runningNotificationIds chan string
-	taskQueue              []*etcd.Queue
-	notificationQueue      []*etcd.Queue
+	taskQueue              lib.Topic
+	notificationQueue      lib.Topic
 }
 
-func NewController() *Controller {
-	queueNum := etcd.GetQueueNum()
+func NewController() (*Controller, error) {
+	cfg := config.GetInstance().LoadConf()
+	queueConnStr := cfg.Queue.Addr
+	queueType := cfg.Queue.Type
 
-	notificationQueue := make([]*etcd.Queue, 0)
-	taskQueue := make([]*etcd.Queue, 0)
-	e := global.GetInstance().GetEtcd()
-	for i := 0; i < queueNum; i++ {
-		notificationQueue = append(notificationQueue, e.NewQueue(fmt.Sprintf("%s-%d", constants.NotificationTopicPrefix, i)))
-		taskQueue = append(taskQueue, e.NewQueue(fmt.Sprintf("%s-%d", constants.NotificationTaskTopicPrefix, i)))
+	queueConfigMap := map[string]interface{}{
+		"connStr": queueConnStr,
 	}
 
+	c, err := q.New(queueType, queueConfigMap)
+	if err != nil {
+		logger.Errorf(nil, "Failed to connect redis queue: %+v.", err)
+		return nil, err
+	}
+
+	notificationQueue, _ := c.SetTopic(constants.NotificationTopicPrefix)
+
+	taskQueue, _ := c.SetTopic(constants.NotificationTaskTopicPrefix)
 	return &Controller{
 		taskQueue:              taskQueue,
 		notificationQueue:      notificationQueue,
 		runningTaskIds:         make(chan string),
 		runningNotificationIds: make(chan string),
-	}
+	}, nil
 }
 
 func (c *Controller) Serve() {
-	for i := 0; i < len(c.taskQueue); i++ {
-		go c.ExtractTasks(i)
-	}
-	for i := 0; i < len(c.notificationQueue); i++ {
-		go c.ExtractNotifications(i)
-	}
+	go c.ExtractTasks()
+	go c.ExtractNotifications()
 
 	for i := 0; i < constants.MaxWorkingTasks; i++ {
 		go c.HandleTask(strconv.Itoa(i))
@@ -63,30 +65,31 @@ func (c *Controller) Serve() {
 	}
 }
 
-func (c *Controller) ExtractTasks(index int) error {
+func (c *Controller) ExtractTasks() error {
 	for {
-		taskId, err := c.taskQueue[index].Dequeue()
+
+		taskId, err := c.taskQueue.Dequeue()
 		if err != nil {
-			logger.Errorf(nil, "Failed to dequeue task from etcd queue: %+v", err)
+			logger.Errorf(nil, "Failed to dequeue task from queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
 
-		logger.Infof(nil, "Dequeue task [%s] from etcd queue succeed", taskId)
+		logger.Infof(nil, "Dequeue task [%s] from queue succeed", taskId)
 		c.runningTaskIds <- taskId
 	}
 }
 
-func (c *Controller) ExtractNotifications(index int) error {
+func (c *Controller) ExtractNotifications() error {
 	for {
-		notificationId, err := c.notificationQueue[index].Dequeue()
+		notificationId, err := c.notificationQueue.Dequeue()
 		if err != nil {
-			logger.Errorf(nil, "Failed to dequeue notification from etcd queue: %+v", err)
+			logger.Errorf(nil, "Failed to dequeue notification from queue: %+v", err)
 			time.Sleep(3 * time.Second)
 			continue
 		}
 
-		logger.Infof(nil, "Dequeue notification [%s] from etcd queue succeed", notificationId)
+		logger.Infof(nil, "Dequeue notification [%s] from queue succeed", notificationId)
 		c.runningNotificationIds <- notificationId
 	}
 }
@@ -155,10 +158,10 @@ func (c *Controller) HandleNotification(handlerNum string) {
 						isNotificationFinished = true
 					}
 
-					//2/2 retry the task, put this one task back to task etcd queue.
-					err := c.taskQueue[rand.Intn(etcd.GetQueueNum())].Enqueue(noSuccessfulTask.TaskId)
+					//2/2 retry the task, put this one task back to task queue.
+					err := c.taskQueue.Enqueue(noSuccessfulTask.TaskId)
 					if err != nil {
-						logger.Errorf(nil, "Failed to push task [%s] into etcd, error: [%+v]", noSuccessfulTask.TaskId, err)
+						logger.Errorf(nil, "Failed to push task [%s] into queue, error: [%+v]", noSuccessfulTask.TaskId, err)
 						continue
 					}
 				}

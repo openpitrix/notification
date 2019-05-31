@@ -48,6 +48,11 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "NOTIFICATION_ETCD_ENDPOINTS : %+v", mycfg.Etcd.Endpoints)
 	logger.Debugf(nil, "")
 
+	logger.Debugf(nil, "Queue=========================================")
+	logger.Debugf(nil, "NOTIFICATION_QUEUE_ADDR : %+v", mycfg.Queue.Addr)
+	logger.Debugf(nil, "NOTIFICATION_QUEUE_TYPE : %+v", mycfg.Queue.Type)
+	logger.Debugf(nil, "")
+
 	logger.Debugf(nil, "Email=========================================")
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_PROTOCOL : %+v", mycfg.Email.Protocol)
 	logger.Debugf(nil, "NOTIFICATION_EMAIL_EMAIL_HOST : %+v", mycfg.Email.EmailHost)

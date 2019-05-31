@@ -22,7 +22,8 @@ func TestSetServiceConfig(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -54,7 +55,8 @@ func TestGetServiceConfig(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -78,7 +80,8 @@ func TestCreateNotification(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
@@ -121,7 +124,8 @@ func TestRetryNotifications(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -144,7 +148,8 @@ func TestRetryTasks(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -169,7 +174,8 @@ func TestDescribeNotifications(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -212,7 +218,8 @@ func TestDescribeTasks(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -251,7 +258,8 @@ func TestCreateAddress(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -282,7 +290,8 @@ func TestDescribeAddresses(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -326,7 +335,8 @@ func TestModifyAddress(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -351,7 +361,8 @@ func TestDeleteAddresses(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -375,7 +386,8 @@ func TestCreateAddressList(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -406,7 +418,8 @@ func TestDescribeAddressList(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -446,7 +459,8 @@ func TestModifyAddressList(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -475,7 +489,8 @@ func TestDeleteAddressList(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -500,7 +515,8 @@ func TestValidateEmailService(t *testing.T) {
 	}
 
 	config.GetInstance().LoadConf()
-	s := &Server{controller: NewController()}
+	controller, _ := NewController()
+	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
