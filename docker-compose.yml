@@ -23,6 +23,16 @@ services:
         max-size: ${NOTIFICATION_LOG_MAX_SIZE}
         max-file: ${NOTIFICATION_LOG_MAX_FILE}
 
+  # notification redis
+  notification-redis:
+    image: "redis:5.0.5-alpine"
+    volumes:
+    - ${DATA_PATH}/redis:/data
+    command: redis-server
+    ports:
+    - "6379:6379"
+    container_name: "notification-redis"
+
   # notification etcd
   notification-etcd:
     image: "quay.io/coreos/etcd:v3.2.18"

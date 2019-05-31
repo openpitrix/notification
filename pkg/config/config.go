@@ -36,7 +36,12 @@ type Config struct {
 	Etcd struct {
 		Endpoints string `default:"notification-etcd:2379"` // Example: "localhost:2379,localhost:22379,localhost:32379"
 		//Endpoints string `default:"192.168.0.6:12379"`
-		QueueNum string `default:"100"`
+	}
+
+	Queue struct {
+		Type string `default:"redis"`
+		Addr string `default:"redis://notification-redis:6379"`
+		//Addr string `default:"redis://192.168.0.4:6379"`
 	}
 
 	Email struct {

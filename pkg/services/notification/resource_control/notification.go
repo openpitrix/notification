@@ -242,7 +242,7 @@ func pushTask2WsQueue(ctx context.Context, task *models.Task, nf *models.Notific
 	if ok {
 		messageType = nfExtraType
 	}
-	//if notify type is websocket,call websocket PushWsMessage to websocket etcd queue.
+	//if notify type is websocket,call websocket PushWsMessage to websocket queue.
 	if task.NotifyType == constants.NotifyTypeWebsocket {
 		taskDirective, err := models.DecodeTaskDirective(task.Directive)
 		if err != nil {

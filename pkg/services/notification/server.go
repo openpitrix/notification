@@ -19,9 +19,11 @@ type Server struct {
 
 func Serve() {
 	cfg := config.GetInstance()
-	s := &Server{
-		controller: NewController(),
+	controller, err := NewController()
+	if err != nil {
+		logger.Criticalf(nil, "Failed to start serve: %+v.", err)
 	}
+	s := &Server{controller: controller}
 
 	/**********************************************************
 	** start controller **
