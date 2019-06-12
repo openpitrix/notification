@@ -31,8 +31,6 @@ func Serve() {
 	logger.Infof(nil, "[%s]", "/**********************************************************")
 	logger.Infof(nil, "[%s]", "** start controller **")
 	logger.Infof(nil, "[%s]", "**********************************************************/")
-	logger.Infof(nil, "[%s]", "")
-	logger.Infof(nil, "[%s]", "")
 	go s.controller.Serve()
 
 	/**********************************************************

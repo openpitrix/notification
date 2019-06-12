@@ -157,13 +157,19 @@ func (s *Server) mainHandler() http.Handler {
 	mux.Handle("/", gwmux)
 
 	/**********************************************************
-	** start websocket mananger service **
+	** start websocket_manager service **
 	**********************************************************/
 	logger.Infof(nil, "[%s]", "/**********************************************************")
-	logger.Infof(nil, "[%s]", "** start websocket mananger service **")
+	logger.Infof(nil, "[%s]", "** start websocket_manager service **")
 	logger.Infof(nil, "[%s]", "**********************************************************/")
-	global := global.GetInstance()
-	wsm := websocket.NewWsManager(global.GetEtcd())
+
+	pubsubType := cfg.PubSub.Type
+	psClient := global.GetInstance().GetPubSubClient()
+
+	wsm, err := websocket.NewWsManager(pubsubType, psClient)
+	if err != nil {
+		logger.Errorf(nil, "Failed to new websocket manager.: %+v", err)
+	}
 	go wsm.Run()
 
 	mux.HandleFunc("/v1/notifications/ws", wsm.HandleWsTask())

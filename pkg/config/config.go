@@ -41,7 +41,17 @@ type Config struct {
 	Queue struct {
 		Type string `default:"redis"`
 		Addr string `default:"redis://notification-redis:6379"`
-		//Addr string `default:"redis://192.168.0.4:6379"`
+		//Addr string `default:"redis://192.168.0.6:6379"`
+		//Type string `default:"etcd"`
+		//Addr string `default:"192.168.0.6:12379"`
+	}
+
+	PubSub struct {
+		Type string `default:"redis"`
+		Addr string `default:"redis://notification-redis:6379"`
+		//Addr string `default:"redis://192.168.0.6:6379"`
+		//Type string `default:"etcd"`
+		//Addr string `default:"192.168.0.6:12379"`
 	}
 
 	Email struct {
@@ -70,7 +80,7 @@ type Config struct {
 	}
 
 	Websocket struct {
-		MessageTypes string `default:"nf,event"`
+		ServiceMessageTypes string `default:"op/nf,op/event,ks/nf,ks/event"`
 	}
 }
 
@@ -86,7 +96,8 @@ func GetInstance() *Config {
 }
 
 type LogConfig struct {
-	Level string `default:"error"` // debug, info, warn, error, fatal
+	//Level string `default:"error"` // debug, info, warn, error, fatal
+	Level string `default:"debug"`
 }
 
 type GrpcConfig struct {
@@ -125,7 +136,8 @@ func (c *Config) LoadConf() *Config {
 		panic(err)
 	}
 
-	logger.Infof(nil, "LoadConf: %+v", config)
-
+	loglevel := config.Log.Level
+	logger.SetLevelByString(loglevel)
+	logger.Debugf(nil, "LoadConf: %+v", config)
 	return config
 }

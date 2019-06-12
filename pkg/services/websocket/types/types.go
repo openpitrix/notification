@@ -2,30 +2,32 @@
 // Use of this source code is governed by a Apache license
 // that can be found in the LICENSE file.
 
-package websocket
+package types
 
 import (
 	"github.com/gorilla/websocket"
-
 	"openpitrix.io/notification/pkg/util/idutil"
 )
 
 const ExpireTime = 60 // second
 
-type userMessage struct {
-	UserId      string
-	MessageType string
-	Message     Message
+type UserMessage struct {
+	UserId        string
+	Service       string
+	MessageType   string
+	MessageDetail MessageDetail
 }
 
-type Message struct {
-	MessageId   string `json:"ws_message_id,omitempty"`
-	UserId      string `json:"ws_user_id,omitempty"`
-	MessageType string `json:"ws_message_type,omitempty"`
-	Message     string `json:"ws_message,omitempty"`
+type MessageDetail struct {
+	MessageId      string `json:"ws_message_id,omitempty"`
+	UserId         string `json:"ws_user_id,omitempty"`
+	Service        string `json:"ws_service,omitempty"`
+	MessageType    string `json:"ws_message_type,omitempty"`
+	MessageContent string `json:"ws_message,omitempty"`
 }
 
-type receiver struct {
+type Receiver struct {
+	Service     string
 	MessageType string
 	UserId      string
 	Conn        *websocket.Conn
