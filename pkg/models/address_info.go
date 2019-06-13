@@ -18,7 +18,7 @@ func DecodeAddressInfo(data string) (*AddressInfo, error) {
 	addressInfo := new(AddressInfo)
 	err := jsonutil.Decode([]byte(data), addressInfo)
 	if err != nil {
-		logger.Errorf(nil, "Decode [%s] into address info failed: %+v", data, err)
+		logger.Warnf(nil, "Try to decode as format[{\"email\": [\"xxx@abc.com\", \"xxx@xxx.com\"]}], decode [%s] into address info failed: %+v", data, err)
 	}
 	return addressInfo, err
 }
@@ -27,7 +27,7 @@ func DecodeAddressListIds(data string) (*AddressListIds, error) {
 	addressListIds := new(AddressListIds)
 	err := jsonutil.Decode([]byte(data), addressListIds)
 	if err != nil {
-		logger.Errorf(nil, "Decode [%s] into address list ids failed: %+v", data, err)
+		logger.Warnf(nil, "Try to decode as format[\"adl-xxxxxx\"], decode [%s] into address list ids failed: %+v", data, err)
 	}
 	return addressListIds, err
 }

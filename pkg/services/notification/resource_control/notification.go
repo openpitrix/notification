@@ -10,12 +10,14 @@ import (
 
 	"openpitrix.io/logger"
 
+	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
 	nfdb "openpitrix.io/notification/pkg/db"
 	"openpitrix.io/notification/pkg/global"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/services/websocket"
+	wstypes "openpitrix.io/notification/pkg/services/websocket/types"
 	"openpitrix.io/notification/pkg/util/jsonutil"
 	"openpitrix.io/notification/pkg/util/pbutil"
 	"openpitrix.io/notification/pkg/util/stringutil"
@@ -172,14 +174,9 @@ func processsAddressInfo4AddressListIds(ctx context.Context, notification *model
 			jsonutil.ToString(directive),
 			address.NotifyType,
 		)
-		//if websocket message,just push to ws Queue,no need to create task record in DB.
+		//if websocket message,just push to ws pubsub queue,no need to create task record in DB.
 		if address.NotifyType == constants.NotifyTypeWebsocket {
-			err := models.CheckExtra(ctx, notification)
-			if err != nil {
-				return nil, err
-			}
-
-			err = pushTask2WsQueue(ctx, task, notification)
+			err = pushTask2WsPubSub(ctx, task, notification)
 			if err != nil {
 				return nil, err
 			}
@@ -218,7 +215,7 @@ func processsAddressInfo4AddressMap(ctx context.Context, notification *models.No
 			)
 
 			if notifyType == constants.NotifyTypeWebsocket {
-				err = pushTask2WsQueue(ctx, task, notification)
+				err = pushTask2WsPubSub(ctx, task, notification)
 				if err != nil {
 					return nil, err
 				}
@@ -231,18 +228,10 @@ func processsAddressInfo4AddressMap(ctx context.Context, notification *models.No
 	return tasks, nil
 }
 
-func pushTask2WsQueue(ctx context.Context, task *models.Task, nf *models.Notification) error {
-	nfExtraMap, err := models.DecodeNotificationExtra(nf.Extra)
-	if err != nil {
-		return err
-	}
+func pushTask2WsPubSub(ctx context.Context, task *models.Task, nf *models.Notification) error {
+	service, messageType := models.DecodeNotificationExtra4ws(nf.Extra)
 
-	messageType := ""
-	nfExtraType, ok := (*nfExtraMap)[constants.WsMessageType]
-	if ok {
-		messageType = nfExtraType
-	}
-	//if notify type is websocket,call websocket PushWsMessage to websocket queue.
+	//if notify type is websocket,call websocket PushWsMessage to pubsub.
 	if task.NotifyType == constants.NotifyTypeWebsocket {
 		taskDirective, err := models.DecodeTaskDirective(task.Directive)
 		if err != nil {
@@ -250,15 +239,21 @@ func pushTask2WsQueue(ctx context.Context, task *models.Task, nf *models.Notific
 		}
 		userId := taskDirective.Address
 
-		msg := websocket.Message{
-			MessageId:   websocket.NewWsMessageId(),
-			MessageType: messageType,
-			Message:     task.Directive,
-			UserId:      userId,
+		msgDetail := wstypes.MessageDetail{
+			MessageId:      wstypes.NewWsMessageId(),
+			UserId:         userId,
+			Service:        service,
+			MessageType:    messageType,
+			MessageContent: task.Directive,
 		}
 
-		err = websocket.PushWsMessage(context.Background(), global.GetInstance().GetEtcd(), messageType, userId, msg)
-
+		userMsg := wstypes.UserMessage{
+			UserId:        userId,
+			Service:       service,
+			MessageType:   messageType,
+			MessageDetail: msgDetail,
+		}
+		err = websocket.PushWsMessage(context.Background(), config.GetInstance().PubSub.Type, global.GetInstance().GetPubSubClient(), &userMsg)
 		if err != nil {
 			logger.Errorf(ctx, "Push user [%s] websocket message id [%s] failed: %+v", userId, task.TaskId, err)
 			return err

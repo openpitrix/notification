@@ -88,15 +88,15 @@ func TestCreateNotification(t *testing.T) {
 	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
 	//testAddrsStr := "{\"web\": [\"test_huojiao1\", \"test_huojiao2\"]}"
 
-	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"],\"websocket\": [\"system\", \"huojiao\"]}"
+	testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"],\"websocket\": [\"system\", \"huojiao\"]}"
 	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"] }"
-	testAddrsStr := "[\"adl-33rZANw163o8\"]"
+	//testAddrsStr := "[\"adl-LQ2WQlJRzBo8\"]"
 	//testAddrsStr := "[\"adl-VDP0l9x1z6k4\"]"
 	//TimeFormat := "15:04:05"
 	//availableStartTime, _ := time.Parse(TimeFormat, "00:00:00")
 	//availableEndTime, _ := time.Parse(TimeFormat, "24:00:00")
 
-	//testExtra := "{\"ws_message_type\": \"ws_op_nf\"}"
+	testExtra := "{\"ws_service\": \"op\",\"ws_message_type\": \"event\"}"
 
 	var req = &pb.CreateNotificationRequest{
 		ContentType:        pbutil.ToProtoString("other"),
@@ -108,7 +108,7 @@ func TestCreateNotification(t *testing.T) {
 		AddressInfo:        pbutil.ToProtoString(testAddrsStr),
 		AvailableStartTime: pbutil.ToProtoString(""),
 		AvailableEndTime:   pbutil.ToProtoString(""),
-		//	Extra:              pbutil.ToProtoString(testExtra),
+		Extra:              pbutil.ToProtoString(testExtra),
 	}
 	resp, err := s.CreateNotification(ctx, req)
 	if err != nil {
@@ -396,7 +396,7 @@ func TestCreateAddressList(t *testing.T) {
 	//addressIds = append(addressIds, "addr-79ME9JRwyM94")
 	//addressIds = append(addressIds, "addr-vApolRp19pnj")
 
-	addressIds = append(addressIds, "addr-oXplX74RM3o8")
+	addressIds = append(addressIds, "addr-4MMNPyVzqMEr")
 	//addressIds = append(addressIds, "addr-zP8zA0mZqYvj")
 
 	var req = &pb.CreateAddressListRequest{

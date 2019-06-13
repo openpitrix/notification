@@ -13,8 +13,6 @@ import (
 
 func TestLoadConf(t *testing.T) {
 
-	logger.SetLevelByString("debug")
-
 	os.Setenv("NOTIFICATION_LOG_LEVEL", "debug")
 	os.Setenv("NOTIFICATION_GRPC_SHOW_ERROR_CAUSE", "false")
 
@@ -28,6 +26,9 @@ func TestLoadConf(t *testing.T) {
 
 	mycfg := GetInstance()
 	mycfg.LoadConf()
+
+	//loglevel := mycfg.Log.Level
+	//logger.SetLevelByString(loglevel)
 
 	logger.Debugf(nil, "Other=========================================")
 	logger.Debugf(nil, "NOTIFICATION_LOG_LEVEL : %+v", mycfg.Log.Level)
@@ -49,8 +50,14 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "")
 
 	logger.Debugf(nil, "Queue=========================================")
-	logger.Debugf(nil, "NOTIFICATION_QUEUE_ADDR : %+v", mycfg.Queue.Addr)
 	logger.Debugf(nil, "NOTIFICATION_QUEUE_TYPE : %+v", mycfg.Queue.Type)
+	logger.Debugf(nil, "NOTIFICATION_QUEUE_ADDR : %+v", mycfg.Queue.Addr)
+
+	logger.Debugf(nil, "")
+
+	logger.Debugf(nil, "PubSub=========================================")
+	logger.Debugf(nil, "NOTIFICATION_PUBSUB_TYPE : %+v", mycfg.PubSub.Type)
+	logger.Debugf(nil, "NOTIFICATION_PUBSUB_ADDR : %+v", mycfg.PubSub.Addr)
 	logger.Debugf(nil, "")
 
 	logger.Debugf(nil, "Email=========================================")
@@ -70,6 +77,10 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "NOTIFICATION_APP_API_PORT : %+v", mycfg.App.ApiPort)
 	logger.Debugf(nil, "NOTIFICATION_APP_MAX_WORKING_NOTIFICATIONS : %+v", mycfg.App.MaxWorkingNotifications)
 	logger.Debugf(nil, "NOTIFICATION_APP_MAX_WORKING_TASKS : %+v", mycfg.App.MaxWorkingTasks)
+	logger.Debugf(nil, "")
+
+	logger.Debugf(nil, "Websocket=========================================")
+	logger.Debugf(nil, "NOTIFICATION_WEBSOCKET_SERVICE_MESSAGE_TYPES : %+v", mycfg.Websocket.ServiceMessageTypes)
 	logger.Debugf(nil, "")
 
 	mycfg.PrintUsage()

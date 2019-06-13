@@ -140,7 +140,7 @@ func validateAddressInfo4AddressMap(ctx context.Context, notification *models.No
 				}
 			}
 			if notifyType == constants.NotifyTypeWebsocket {
-				err := models.CheckExtra(ctx, notification)
+				err := models.CheckExtra(ctx, notification.Extra)
 				if err != nil {
 					return err
 				}

@@ -76,6 +76,7 @@ var RecordStatuses = []string{
 }
 
 const (
+	WsService       = "ws_service"
 	WsMessageType   = "ws_message_type"
 	WsMessagePrefix = "ws_"
 )

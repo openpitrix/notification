@@ -17,12 +17,14 @@ import (
 	"openpitrix.io/notification/pkg/constants"
 	nfdb "openpitrix.io/notification/pkg/db"
 	"openpitrix.io/notification/pkg/etcd"
+	wstypes "openpitrix.io/notification/pkg/services/websocket/types"
 )
 
 type GlobalCfg struct {
-	cfg      *config.Config
-	database *gorm.DB
-	etcd     *etcd.Etcd
+	cfg          *config.Config
+	database     *gorm.DB
+	etcd         *etcd.Etcd
+	pubsubClient *wstypes.PubsubClient
 }
 
 var instance *GlobalCfg
@@ -42,6 +44,7 @@ func newGlobalCfg() *GlobalCfg {
 	g.setLoggerLevel()
 	g.openDatabase()
 	g.openEtcd()
+	g.setPubSubClient()
 
 	if err := agent.Listen(agent.Options{
 		ShutdownCleanup: true,
@@ -86,7 +89,24 @@ func (g *GlobalCfg) openEtcd() *GlobalCfg {
 func (g *GlobalCfg) setLoggerLevel() *GlobalCfg {
 	AppLogMode := config.GetInstance().Log.Level
 	logger.SetLevelByString(AppLogMode)
-	logger.Debugf(nil, "Set app log level to %+s", AppLogMode)
+	logger.Infof(nil, "Set app log level to %+s", AppLogMode)
+	return g
+}
+
+func (g *GlobalCfg) setPubSubClient() *GlobalCfg {
+	pubsubConnStr := g.cfg.PubSub.Addr
+	pubsubType := g.cfg.PubSub.Type
+
+	pubsubConfigMap := map[string]interface{}{
+		"connStr": pubsubConnStr,
+	}
+
+	psClient, err := wstypes.New(pubsubType, pubsubConfigMap)
+	if err != nil {
+		logger.Errorf(nil, "Failed to connect pubsub server: %+v.", err)
+	}
+
+	g.pubsubClient = &psClient
 	return g
 }
 
@@ -96,4 +116,7 @@ func (g *GlobalCfg) GetEtcd() *etcd.Etcd {
 
 func (g *GlobalCfg) GetDB() *gorm.DB {
 	return g.database
+}
+func (g *GlobalCfg) GetPubSubClient() *wstypes.PubsubClient {
+	return g.pubsubClient
 }
