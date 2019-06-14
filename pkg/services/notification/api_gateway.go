@@ -172,7 +172,7 @@ func (s *Server) mainHandler() http.Handler {
 	}
 	go wsm.Run()
 
-	mux.HandleFunc("/v1/notifications/ws", wsm.HandleWsTask())
+	mux.HandleFunc("/v1/io", wsm.HandleWsTask())
 
 	return formWrapper(mux)
 }

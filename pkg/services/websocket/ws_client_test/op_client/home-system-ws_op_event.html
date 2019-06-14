@@ -35,7 +35,7 @@ window.onload = function () {
 	//   conn = new WebSocket("ws://127.0.0.1:9200/v1/io?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzeXN0ZW0iLCJyb2xlIjoiZ2xvYmFsX2FkbWluIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE4MTYyMzkwMjJ9.v2IxrjiS8fL5gd2V1md1T98Hncubdq1iz2_9xf0aSJ4");
 	
 	
-	  conn = new WebSocket("ws://127.0.0.1:9200/v1/notifications/ws?user_id=system&service=op&message_type=event");
+	  conn = new WebSocket("ws://127.0.0.1:9200/v1/io?user_id=system&service=op&message_type=event");
         conn.onclose = function (evt) {
             var item = document.createElement("div");
             item.innerHTML = "<b>Connection closed.</b>";

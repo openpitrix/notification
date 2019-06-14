@@ -34,7 +34,7 @@ window.onload = function () {
        // conn = new WebSocket("ws://127.0.0.1:8080/ws");
 	   //conn = new WebSocket("ws://127.0.0.1:9200/v1/io?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJodW9qaWFvIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE4MTYyMzkwMjJ9.7SKxaofwVAhU1wx0FeIhAGGFdxdUaby3olx4tTMcK6Q");
 	   
-	    conn = new WebSocket("ws://127.0.0.1:9200/v1/notifications/ws?user_id=system&service=ks&message_type=nf");
+	    conn = new WebSocket("ws://127.0.0.1:9200/v1/io?user_id=system&service=ks&message_type=nf");
 	   
         conn.onclose = function (evt) {
             var item = document.createElement("div");
