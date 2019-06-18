@@ -85,13 +85,15 @@ func TestCreateNotification(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 
+	testContentStr := "{\"html\":\"test_content_html\",  \"normal\":\"test_content_normal\"}"
+
 	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
 	//testAddrsStr := "{\"web\": [\"test_huojiao1\", \"test_huojiao2\"]}"
-
 	testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"],\"websocket\": [\"system\", \"huojiao\"]}"
 	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"] }"
 	//testAddrsStr := "[\"adl-LQ2WQlJRzBo8\"]"
 	//testAddrsStr := "[\"adl-VDP0l9x1z6k4\"]"
+
 	//TimeFormat := "15:04:05"
 	//availableStartTime, _ := time.Parse(TimeFormat, "00:00:00")
 	//availableEndTime, _ := time.Parse(TimeFormat, "24:00:00")
@@ -99,10 +101,11 @@ func TestCreateNotification(t *testing.T) {
 	testExtra := "{\"ws_service\": \"op\",\"ws_message_type\": \"event\"}"
 
 	var req = &pb.CreateNotificationRequest{
-		ContentType:        pbutil.ToProtoString("other"),
-		Title:              pbutil.ToProtoString("handler_test.go Title_test."),
-		Content:            pbutil.ToProtoString("Content:handler_test.go Content_test."),
-		ShortContent:       pbutil.ToProtoString("ShortContent"),
+		ContentType: pbutil.ToProtoString("other"),
+		Title:       pbutil.ToProtoString("Title_test."),
+		//Content:            pbutil.ToProtoString("Content:handler_test.go Content_test."),
+		Content:            pbutil.ToProtoString(testContentStr),
+		ShortContent:       pbutil.ToProtoString("ShortContent_test"),
 		ExpiredDays:        pbutil.ToProtoUInt32(0),
 		Owner:              pbutil.ToProtoString("HuoJiao"),
 		AddressInfo:        pbutil.ToProtoString(testAddrsStr),

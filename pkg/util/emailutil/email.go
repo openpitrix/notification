@@ -14,7 +14,7 @@ import (
 	"openpitrix.io/notification/pkg/config"
 )
 
-func SendMail(ctx context.Context, emailAddr string, header string, body string) error {
+func SendMail(ctx context.Context, emailAddr string, header string, body string, fmtType string) error {
 	host := config.GetInstance().Email.EmailHost
 	port := config.GetInstance().Email.Port
 	email := config.GetInstance().Email.Email
@@ -26,7 +26,11 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string)
 	m.SetAddressHeader("From", email, displaySender)
 	m.SetHeader("To", emailAddr)
 	m.SetHeader("Subject", header)
-	m.SetBody("text/html", body)
+	contentType := "text/html"
+	if fmtType == "normal" {
+		contentType = "text/plain"
+	}
+	m.SetBody(contentType, body)
 
 	d := gomail.NewDialer(host, port, email, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
