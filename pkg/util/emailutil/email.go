@@ -7,6 +7,7 @@ package emailutil
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 
 	gomail "gopkg.in/gomail.v2"
 	"openpitrix.io/logger"
@@ -36,8 +37,21 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string,
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
 
 	if err := d.DialAndSend(m); err != nil {
-		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
-		return err
+		if !sslEnable && err == errors.New("unencrypted connection") {
+			d.Auth = &unencryptedPlainAuth{
+				identity: "",
+				username: d.Username,
+				password: d.Password,
+				host:     d.Host,
+			}
+			if err = d.DialAndSend(m); err != nil {
+				logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
+				return err
+			}
+		} else {
+			logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
+			return err
+		}
 	}
 	return nil
 }
