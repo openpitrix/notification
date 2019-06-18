@@ -107,7 +107,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 			continue
 		}
 
-		//setp2:when sending,one task has 3 times to retry.
+		//when sending,one task has 3 times to retry.
 		isNotificationFinished := false
 
 		//taskRetryTimes stores the taskid to retry and the times has retried.【taskId,retryTimes】
@@ -125,7 +125,8 @@ func (c *Controller) HandleNotification(handlerNum string) {
 				},
 			)
 
-			//step1:check all the taskid for this one notifitication exits not successful status,if not exits, update this one nf status to successful.
+			//step1:check all the taskid for this one notifitication exits not successful status,
+			// if not exits, update this one nf status to successful.
 			if len(noSuccessfulTasks) == 0 {
 				err := rs.UpdateNotificationsStatus(ctx, []string{notificationId}, constants.StatusSuccessful)
 				if err != nil {
@@ -134,7 +135,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 				}
 				isNotificationFinished = true
 			} else {
-				//step2: go through all the task with not_successful status, if status is failded, retry this task.
+				//step2: go through all the tasks with not_successful status, if status is failded, retry this task.
 				for _, noSuccessfulTask := range noSuccessfulTasks {
 					if noSuccessfulTask.Status != constants.StatusFailed {
 						continue
@@ -146,7 +147,8 @@ func (c *Controller) HandleNotification(handlerNum string) {
 					}
 					taskRetryTimes[noSuccessfulTask.TaskId] = retryTimes + 1
 
-					//2.1 if the retryTimes for this one task is more than the setting times, update this one notification status to faild.
+					//2.1 if the retryTimes for this one task is more than the setting times,
+					// update this one notification status to faild.
 					if taskRetryTimes[noSuccessfulTask.TaskId] > constants.MaxTaskRetryTimes {
 						err := rs.UpdateNotificationsStatus(ctx, []string{notificationId}, constants.StatusFailed)
 						if err != nil {
@@ -158,7 +160,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 						isNotificationFinished = true
 					}
 
-					//2/2 retry the task, put this one task back to task queue.
+					//2.2 retry the task, put this one task back to task queue.
 					err := c.taskQueue.Enqueue(noSuccessfulTask.TaskId)
 					if err != nil {
 						logger.Errorf(nil, "Failed to push task [%s] into queue, error: [%+v]", noSuccessfulTask.TaskId, err)

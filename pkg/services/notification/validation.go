@@ -42,7 +42,14 @@ func ValidateCreateNotificationParams(ctx context.Context, req *pb.CreateNotific
 		return err
 	}
 
-	//2.validate address info
+	//2.validate Content fmt
+	// {"content_type": "content"}
+	_, err = models.DecodeContent(req.GetContent().GetValue())
+	if err != nil {
+		return err
+	}
+
+	//3.validate address info
 	notification := models.NewNotification(
 		req.GetContentType().GetValue(),
 		req.GetTitle().GetValue(),

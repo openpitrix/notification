@@ -229,6 +229,16 @@ func processsAddressInfo4AddressMap(ctx context.Context, notification *models.No
 }
 
 func pushTask2WsPubSub(ctx context.Context, task *models.Task, nf *models.Notification) error {
+	//Get contentStr from nf.Content, nf.Content Fmt is like {"content_type": "content"}
+	//if contains normal content_type, use normal content as websocket Content.
+	//if no normal content_type, use the whole nf.Content as websocket Content.
+	contentStruct, _ := models.DecodeContent(nf.Content)
+	contentFmtNormal, ok := (*contentStruct)[constants.ContentFmtNormal]
+	if !ok {
+		contentFmtNormal = nf.Content
+	}
+	nf.Content = contentFmtNormal
+
 	service, messageType := models.DecodeNotificationExtra4ws(nf.Extra)
 
 	//if notify type is websocket,call websocket PushWsMessage to pubsub.
@@ -237,6 +247,19 @@ func pushTask2WsPubSub(ctx context.Context, task *models.Task, nf *models.Notifi
 		if err != nil {
 			return err
 		}
+
+		//for websocket msg , use the content with Normal Format
+		contentStruct, err := models.DecodeContent(taskDirective.Content)
+		if err != nil {
+			return err
+		}
+
+		contentFmtNormal, ok := (*contentStruct)[constants.ContentFmtNormal]
+		if !ok {
+			contentFmtNormal = taskDirective.Content
+		}
+		taskDirective.Content = contentFmtNormal
+
 		userId := taskDirective.Address
 
 		msgDetail := wstypes.MessageDetail{
@@ -244,7 +267,7 @@ func pushTask2WsPubSub(ctx context.Context, task *models.Task, nf *models.Notifi
 			UserId:         userId,
 			Service:        service,
 			MessageType:    messageType,
-			MessageContent: task.Directive,
+			MessageContent: contentFmtNormal,
 		}
 
 		userMsg := wstypes.UserMessage{

@@ -80,3 +80,9 @@ const (
 	WsMessageType   = "ws_message_type"
 	WsMessagePrefix = "ws_"
 )
+
+const (
+	ContentFmt       = "content_fmt"
+	ContentFmtHtml   = "html"
+	ContentFmtNormal = "normal"
+)

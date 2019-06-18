@@ -19,7 +19,7 @@ func TestSendMail(t *testing.T) {
 	emailaddr := "openpitrix@163.com"
 	header := "email_test.go sends an email."
 	body := "<p>Content:email_test.go sends an email!</p>"
-	err := SendMail(nil, emailaddr, header, body)
+	err := SendMail(nil, emailaddr, header, body, "html")
 
 	if err != nil {
 		logger.Errorf(nil, "send email failed, [%+v]", err)
