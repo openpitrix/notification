@@ -107,9 +107,9 @@ spec:
           value: "redis"
         - name: NOTIFICATION_QUEUE_ADDR
           value: "redis://redis.kubesphere-system.svc:6379"
-        - name: NOTIFICATION_PUBSUB_TYPE
+        - name: NOTIFICATION_PUB_SUB_TYPE
           value: "redis"
-        - name: NOTIFICATION_PUBSUB_ADDR
+        - name: NOTIFICATION_PUB_SUB_ADDR
           value: "redis://redis.kubesphere-system.svc:6379"
         - name: NOTIFICATION_MYSQL_LOG_MODE
           value: "false"
