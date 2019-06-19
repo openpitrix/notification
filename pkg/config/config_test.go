@@ -56,8 +56,8 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "")
 
 	logger.Debugf(nil, "PubSub=========================================")
-	logger.Debugf(nil, "NOTIFICATION_PUBSUB_TYPE : %+v", mycfg.PubSub.Type)
-	logger.Debugf(nil, "NOTIFICATION_PUBSUB_ADDR : %+v", mycfg.PubSub.Addr)
+	logger.Debugf(nil, "NOTIFICATION_PUB_SUB_TYPE : %+v", mycfg.PubSub.Type)
+	logger.Debugf(nil, "NOTIFICATION_PUB_SUB_ADDR : %+v", mycfg.PubSub.Addr)
 	logger.Debugf(nil, "")
 
 	logger.Debugf(nil, "Email=========================================")

@@ -13,13 +13,12 @@ import (
 )
 
 func TestSendMail(t *testing.T) {
-
 	config.GetInstance().LoadConf()
-
 	emailaddr := "openpitrix@163.com"
+
 	header := "email_test.go sends an email."
 	body := "<p>Content:email_test.go sends an email!</p>"
-	err := SendMail(nil, emailaddr, header, body, "html")
+	err := SendMail(nil, emailaddr, header, body, "normal")
 
 	if err != nil {
 		logger.Errorf(nil, "send email failed, [%+v]", err)

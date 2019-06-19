@@ -74,3 +74,5 @@ require (
 )
 
 replace openpitrix.io/libqueue v0.3.1 => github.com/openpitrix/libqueue v0.3.1
+
+replace gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df => github.com/go-mail/mail v2.3.1+incompatible

@@ -6,10 +6,8 @@ package notification
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 
-	"gopkg.in/gomail.v2"
 	"openpitrix.io/logger"
 
 	"openpitrix.io/notification/pkg/constants"
@@ -17,6 +15,7 @@ import (
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
 	rs "openpitrix.io/notification/pkg/services/notification/resource_control"
+	"openpitrix.io/notification/pkg/util/emailutil"
 	"openpitrix.io/notification/pkg/util/pbutil"
 	"openpitrix.io/notification/pkg/util/stringutil"
 )
@@ -504,33 +503,14 @@ func (s *Server) DeleteAddressList(ctx context.Context, req *pb.DeleteAddressLis
 }
 
 func (s *Server) ValidateEmailService(ctx context.Context, req *pb.ServiceConfig) (*pb.ValidateEmailServiceResponse, error) {
-	host := req.GetEmailServiceConfig().GetEmailHost().GetValue()
-	port := req.GetEmailServiceConfig().GetPort().GetValue()
-	email := req.GetEmailServiceConfig().GetEmail().GetValue()
-	password := req.GetEmailServiceConfig().GetPassword().GetValue()
-	displaySender := req.GetEmailServiceConfig().GetDisplaySender().GetValue()
-
-	emailAddr := email
-	header := "ValidateEmailService"
-	body := "<p>Email Service Config is working!</p>"
-
-	m := gomail.NewMessage()
-	m.SetAddressHeader("From", email, displaySender)
-	m.SetHeader("To", emailAddr)
-	m.SetHeader("Subject", header)
-	m.SetBody("text/html", body)
-
-	d := gomail.NewDialer(host, int(port), email, password)
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-	if err := d.DialAndSend(m); err != nil {
-		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
+	err := emailutil.SendMail4ValidateEmailService(nil, req)
+	if err != nil {
+		logger.Errorf(nil, "send email failed, [%+v]", err)
 		return &pb.ValidateEmailServiceResponse{
 			IsSucc: pbutil.ToProtoBool(false),
 		}, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateEmailService)
 	}
-
 	return &pb.ValidateEmailServiceResponse{
 		IsSucc: pbutil.ToProtoBool(true),
 	}, nil
-
 }
