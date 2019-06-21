@@ -88,9 +88,8 @@ func TestCreateNotification(t *testing.T) {
 	testContentStr := "{\"html\":\"test_content_html\",  \"normal\":\"test_content_normal\"}"
 
 	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
-	//testAddrsStr := "{\"web\": [\"test_huojiao1\", \"test_huojiao2\"]}"
+	//testAddrsStr := "{\"websocket\": [\"system\", \"huojiao\"]}"
 	testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"],\"websocket\": [\"system\", \"huojiao\"]}"
-	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"] }"
 	//testAddrsStr := "[\"adl-LQ2WQlJRzBo8\"]"
 	//testAddrsStr := "[\"adl-VDP0l9x1z6k4\"]"
 
@@ -98,12 +97,11 @@ func TestCreateNotification(t *testing.T) {
 	//availableStartTime, _ := time.Parse(TimeFormat, "00:00:00")
 	//availableEndTime, _ := time.Parse(TimeFormat, "24:00:00")
 
-	testExtra := "{\"ws_service\": \"op\",\"ws_message_type\": \"event\"}"
+	testExtra := "{\"ws_service\": \"ks\",\"ws_message_type\": \"event\"}"
 
 	var req = &pb.CreateNotificationRequest{
-		ContentType: pbutil.ToProtoString("other"),
-		Title:       pbutil.ToProtoString("Title_test."),
-		//Content:            pbutil.ToProtoString("Content:handler_test.go Content_test."),
+		ContentType:        pbutil.ToProtoString("other"),
+		Title:              pbutil.ToProtoString("Title_test."),
 		Content:            pbutil.ToProtoString(testContentStr),
 		ShortContent:       pbutil.ToProtoString("ShortContent_test"),
 		ExpiredDays:        pbutil.ToProtoUInt32(0),

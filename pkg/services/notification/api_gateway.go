@@ -156,24 +156,25 @@ func (s *Server) mainHandler() http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("/", gwmux)
 
-	/**********************************************************
-	** start websocket_manager service **
-	**********************************************************/
-	logger.Infof(nil, "[%s]", "/**********************************************************")
-	logger.Infof(nil, "[%s]", "** start websocket_manager service **")
-	logger.Infof(nil, "[%s]", "**********************************************************/")
+	if cfg.Websocket.ServiceMessageTypes != "" {
+		/**********************************************************
+		** start ws_manager service **
+		**********************************************************/
 
-	pubsubType := cfg.PubSub.Type
-	psClient := global.GetInstance().GetPubSubClient()
+		logger.Infof(nil, "[%s]", "/**********************************************************")
+		logger.Infof(nil, "[%s]", "** start ws_manager service **")
+		logger.Infof(nil, "[%s]", "**********************************************************/")
 
-	wsm, err := websocket.NewWsManager(pubsubType, psClient)
-	if err != nil {
-		logger.Errorf(nil, "Failed to new websocket manager.: %+v", err)
+		pubsubType := cfg.PubSub.Type
+		psClient := global.GetInstance().GetPubSubClient()
+
+		wsm, err := websocket.NewWsManager(pubsubType, psClient)
+		if err != nil {
+			logger.Errorf(nil, "Failed to new websocket manager.: %+v", err)
+		}
+		go wsm.Run()
+		mux.HandleFunc("/v1/io", wsm.HandleWsTask())
 	}
-	go wsm.Run()
-
-	mux.HandleFunc("/v1/io", wsm.HandleWsTask())
-
 	return formWrapper(mux)
 }
 

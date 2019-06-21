@@ -30,7 +30,7 @@ var Files = map[string]string{
   "paths": {
     "/v1/notifications": {
       "get": {
-        "summary": "describe notifications",
+        "summary": "Describe notifications",
         "operationId": "DescribeNotifications",
         "responses": {
           "200": {
@@ -43,6 +43,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "notification_id",
+            "description": "notification id.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -53,6 +54,7 @@ var Files = map[string]string{
           },
           {
             "name": "content_type",
+            "description": "notification content type, eg:[invite|verify|fee|business|alert|other|event].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -63,6 +65,7 @@ var Files = map[string]string{
           },
           {
             "name": "owner",
+            "description": "notification owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -73,6 +76,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "notification status, eg:[pending|sending|successful|failed].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -83,6 +87,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -90,6 +95,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -97,18 +103,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(notification_id,content_type,title,short_content,address_info,status,owner).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -116,6 +125,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display, currently not support.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -130,7 +140,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create notification",
+        "summary": "Create notification",
         "operationId": "CreateNotification",
         "responses": {
           "200": {
@@ -157,7 +167,7 @@ var Files = map[string]string{
     },
     "/v1/notifications/address": {
       "get": {
-        "summary": "describe addresses",
+        "summary": "Describe addresses",
         "operationId": "DescribeAddresses",
         "responses": {
           "200": {
@@ -170,6 +180,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "address_id",
+            "description": "address id.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -180,6 +191,7 @@ var Files = map[string]string{
           },
           {
             "name": "address_list_id",
+            "description": "address list id.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -190,6 +202,7 @@ var Files = map[string]string{
           },
           {
             "name": "address",
+            "description": "address details, could be email address for email, user id for websocket, mobile number for sms.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -200,6 +213,7 @@ var Files = map[string]string{
           },
           {
             "name": "notify_type",
+            "description": "the notify type , eg:[email|websocket|sms|wechat].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -210,6 +224,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "address status, eg:[active|disabled|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -220,6 +235,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -227,6 +243,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -234,18 +251,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(address_id,address,notify_type,remarks).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -253,6 +273,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display, currently not support.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -267,7 +288,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete addresses",
+        "summary": "Delete addresses",
         "operationId": "DeleteAddresses",
         "responses": {
           "200": {
@@ -292,7 +313,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create address",
+        "summary": "Create address",
         "operationId": "CreateAddress",
         "responses": {
           "200": {
@@ -317,7 +338,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify address",
+        "summary": "Modify address",
         "operationId": "ModifyAddress",
         "responses": {
           "200": {
@@ -344,7 +365,7 @@ var Files = map[string]string{
     },
     "/v1/notifications/address_list": {
       "get": {
-        "summary": "describe address list",
+        "summary": "Describe address list",
         "operationId": "DescribeAddressList",
         "responses": {
           "200": {
@@ -357,6 +378,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "address_list_id",
+            "description": "address list id.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -367,6 +389,7 @@ var Files = map[string]string{
           },
           {
             "name": "address_list_name",
+            "description": "the name of the address list.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -377,6 +400,7 @@ var Files = map[string]string{
           },
           {
             "name": "extra",
+            "description": "the extra info of the address.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -387,6 +411,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "address list status, eg:[active|disabled|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -397,6 +422,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -404,6 +430,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -411,18 +438,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(address_list_id,address_list_name,address_list_name,extra).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -430,6 +460,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display, currently not support.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -469,7 +500,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "create address list",
+        "summary": "Create address list",
         "operationId": "CreateAddressList",
         "responses": {
           "200": {
@@ -494,7 +525,7 @@ var Files = map[string]string{
         ]
       },
       "patch": {
-        "summary": "modify address list",
+        "summary": "Modify address list",
         "operationId": "ModifyAddressList",
         "responses": {
           "200": {
@@ -521,7 +552,7 @@ var Files = map[string]string{
     },
     "/v1/notifications/get_service_config": {
       "post": {
-        "summary": "get service configration",
+        "summary": "Get service configration",
         "operationId": "GetServiceConfig",
         "responses": {
           "200": {
@@ -548,7 +579,7 @@ var Files = map[string]string{
     },
     "/v1/notifications/set_service_config": {
       "post": {
-        "summary": "set service configration",
+        "summary": "Set service configration",
         "operationId": "SetServiceConfig",
         "responses": {
           "200": {
@@ -575,7 +606,7 @@ var Files = map[string]string{
     },
     "/v1/notifications/tasks": {
       "get": {
-        "summary": "describe tasks",
+        "summary": "Describe tasks",
         "operationId": "DescribeTasks",
         "responses": {
           "200": {
@@ -588,6 +619,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "task_id",
+            "description": "task id.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -598,6 +630,7 @@ var Files = map[string]string{
           },
           {
             "name": "notification_id",
+            "description": "the notification id of the task, one notification may send out by serval tasks.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -608,6 +641,7 @@ var Files = map[string]string{
           },
           {
             "name": "error_code",
+            "description": "error code, if task run failed will return a error code.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -618,6 +652,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
+            "description": "the task execution status, eg:[pending|sending|successful|failed].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -628,6 +663,7 @@ var Files = map[string]string{
           },
           {
             "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -635,6 +671,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
+            "description": "data offset, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -642,18 +679,21 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
+            "description": "query key, support these fields(task_id,notification_id,status,error_code).",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
             "in": "query",
             "required": false,
             "type": "string"
           },
           {
             "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
             "in": "query",
             "required": false,
             "type": "boolean",
@@ -661,6 +701,7 @@ var Files = map[string]string{
           },
           {
             "name": "display_columns",
+            "description": "select columns to display, currently not support.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -677,7 +718,7 @@ var Files = map[string]string{
     },
     "/v1/notifications/tasks:retry": {
       "post": {
-        "summary": "retry tasks",
+        "summary": "Retry tasks",
         "operationId": "RetryTasks",
         "responses": {
           "200": {
@@ -704,7 +745,7 @@ var Files = map[string]string{
     },
     "/v1/notifications/validate_email_service": {
       "post": {
-        "summary": "validate email service",
+        "summary": "Validate email service",
         "operationId": "ValidateEmailService",
         "responses": {
           "200": {
@@ -731,7 +772,7 @@ var Files = map[string]string{
     },
     "/v1/notifications:retry": {
       "post": {
-        "summary": "retry notifications",
+        "summary": "Retry notifications",
         "operationId": "RetryNotifications",
         "responses": {
           "200": {
@@ -762,37 +803,47 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_id": {
-          "type": "string"
+          "type": "string",
+          "title": "address id"
         },
         "address_list_id": {
-          "type": "string"
+          "type": "string",
+          "title": "address list id"
         },
         "address": {
-          "type": "string"
+          "type": "string",
+          "description": "address details, could be email address for email, user id for websocket, mobile number for sms."
         },
         "remarks": {
-          "type": "string"
+          "type": "string",
+          "title": "remarks for address"
         },
         "verification_code": {
-          "type": "string"
+          "type": "string",
+          "title": "verification code for register address at the first time"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "address status, eg:[active|disabled|deleted]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "create time of the address"
         },
         "verify_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "verify time when verify the address"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the status changed time of the address"
         },
         "notify_type": {
-          "type": "string"
+          "type": "string",
+          "title": "the notify type , eg:[email|websocket|sms|wechat]"
         }
       }
     },
@@ -800,30 +851,37 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_list_id": {
-          "type": "string"
+          "type": "string",
+          "title": "address list id"
         },
         "address_list_name": {
-          "type": "string"
+          "type": "string",
+          "title": "the name of the address list"
         },
         "extra": {
-          "type": "string"
+          "type": "string",
+          "title": "the extra info of the address"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "address list status, eg:[active|disabled|deleted]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "create time of the address list"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the status changed time of the address list"
         },
         "address_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/pbAddress"
-          }
+          },
+          "title": "address list"
         }
       }
     },
@@ -831,16 +889,19 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_list_name": {
-          "type": "string"
+          "type": "string",
+          "title": "the name of the address list"
         },
         "extra": {
-          "type": "string"
+          "type": "string",
+          "title": "the extra info of the address"
         },
         "address_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, the address ids for the address list to create"
         }
       }
     },
@@ -848,7 +909,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_list_id": {
-          "type": "string"
+          "type": "string",
+          "title": "address list id"
         }
       }
     },
@@ -856,16 +918,20 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address": {
-          "type": "string"
+          "type": "string",
+          "description": "required, address details, could be email address for email, user id for websocket, mobile number for sms."
         },
         "remarks": {
-          "type": "string"
+          "type": "string",
+          "title": "remarks for address"
         },
         "verification_code": {
-          "type": "string"
+          "type": "string",
+          "title": "verification code for register address at the first time"
         },
         "notify_type": {
-          "type": "string"
+          "type": "string",
+          "title": "required, the notify type , eg:[email|websocket|sms|wechat]"
         }
       }
     },
@@ -873,7 +939,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of address created"
         }
       }
     },
@@ -881,35 +948,45 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "content_type": {
-          "type": "string"
+          "type": "string",
+          "title": "required, notification content type, eg:[invite|verify|fee|business|alert|other|event]"
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "title": "required, notification title"
         },
         "content": {
-          "type": "string"
+          "type": "string",
+          "title": "notification content, json fmt, eg:{\"html\":\"test_content_html\", \"normal\":\"test_content_normal\"}"
         },
         "short_content": {
-          "type": "string"
+          "type": "string",
+          "title": "notification short content"
         },
         "expired_days": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "description": "notification expired days,  0 is for never expired."
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "notification owner"
         },
         "address_info": {
-          "type": "string"
+          "type": "string",
+          "description": "the address to send the notification, json fmt, currently support 2 kinds types.\n1.key/value Type, key is the notification send Type,the value is the list of address,\neg:{\"email\": [\"xxx1@163.com\", \"xxx2@163.com\"],\"websocket\": [\"system\", \"user1\"]}\n2.Array Type, eg:[\"adl-xxxx1\", \"adl-xxxx2\"],\nthe item is the address list id which is already created in advance."
         },
         "available_start_time": {
-          "type": "string"
+          "type": "string",
+          "title": "the available start time to receive notification"
         },
         "available_end_time": {
-          "type": "string"
+          "type": "string",
+          "title": "the available end time to receive notification"
         },
         "extra": {
-          "type": "string"
+          "type": "string",
+          "title": "extra info is only used for websocket notification,to show which websocket client could accept it.\neg:\"{\"ws_service\": \"ks\",\"ws_message_type\": \"event\"}\""
         }
       }
     },
@@ -917,7 +994,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "notification_id": {
-          "type": "string"
+          "type": "string",
+          "title": "id of notification created"
         }
       }
     },
@@ -928,7 +1006,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, address list id"
         }
       }
     },
@@ -939,7 +1018,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "address list id"
         }
       }
     },
@@ -950,7 +1030,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, address id"
         }
       }
     },
@@ -961,7 +1042,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "address id"
         }
       }
     },
@@ -970,13 +1052,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified address lists"
         },
         "address_list_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/pbAddressList"
-          }
+          },
+          "title": "list of address lists"
         }
       }
     },
@@ -985,13 +1069,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified address"
         },
         "address_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/pbAddress"
-          }
+          },
+          "title": "list of address"
         }
       }
     },
@@ -1000,13 +1086,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified notifications"
         },
         "notification_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/pbNotification"
-          }
+          },
+          "title": "list of notification"
         }
       }
     },
@@ -1015,13 +1103,15 @@ var Files = map[string]string{
       "properties": {
         "total_count": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "total count of qualified tasks"
         },
         "task_set": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/pbTask"
-          }
+          },
+          "title": "list of task"
         }
       }
     },
@@ -1029,27 +1119,34 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "protocol": {
-          "type": "string"
+          "type": "string",
+          "title": "email server protocol"
         },
         "email_host": {
-          "type": "string"
+          "type": "string",
+          "title": "email server host"
         },
         "port": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "email server send port"
         },
         "display_sender": {
-          "type": "string"
+          "type": "string",
+          "title": "notification display sender"
         },
         "email": {
-          "type": "string"
+          "type": "string",
+          "title": "send email address"
         },
         "password": {
-          "type": "string"
+          "type": "string",
+          "title": "send email address password"
         },
         "ssl_enable": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "is ssl enabled or not"
         }
       }
     },
@@ -1060,7 +1157,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, service type"
         }
       }
     },
@@ -1068,22 +1166,27 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_list_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, address list id"
         },
         "address_list_name": {
-          "type": "string"
+          "type": "string",
+          "title": "address list name"
         },
         "extra": {
-          "type": "string"
+          "type": "string",
+          "title": "the extra info of the address list"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "address list status, eg:[active|disabled|deleted]"
         },
         "address_id": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "address ids of the address list"
         }
       }
     },
@@ -1091,7 +1194,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_list_id": {
-          "type": "string"
+          "type": "string",
+          "title": "address list id"
         }
       }
     },
@@ -1099,19 +1203,24 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_id": {
-          "type": "string"
+          "type": "string",
+          "title": "required, address id"
         },
         "address": {
-          "type": "string"
+          "type": "string",
+          "description": "address details, could be email address for email, user id for websocket, mobile number for sms."
         },
         "remarks": {
-          "type": "string"
+          "type": "string",
+          "title": "remarks for address"
         },
         "verification_code": {
-          "type": "string"
+          "type": "string",
+          "title": "verification code for register address at the first time"
         },
         "notify_type": {
-          "type": "string"
+          "type": "string",
+          "title": "the notify type, eg:[email|websocket|sms|wechat]"
         }
       }
     },
@@ -1119,7 +1228,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "address_id": {
-          "type": "string"
+          "type": "string",
+          "title": "address id"
         }
       }
     },
@@ -1127,49 +1237,63 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "notification_id": {
-          "type": "string"
+          "type": "string",
+          "title": "notification id"
         },
         "content_type": {
-          "type": "string"
+          "type": "string",
+          "title": "notification content type, eg:[invite|verify|fee|business|alert|other|event]"
         },
         "title": {
-          "type": "string"
+          "type": "string",
+          "title": "notification title"
         },
         "content": {
-          "type": "string"
+          "type": "string",
+          "title": "notification content, json fmt, eg:{\"html\":\"test_content_html\", \"normal\":\"test_content_normal\"}"
         },
         "short_content": {
-          "type": "string"
+          "type": "string",
+          "title": "notification short content"
         },
         "expired_days": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "description": "notification expired days,  0 is for never expired."
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "notification status, eg:[pending|sending|successful|failed]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "create time of the notification"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the status changed time of the notification"
         },
         "owner": {
-          "type": "string"
+          "type": "string",
+          "title": "the owner of the notification"
         },
         "address_info": {
-          "type": "string"
+          "type": "string",
+          "description": "the address to send the notification, json fmt, currently support 2 kinds types.\n1.key/value Type, key is the notification send Type,the value is the list of address, eg:{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"],\"websocket\": [\"system\", \"jo\"]}\n2.Array Type, eg:[\"adl-xxxx1\", \"adl-xxxx2\"], the item is the address list id which is already created in advance."
         },
         "available_start_time": {
-          "type": "string"
+          "type": "string",
+          "title": "the available start time to receive notification"
         },
         "available_end_time": {
-          "type": "string"
+          "type": "string",
+          "title": "the available end time to receive notification"
         },
         "extra": {
-          "type": "string"
+          "type": "string",
+          "title": "extra info is only used for websocket notification,to show which websocket client could accept it.\neg:\"{\"ws_service\": \"ks\",\"ws_message_type\": \"event\"}\""
         }
       }
     },
@@ -1180,7 +1304,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, notification ids to retry"
         }
       }
     },
@@ -1191,7 +1316,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/pbNotification"
-          }
+          },
+          "title": "notifications retried"
         }
       }
     },
@@ -1202,7 +1328,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "title": "required, task ids to retry"
         }
       }
     },
@@ -1213,7 +1340,8 @@ var Files = map[string]string{
           "type": "array",
           "items": {
             "$ref": "#/definitions/pbTask"
-          }
+          },
+          "title": "tasks retried"
         }
       }
     },
@@ -1221,7 +1349,8 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "email_service_config": {
-          "$ref": "#/definitions/pbEmailServiceConfig"
+          "$ref": "#/definitions/pbEmailServiceConfig",
+          "title": "email service config information"
         }
       }
     },
@@ -1230,7 +1359,8 @@ var Files = map[string]string{
       "properties": {
         "is_succ": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "set service config successfully or not"
         }
       }
     },
@@ -1238,28 +1368,35 @@ var Files = map[string]string{
       "type": "object",
       "properties": {
         "task_id": {
-          "type": "string"
+          "type": "string",
+          "title": "task id"
         },
         "notification_id": {
-          "type": "string"
+          "type": "string",
+          "title": "the notification id of the task, one notification may send out by serval tasks"
         },
         "error_code": {
           "type": "integer",
-          "format": "int64"
+          "format": "int64",
+          "title": "error code, if task run failed will return a error code"
         },
         "status": {
-          "type": "string"
+          "type": "string",
+          "title": "the task execution status, eg:[pending|sending|successful|failed]"
         },
         "create_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "create time of the task"
         },
         "status_time": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "title": "the status changed time of the notification"
         },
         "directive": {
-          "type": "string"
+          "type": "string",
+          "title": "the details of notification, json format,\neg:{\"Title\": \"Title_test.\", \"Address\": \"openpitrix@163.com\", \"Content\": \"{\\\"html\\\":\\\"test_content_html\\\",  \\\"normal\\\":\\\"test_content_normal\\\"}\", \"NotifyType\": \"email\", \"ContentType\": \"other\", \"ExpiredDays\": 0, \"ShortContent\": \"ShortContent_test\", \"NotificationId\": \"nf-zZq6G4A7v9YK\", \"AvailableEndTime\": \"\", \"AvailableStartTime\": \"\"}"
         }
       }
     },
@@ -1268,7 +1405,8 @@ var Files = map[string]string{
       "properties": {
         "is_succ": {
           "type": "boolean",
-          "format": "boolean"
+          "format": "boolean",
+          "title": "validate service config ok or not"
         }
       }
     }

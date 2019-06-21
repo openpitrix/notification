@@ -22,6 +22,7 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.GetServiceConfigRequest:
 		return manager.NewChecker(ctx, r).
+			Required(models.ServiceType).
 			StringChosen(models.ServiceType, constants.NotifyTypes).
 			Exec()
 	case *pb.CreateNotificationRequest:
@@ -31,7 +32,7 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.DescribeNotificationsRequest:
 		return manager.NewChecker(ctx, r).
-			StringChosen(models.NfColStatus, constants.SendingStatuses).
+			StringChosen(models.NfColStatus, constants.NfStatuses).
 			Exec()
 	case *pb.RetryNotificationsRequest:
 		return manager.NewChecker(ctx, r).
@@ -59,6 +60,27 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.DeleteAddressesRequest:
 		return manager.NewChecker(ctx, r).
 			Required(models.AddrColId).
+			Exec()
+	case *pb.DescribeTasksRequest:
+		return manager.NewChecker(ctx, r).
+			StringChosen(models.TaskColStatus, constants.TaskStatuses).
+			Exec()
+	case *pb.CreateAddressListRequest:
+		return manager.NewChecker(ctx, r).
+			Required(models.AddrColId).
+			Exec()
+	case *pb.DescribeAddressListRequest:
+		return manager.NewChecker(ctx, r).
+			StringChosen(models.AddrLsColStatus, constants.RecordStatuses).
+			Exec()
+	case *pb.ModifyAddressListRequest:
+		return manager.NewChecker(ctx, r).
+			Required(models.AddrLsColId).
+			StringChosen(models.AddrLsColStatus, constants.RecordStatuses).
+			Exec()
+	case *pb.DeleteAddressListRequest:
+		return manager.NewChecker(ctx, r).
+			Required(models.AddrLsColId).
 			Exec()
 	}
 

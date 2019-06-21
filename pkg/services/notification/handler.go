@@ -82,18 +82,7 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 		return nil, err
 	}
 
-	notification := models.NewNotification(
-		req.GetContentType().GetValue(),
-		req.GetTitle().GetValue(),
-		req.GetContent().GetValue(),
-		req.GetShortContent().GetValue(),
-		req.GetAddressInfo().GetValue(),
-		req.GetOwner().GetValue(),
-		req.GetExpiredDays().GetValue(),
-		req.GetAvailableStartTime().GetValue(),
-		req.GetAvailableEndTime().GetValue(),
-		req.GetExtra().GetValue(),
-	)
+	notification := models.NewNotification(req)
 
 	//Step1:Register Notification in DB as status="pending"
 	err = rs.RegisterNotification(ctx, notification)
