@@ -86,25 +86,25 @@ func NewNotificationId() string {
 	return idutil.GetUuid(NotificationIdPrefix)
 }
 
-func NewNotification(contentType, title, content, shortContent, addressInfo, owner string, expiredDays uint32, availableStartTimeStr string, availableEndTimeStr string, extra string) *Notification {
+func NewNotification(req *pb.CreateNotificationRequest) *Notification {
+	extra := req.GetExtra().GetValue()
 	if extra == "" {
 		extra = "{}"
 	}
-
 	notification := &Notification{
 		NotificationId:     NewNotificationId(),
-		ContentType:        contentType,
-		Title:              title,
-		Content:            content,
-		ShortContent:       shortContent,
-		ExpiredDays:        expiredDays,
-		AddressInfo:        addressInfo,
-		Owner:              owner,
+		ContentType:        req.GetContentType().GetValue(),
+		Title:              req.GetTitle().GetValue(),
+		Content:            req.GetContent().GetValue(),
+		ShortContent:       req.GetShortContent().GetValue(),
+		ExpiredDays:        req.GetExpiredDays().GetValue(),
+		AddressInfo:        req.GetAddressInfo().GetValue(),
+		Owner:              req.GetOwner().GetValue(),
 		Status:             constants.StatusPending,
 		CreateTime:         time.Now(),
 		StatusTime:         time.Now(),
-		AvailableStartTime: availableStartTimeStr,
-		AvailableEndTime:   availableEndTimeStr,
+		AvailableStartTime: req.GetAvailableStartTime().GetValue(),
+		AvailableEndTime:   req.GetAvailableEndTime().GetValue(),
 		Extra:              extra,
 	}
 	return notification

@@ -12,245 +12,392 @@ import "protoc-gen-swagger/options/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 message CreateNotificationRequest {
+	//required, notification content type, eg:[invite|verify|fee|business|alert|other|event]
 	google.protobuf.StringValue content_type = 1;
+	//required, notification title
 	google.protobuf.StringValue title = 2;
+	//notification content, json fmt, eg:{"html":"test_content_html", "normal":"test_content_normal"}
 	google.protobuf.StringValue content = 3;
+	//notification short content
 	google.protobuf.StringValue short_content = 4;
+	//notification expired days,  0 is for never expired.
 	google.protobuf.UInt32Value expired_days = 5;
+	//notification owner
 	google.protobuf.StringValue owner = 6;
+	//the address to send the notification, json fmt, currently support 2 kinds types.
+	//1.key/value Type, key is the notification send Type,the value is the list of address,
+	//eg:{"email": ["xxx1@163.com", "xxx2@163.com"],"websocket": ["system", "user1"]}
+	//2.Array Type, eg:["adl-xxxx1", "adl-xxxx2"],
+	//the item is the address list id which is already created in advance.
 	google.protobuf.StringValue address_info = 7;
+	//the available start time to receive notification
 	google.protobuf.StringValue available_start_time = 8;
+	//the available end time to receive notification
 	google.protobuf.StringValue available_end_time = 9;
+	//extra info is only used for websocket notification,to show which websocket client could accept it.
+	//eg:"{"ws_service": "ks","ws_message_type": "event"}"
 	google.protobuf.StringValue extra = 10;
 }
 
 message CreateNotificationResponse {
+	//id of notification created
 	google.protobuf.StringValue notification_id = 1;
 }
 
 message Notification {
+	//notification id
 	google.protobuf.StringValue notification_id = 1;
+	//notification content type, eg:[invite|verify|fee|business|alert|other|event]
 	google.protobuf.StringValue content_type = 2;
+	//notification title
 	google.protobuf.StringValue title = 3;
+	//notification content, json fmt, eg:{"html":"test_content_html", "normal":"test_content_normal"}
 	google.protobuf.StringValue content = 4;
+	//notification short content
 	google.protobuf.StringValue short_content = 5;
+	//notification expired days,  0 is for never expired.
 	google.protobuf.UInt32Value expired_days = 6;
+	//notification status, eg:[pending|sending|successful|failed]
 	google.protobuf.StringValue status = 7;
+	//create time of the notification
 	google.protobuf.Timestamp create_time = 8;
+	//the status changed time of the notification
 	google.protobuf.Timestamp status_time = 9;
+	//the owner of the notification
 	google.protobuf.StringValue owner = 10;
+	//the address to send the notification, json fmt, currently support 2 kinds types.
+	//1.key/value Type, key is the notification send Type,the value is the list of address, eg:{"email": ["openpitrix@163.com", "openpitrix@163.com"],"websocket": ["system", "jo"]}
+	//2.Array Type, eg:["adl-xxxx1", "adl-xxxx2"], the item is the address list id which is already created in advance.
 	google.protobuf.StringValue address_info = 11;
+	//the available start time to receive notification
 	google.protobuf.StringValue available_start_time = 12;
+	//the available end time to receive notification
 	google.protobuf.StringValue available_end_time = 13;
+	//extra info is only used for websocket notification,to show which websocket client could accept it.
+	//eg:"{"ws_service": "ks","ws_message_type": "event"}"
 	google.protobuf.StringValue extra = 14;
 }
 
 message DescribeNotificationsRequest {
+	//notification id
 	repeated string notification_id = 1;
+	//notification content type, eg:[invite|verify|fee|business|alert|other|event]
 	repeated string content_type = 2;
+	//notification owner
 	repeated string owner = 3;
+	//notification status, eg:[pending|sending|successful|failed]
 	repeated string status = 4;
+	//data limit per page, default value 20, max value 200
 	uint32 limit = 5;
+	//data offset, default 0
 	uint32 offset = 6;
+	//query key, support these fields(notification_id,content_type,title,short_content,address_info,status,owner)
 	google.protobuf.StringValue search_word = 7;
+	//sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 8;
+	//value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 9;
+	//select columns to display, currently not support
 	repeated string display_columns = 10;
 }
 
 message DescribeNotificationsResponse {
+	//total count of qualified notifications
 	uint32 total_count = 1;
+	//list of notification
 	repeated Notification notification_set = 2;
 }
 
 message RetryNotificationsRequest {
+	//required, notification ids to retry
 	repeated string notification_id = 1;
 }
 
 message RetryNotificationsResponse {
+	//notifications retried
 	repeated Notification notification_set = 1;
 }
 
 message Task {
+	//task id
 	google.protobuf.StringValue task_id = 1;
+	//the notification id of the task, one notification may send out by serval tasks
 	google.protobuf.StringValue notification_id = 2;
+	//error code, if task run failed will return a error code
 	google.protobuf.UInt32Value error_code = 3;
+	//the task execution status, eg:[pending|sending|successful|failed]
 	google.protobuf.StringValue status = 4;
+	//create time of the task
 	google.protobuf.Timestamp create_time = 5;
+	//the status changed time of the notification
 	google.protobuf.Timestamp status_time = 6;
+	//the details of notification, json format,
+	//eg:{"Title": "Title_test.", "Address": "openpitrix@163.com", "Content": "{\"html\":\"test_content_html\",  \"normal\":\"test_content_normal\"}", "NotifyType": "email", "ContentType": "other", "ExpiredDays": 0, "ShortContent": "ShortContent_test", "NotificationId": "nf-zZq6G4A7v9YK", "AvailableEndTime": "", "AvailableStartTime": ""}
 	google.protobuf.StringValue directive = 7;
 }
 
 message DescribeTasksRequest {
+	//task id
 	repeated string task_id = 1;
+	//the notification id of the task, one notification may send out by serval tasks
 	repeated string notification_id = 2;
+	//error code, if task run failed will return a error code
 	repeated string error_code = 3;
+	//the task execution status, eg:[pending|sending|successful|failed]
 	repeated string status = 4;
+	//data limit per page, default value 20, max value 200
 	uint32 limit = 5;
+	//data offset, default 0
 	uint32 offset = 6;
+	//query key, support these fields(task_id,notification_id,status,error_code)
 	google.protobuf.StringValue search_word = 7;
+	//sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 8;
+	//value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 9;
+	//select columns to display, currently not support
 	repeated string display_columns = 10;
 }
 
 message DescribeTasksResponse {
+	//total count of qualified tasks
 	uint32 total_count = 1;
+	//list of task
 	repeated Task task_set = 2;
 }
 
 message RetryTasksRequest {
+	//required, task ids to retry
 	repeated string task_id = 1;
 }
 
 message RetryTasksResponse {
+	//tasks retried
 	repeated Task task_set = 1;
 }
 
 message CreateAddressRequest {
+	//required, address details, could be email address for email, user id for websocket, mobile number for sms.
 	google.protobuf.StringValue address = 1;
+	//remarks for address
 	google.protobuf.StringValue remarks = 2;
+	//verification code for register address at the first time
 	google.protobuf.StringValue verification_code = 3;
+	//required, the notify type , eg:[email|websocket|sms|wechat]
 	google.protobuf.StringValue notify_type = 4;
 }
 
 message CreateAddressResponse {
+	//id of address created
 	google.protobuf.StringValue address_id = 1;
 }
 
 message DescribeAddressesRequest {
+	//address id
 	repeated string address_id = 1;
+	//address list id
 	repeated string address_list_id = 2;
+	//address details, could be email address for email, user id for websocket, mobile number for sms.
 	repeated string address = 3;
+	//the notify type , eg:[email|websocket|sms|wechat]
 	repeated string notify_type = 4;
+	//address status, eg:[active|disabled|deleted]
 	repeated string status = 5;
+	//data limit per page, default value 20, max value 200
 	uint32 limit = 6;
+	//data offset, default 0
 	uint32 offset = 7;
+	//query key, support these fields(address_id,address,notify_type,remarks)
 	google.protobuf.StringValue search_word = 8;
+	//sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 9;
+	//value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 10;
+	//select columns to display, currently not support
 	repeated string display_columns = 11;
 }
 
 message Address {
+	//address id
 	google.protobuf.StringValue address_id = 1;
+	//address list id
 	google.protobuf.StringValue address_list_id = 2;
+	//address details, could be email address for email, user id for websocket, mobile number for sms.
 	google.protobuf.StringValue address = 3;
+	//remarks for address
 	google.protobuf.StringValue remarks = 4;
+	//verification code for register address at the first time
 	google.protobuf.StringValue verification_code = 5;
+	//address status, eg:[active|disabled|deleted]
 	google.protobuf.StringValue status = 6;
+	//create time of the address
 	google.protobuf.Timestamp create_time = 7;
+	//verify time when verify the address
 	google.protobuf.Timestamp verify_time = 8;
+	//the status changed time of the address
 	google.protobuf.Timestamp status_time = 9;
+	//the notify type , eg:[email|websocket|sms|wechat]
 	google.protobuf.StringValue notify_type = 10;
 }
 
 message DescribeAddressesResponse {
+	//total count of qualified address
 	uint32 total_count = 1;
+	//list of address
 	repeated Address address_set = 2;
 }
 
 message ModifyAddressRequest {
+	//required, address id
 	google.protobuf.StringValue address_id = 1;
+	//address details, could be email address for email, user id for websocket, mobile number for sms.
 	google.protobuf.StringValue address = 2;
+	//remarks for address
 	google.protobuf.StringValue remarks = 3;
+	//verification code for register address at the first time
 	google.protobuf.StringValue verification_code = 4;
+	//the notify type, eg:[email|websocket|sms|wechat]
 	google.protobuf.StringValue notify_type = 5;
 }
 
 message ModifyAddressResponse {
+	//address id
 	google.protobuf.StringValue address_id = 1;
 }
 
 message DeleteAddressesRequest {
+	//required, address id
 	repeated string address_id = 1;
 }
 
 message DeleteAddressesResponse {
+	//address id
 	repeated string address_id = 1;
 }
 
 message CreateAddressListRequest {
+	//the name of the address list
 	google.protobuf.StringValue address_list_name = 1;
+	//the extra info of the address
 	google.protobuf.StringValue extra = 2;
+	//required, the address ids for the address list to create
 	repeated string address_id = 3;
 }
 
 message CreateAddressListResponse {
+	//address list id
 	google.protobuf.StringValue address_list_id = 1;
 }
 
 message DescribeAddressListRequest {
+	//address list id
 	repeated string address_list_id = 1;
+	//the name of the address list
 	repeated string address_list_name = 2;
+	//the extra info of the address
 	repeated string extra = 3;
+	//address list status, eg:[active|disabled|deleted]
 	repeated string status = 4;
+	//data limit per page, default value 20, max value 200
 	uint32 limit = 5;
+	//data offset, default 0
 	uint32 offset = 6;
+	//query key, support these fields(address_list_id,address_list_name,address_list_name,extra)
 	google.protobuf.StringValue search_word = 7;
+	//sort key, order by sort_key, default create_time
 	google.protobuf.StringValue sort_key = 8;
+	//value = 0 sort ASC, value = 1 sort DESC
 	google.protobuf.BoolValue reverse = 9;
+	//select columns to display, currently not support
 	repeated string display_columns = 10;
 }
 
 message AddressList {
+	//address list id
 	google.protobuf.StringValue address_list_id = 1;
+	//the name of the address list
 	google.protobuf.StringValue address_list_name = 2;
+	//the extra info of the address
 	google.protobuf.StringValue extra = 3;
+	//address list status, eg:[active|disabled|deleted]
 	google.protobuf.StringValue status = 4;
+	//create time of the address list
 	google.protobuf.Timestamp create_time = 5;
+	//the status changed time of the address list
 	google.protobuf.Timestamp status_time = 6;
+	//address list
 	repeated Address address_set = 7;
 }
 
 message DescribeAddressListResponse {
+	//total count of qualified address lists
 	uint32 total_count = 1;
+	//list of address lists
 	repeated AddressList address_list_set = 2;
 }
 
 message ModifyAddressListRequest {
+	//required, address list id
 	google.protobuf.StringValue address_list_id = 1;
+	//address list name
 	google.protobuf.StringValue address_list_name = 2;
+	//the extra info of the address list
 	google.protobuf.StringValue extra = 3;
+	//address list status, eg:[active|disabled|deleted]
 	google.protobuf.StringValue status = 4;
+	//address ids of the address list
 	repeated string address_id = 5;
 }
 
 message ModifyAddressListResponse {
+	//address list id
 	google.protobuf.StringValue address_list_id = 1;
 }
 
 message DeleteAddressListRequest {
+	//required, address list id
 	repeated string address_list_id = 1;
 }
 
 message DeleteAddressListResponse {
+	//address list id
 	repeated string address_list_id = 1;
 }
 
 message EmailServiceConfig {
+	//email server protocol
 	google.protobuf.StringValue protocol = 1;
+	//email server host
 	google.protobuf.StringValue email_host = 2;
+	//email server send port
 	google.protobuf.UInt32Value port = 3;
+	//notification display sender
 	google.protobuf.StringValue display_sender = 4;
+	//send email address
 	google.protobuf.StringValue email = 5;
+	//send email address password
 	google.protobuf.StringValue password = 6;
+	// is ssl enabled or not
 	google.protobuf.BoolValue ssl_enable = 7;
 }
 
 message ServiceConfig {
+	//email service config information
 	EmailServiceConfig email_service_config = 1;
 }
 
 message SetServiceConfigResponse {
+	//set service config successfully or not
 	google.protobuf.BoolValue is_succ = 1;
 }
 
 message GetServiceConfigRequest {
+	//required, service type
 	repeated string service_type = 1;
 }
 
 message ValidateEmailServiceResponse{
+	//validate service config ok or not
 	google.protobuf.BoolValue is_succ = 1;
 }
 
@@ -258,9 +405,10 @@ message ValidateEmailServiceResponse{
 
 
 service notification {
+	//Create notification
 	rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create notification"
+			summary: "Create notification"
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications"
@@ -268,112 +416,114 @@ service notification {
 		};
 	}
 
+	//Describe notifications
 	rpc DescribeNotifications (DescribeNotificationsRequest) returns (DescribeNotificationsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe notifications"
+			summary: "Describe notifications"
 		};
 		option (google.api.http) = {
 			get: "/v1/notifications"
 		};
 	}
 
+	//Retry notifications
 	rpc RetryNotifications (RetryNotificationsRequest) returns (RetryNotificationsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "retry notifications"
+			summary: "Retry notifications"
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications:retry"
 			body: "*"
 		};
 	}
-
+	//Describe tasks
 	rpc DescribeTasks (DescribeTasksRequest) returns (DescribeTasksResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe tasks"
+			summary: "Describe tasks"
 		};
 		option (google.api.http) = {
 			get: "/v1/notifications/tasks"
 		};
 	}
-
+	//Retry tasks
 	rpc RetryTasks (RetryTasksRequest) returns (RetryTasksResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "retry tasks"
+			summary: "Retry tasks"
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications/tasks:retry"
 			body: "*"
 		};
 	}
-
+	//Create address
 	rpc CreateAddress (CreateAddressRequest) returns (CreateAddressResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create address"
+			summary: "Create address"
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications/address"
 			body: "*"
 		};
 	}
-
+	//Describe addresses
 	rpc DescribeAddresses (DescribeAddressesRequest) returns (DescribeAddressesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe addresses"
+			summary: "Describe addresses"
 		};
 		option (google.api.http) = {
 			get: "/v1/notifications/address"
 		};
 	}
-
+	//Modify address
 	rpc ModifyAddress (ModifyAddressRequest) returns (ModifyAddressResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify address"
+			summary: "Modify address"
 		};
 		option (google.api.http) = {
 			patch: "/v1/notifications/address"
 			body: "*"
 		};
 	}
-
+	//Delete addresses
 	rpc DeleteAddresses (DeleteAddressesRequest) returns (DeleteAddressesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete addresses"
+			summary: "Delete addresses"
 		};
 		option (google.api.http) = {
 			delete: "/v1/notifications/address"
 			body: "*"
 		};
 	}
-
+	//Create address list
 	rpc CreateAddressList (CreateAddressListRequest) returns (CreateAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "create address list"
+			summary: "Create address list"
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications/address_list"
 			body: "*"
 		};
 	}
-
+	//Describe address lists
 	rpc DescribeAddressList (DescribeAddressListRequest) returns (DescribeAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "describe address list"
+			summary: "Describe address list"
 		};
 		option (google.api.http) = {
 			get: "/v1/notifications/address_list"
 		};
 	}
-
+	//Modify address list
 	rpc ModifyAddressList (ModifyAddressListRequest) returns (ModifyAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "modify address list"
+			summary: "Modify address list"
 		};
 		option (google.api.http) = {
 			patch: "/v1/notifications/address_list"
 			body: "*"
 		};
 	}
-
+	//Delete address lists
 	rpc DeleteAddressList (DeleteAddressListRequest) returns (DeleteAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "delete address list"
@@ -383,22 +533,20 @@ service notification {
 			body: "*"
 		};
 	}
-
+	//Set service configration
 	rpc SetServiceConfig (ServiceConfig) returns (SetServiceConfigResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "set service configration"
+			summary: "Set service configration"
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications/set_service_config"
 			body: "*"
 		};
 	}
-
-
-
+	//Get service configration
 	rpc GetServiceConfig (GetServiceConfigRequest) returns (ServiceConfig) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "get service configration"
+			summary: "Get service configration"
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications/get_service_config"
@@ -406,10 +554,10 @@ service notification {
 		};
 	}
 
-
+	//Validate email service
 	rpc ValidateEmailService(ServiceConfig)  returns (ValidateEmailServiceResponse){
 	option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "validate email service"
+			summary: "Validate email service"
 		};
 	option (google.api.http) = {
 			post: "/v1/notifications/validate_email_service"

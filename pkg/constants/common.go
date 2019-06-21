@@ -56,7 +56,14 @@ const (
 	StatusFailed     = "failed"
 )
 
-var SendingStatuses = []string{
+var NfStatuses = []string{
+	StatusPending,
+	StatusSending,
+	StatusSuccessful,
+	StatusFailed,
+}
+
+var TaskStatuses = []string{
 	StatusPending,
 	StatusSending,
 	StatusSuccessful,

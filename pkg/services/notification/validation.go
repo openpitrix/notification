@@ -50,18 +50,7 @@ func ValidateCreateNotificationParams(ctx context.Context, req *pb.CreateNotific
 	}
 
 	//3.validate address info
-	notification := models.NewNotification(
-		req.GetContentType().GetValue(),
-		req.GetTitle().GetValue(),
-		req.GetContent().GetValue(),
-		req.GetShortContent().GetValue(),
-		req.GetAddressInfo().GetValue(),
-		req.GetOwner().GetValue(),
-		req.GetExpiredDays().GetValue(),
-		req.GetAvailableStartTime().GetValue(),
-		req.GetAvailableEndTime().GetValue(),
-		req.GetExtra().GetValue(),
-	)
+	notification := models.NewNotification(req)
 
 	_, decodeMapErr := models.DecodeAddressInfo(notification.AddressInfo)
 	if decodeMapErr == nil {
@@ -147,6 +136,8 @@ func validateAddressInfo4AddressMap(ctx context.Context, notification *models.No
 				}
 			}
 			if notifyType == constants.NotifyTypeWebsocket {
+				//extra info is only used for websocket notification,to show which websocket client could accept it.
+				//eg:"{"ws_service": "ks","ws_message_type": "event"}"
 				err := models.CheckExtra(ctx, notification.Extra)
 				if err != nil {
 					return err

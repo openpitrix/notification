@@ -63,21 +63,23 @@ func TestRegisterNotification4rc(t *testing.T) {
 	}
 	config.GetInstance().LoadConf()
 
-	//testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
-	testAddrListIds := "[\"adl-EgoLADQkwkEr\"]"
+	testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
+	//testAddrListIds := "[\"adl-EgoLADQkwkEr\"]"
+	//testExtra := "{\"ws_service\": \"ks\",\"ws_message_type\": \"event\"}"
+	var req = &pb.CreateNotificationRequest{
+		ContentType:        pbutil.ToProtoString("alert"),
+		Title:              pbutil.ToProtoString("testing alert"),
+		Content:            pbutil.ToProtoString("test content"),
+		ShortContent:       pbutil.ToProtoString("test short content"),
+		ExpiredDays:        pbutil.ToProtoUInt32(0),
+		Owner:              pbutil.ToProtoString("HuoJiao"),
+		AddressInfo:        pbutil.ToProtoString(testAddrsStr),
+		AvailableStartTime: pbutil.ToProtoString(""),
+		AvailableEndTime:   pbutil.ToProtoString(""),
+		//Extra:              pbutil.ToProtoString(testExtra),
+	}
 
-	notification := models.NewNotification(
-		"alert",
-		"testing alert",
-		"test content",
-		"test short content",
-		//testAddrsStr,
-		testAddrListIds,
-		"testJo",
-		0,
-		"00:00:00",
-		"20:00:00", "ws_op_nf",
-	)
+	notification := models.NewNotification(req)
 
 	err := RegisterNotification(nil, notification)
 	if err != nil {
