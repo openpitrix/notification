@@ -360,7 +360,7 @@ func (s *Server) ModifyAddress(ctx context.Context, req *pb.ModifyAddressRequest
 		return nil, err
 	}
 
-	addressId := req.AddressId.GetValue()
+	addressId := req.AddressId
 	attributes := make(map[string]interface{})
 	if req.Address.GetValue() != "" {
 		attributes[models.AddrColAddress] = req.Address.GetValue()
@@ -444,7 +444,7 @@ func (s *Server) DescribeAddressList(ctx context.Context, req *pb.DescribeAddres
 
 func (s *Server) ModifyAddressList(ctx context.Context, req *pb.ModifyAddressListRequest) (*pb.ModifyAddressListResponse, error) {
 	var err error
-	addressListId := req.GetAddressListId().GetValue()
+	addressListId := req.GetAddressListId()
 	addrIds := req.GetAddressId()
 
 	attributes := make(map[string]interface{})

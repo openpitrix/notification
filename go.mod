@@ -68,11 +68,14 @@ require (
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
+	gopkg.in/mail.v2 v2.3.1 // indirect
 	gopkg.in/yaml.v2 v2.2.2 // indirect
 	openpitrix.io/libqueue v0.3.1
 	openpitrix.io/logger v0.1.0
 )
 
+replace gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df => github.com/go-mail/mail v2.3.1+incompatible
+
 replace openpitrix.io/libqueue v0.3.1 => github.com/openpitrix/libqueue v0.3.1
 
-replace gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df => github.com/go-mail/mail v2.3.1+incompatible
+replace openpitrix.io/logger v0.1.0 => github.com/openpitrix/logger v0.1.0

@@ -28,22 +28,22 @@ var Files = map[string]string{
     "application/json"
   ],
   "paths": {
-    "/v1/notifications": {
+    "/v1/address_lists": {
       "get": {
-        "summary": "Describe notifications",
-        "operationId": "DescribeNotifications",
+        "summary": "Describe address list",
+        "operationId": "DescribeAddressList",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbDescribeNotificationsResponse"
+              "$ref": "#/definitions/pbDescribeAddressListResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "notification_id",
-            "description": "notification id.",
+            "name": "address_list_id",
+            "description": "address list id.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -53,8 +53,8 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "content_type",
-            "description": "notification content type, eg:[invite|verify|fee|business|alert|other|event].",
+            "name": "address_list_name",
+            "description": "the name of the address list.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -64,8 +64,8 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "owner",
-            "description": "notification owner.",
+            "name": "extra",
+            "description": "the extra info of the address.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -76,7 +76,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
-            "description": "notification status, eg:[pending|sending|successful|failed].",
+            "description": "address list status, eg:[active|disabled|deleted].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -103,7 +103,7 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
-            "description": "query key, support these fields(notification_id,content_type,title,short_content,address_info,status,owner).",
+            "description": "query key, support these fields(address_list_id,address_list_name,address_list_name,extra).",
             "in": "query",
             "required": false,
             "type": "string"
@@ -139,14 +139,14 @@ var Files = map[string]string{
           "notification"
         ]
       },
-      "post": {
-        "summary": "Create notification",
-        "operationId": "CreateNotification",
+      "delete": {
+        "summary": "delete address list",
+        "operationId": "DeleteAddressList",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateNotificationResponse"
+              "$ref": "#/definitions/pbDeleteAddressListResponse"
             }
           }
         },
@@ -156,7 +156,32 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateNotificationRequest"
+              "$ref": "#/definitions/pbDeleteAddressListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "post": {
+        "summary": "Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list",
+        "operationId": "CreateAddressList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateAddressListResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateAddressListRequest"
             }
           }
         ],
@@ -165,7 +190,41 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/notifications/address": {
+    "/v1/address_lists/{address_list_id}": {
+      "put": {
+        "summary": "Modify address list",
+        "operationId": "ModifyAddressList",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbModifyAddressListResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address_list_id",
+            "description": "required, address list id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbModifyAddressListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/addresses": {
       "get": {
         "summary": "Describe addresses",
         "operationId": "DescribeAddresses",
@@ -313,7 +372,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "Create address",
+        "summary": "Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list.",
         "operationId": "CreateAddress",
         "responses": {
           "200": {
@@ -336,8 +395,10 @@ var Files = map[string]string{
         "tags": [
           "notification"
         ]
-      },
-      "patch": {
+      }
+    },
+    "/v1/addresses/{address_id}": {
+      "put": {
         "summary": "Modify address",
         "operationId": "ModifyAddress",
         "responses": {
@@ -349,6 +410,13 @@ var Files = map[string]string{
           }
         },
         "parameters": [
+          {
+            "name": "address_id",
+            "description": "required, address id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
@@ -363,22 +431,22 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/notifications/address_list": {
+    "/v1/notifications": {
       "get": {
-        "summary": "Describe address list",
-        "operationId": "DescribeAddressList",
+        "summary": "Describe notifications",
+        "operationId": "DescribeNotifications",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbDescribeAddressListResponse"
+              "$ref": "#/definitions/pbDescribeNotificationsResponse"
             }
           }
         },
         "parameters": [
           {
-            "name": "address_list_id",
-            "description": "address list id.",
+            "name": "notification_id",
+            "description": "notification id.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -388,8 +456,8 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "address_list_name",
-            "description": "the name of the address list.",
+            "name": "content_type",
+            "description": "notification content type, eg:[invite|verify|fee|business|alert|other|event].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -399,8 +467,8 @@ var Files = map[string]string{
             "collectionFormat": "multi"
           },
           {
-            "name": "extra",
-            "description": "the extra info of the address.",
+            "name": "owner",
+            "description": "notification owner.",
             "in": "query",
             "required": false,
             "type": "array",
@@ -411,7 +479,7 @@ var Files = map[string]string{
           },
           {
             "name": "status",
-            "description": "address list status, eg:[active|disabled|deleted].",
+            "description": "notification status, eg:[pending|sending|successful|failed].",
             "in": "query",
             "required": false,
             "type": "array",
@@ -438,7 +506,7 @@ var Files = map[string]string{
           },
           {
             "name": "search_word",
-            "description": "query key, support these fields(address_list_id,address_list_name,address_list_name,extra).",
+            "description": "query key, support these fields(notification_id,content_type,title,short_content,address_info,status,owner).",
             "in": "query",
             "required": false,
             "type": "string"
@@ -474,39 +542,14 @@ var Files = map[string]string{
           "notification"
         ]
       },
-      "delete": {
-        "summary": "delete address list",
-        "operationId": "DeleteAddressList",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbDeleteAddressListResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbDeleteAddressListRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      },
       "post": {
-        "summary": "Create address list",
-        "operationId": "CreateAddressList",
+        "summary": "Create notification",
+        "operationId": "CreateNotification",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/pbCreateAddressListResponse"
+              "$ref": "#/definitions/pbCreateNotificationResponse"
             }
           }
         },
@@ -516,32 +559,7 @@ var Files = map[string]string{
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/pbCreateAddressListRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      },
-      "patch": {
-        "summary": "Modify address list",
-        "operationId": "ModifyAddressList",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbModifyAddressListResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbModifyAddressListRequest"
+              "$ref": "#/definitions/pbCreateNotificationRequest"
             }
           }
         ],
@@ -550,8 +568,35 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/notifications/get_service_config": {
+    "/v1/notifications/retry": {
       "post": {
+        "summary": "Retry notifications",
+        "operationId": "RetryNotifications",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRetryNotificationsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbRetryNotificationsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/service_configs": {
+      "get": {
         "summary": "Get service configration",
         "operationId": "GetServiceConfig",
         "responses": {
@@ -564,20 +609,21 @@ var Files = map[string]string{
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbGetServiceConfigRequest"
-            }
+            "name": "service_type",
+            "description": "required, service type.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
           }
         ],
         "tags": [
           "notification"
         ]
-      }
-    },
-    "/v1/notifications/set_service_config": {
+      },
       "post": {
         "summary": "Set service configration",
         "operationId": "SetServiceConfig",
@@ -604,7 +650,34 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/notifications/tasks": {
+    "/v1/service_configs/validation": {
+      "post": {
+        "summary": "Validate email service",
+        "operationId": "ValidateEmailService",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbValidateEmailServiceResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbServiceConfig"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/tasks": {
       "get": {
         "summary": "Describe tasks",
         "operationId": "DescribeTasks",
@@ -716,7 +789,7 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/notifications/tasks:retry": {
+    "/v1/tasks/retry": {
       "post": {
         "summary": "Retry tasks",
         "operationId": "RetryTasks",
@@ -735,60 +808,6 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbRetryTasksRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
-    "/v1/notifications/validate_email_service": {
-      "post": {
-        "summary": "Validate email service",
-        "operationId": "ValidateEmailService",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbValidateEmailServiceResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbServiceConfig"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
-    "/v1/notifications:retry": {
-      "post": {
-        "summary": "Retry notifications",
-        "operationId": "RetryNotifications",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbRetryNotificationsResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbRetryNotificationsRequest"
             }
           }
         ],
@@ -1147,18 +1166,6 @@ var Files = map[string]string{
           "type": "boolean",
           "format": "boolean",
           "title": "is ssl enabled or not"
-        }
-      }
-    },
-    "pbGetServiceConfigRequest": {
-      "type": "object",
-      "properties": {
-        "service_type": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "required, service type"
         }
       }
     },
