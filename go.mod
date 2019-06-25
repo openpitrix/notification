@@ -74,6 +74,8 @@ require (
 	openpitrix.io/logger v0.1.0
 )
 
+replace gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df => github.com/go-mail/mail v2.3.1+incompatible
+
 replace openpitrix.io/libqueue v0.3.1 => github.com/openpitrix/libqueue v0.3.1
 
-replace gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df => github.com/go-mail/mail v2.3.1+incompatible
+replace openpitrix.io/logger v0.1.0 => github.com/openpitrix/logger v0.1.0
