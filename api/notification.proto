@@ -249,7 +249,7 @@ message DescribeAddressesResponse {
 
 message ModifyAddressRequest {
 	//required, address id
-	google.protobuf.StringValue address_id = 1;
+	string address_id = 1;
 	//address details, could be email address for email, user id for websocket, mobile number for sms.
 	google.protobuf.StringValue address = 2;
 	//remarks for address
@@ -338,7 +338,7 @@ message DescribeAddressListResponse {
 
 message ModifyAddressListRequest {
 	//required, address list id
-	google.protobuf.StringValue address_list_id = 1;
+	string address_list_id = 1;
 	//address list name
 	google.protobuf.StringValue address_list_name = 2;
 	//the extra info of the address list
@@ -432,7 +432,7 @@ service notification {
 			summary: "Retry notifications"
 		};
 		option (google.api.http) = {
-			post: "/v1/notifications:retry"
+			post: "/v1/notifications/retry"
 			body: "*"
 		};
 	}
@@ -442,7 +442,7 @@ service notification {
 			summary: "Describe tasks"
 		};
 		option (google.api.http) = {
-			get: "/v1/notifications/tasks"
+			get: "/v1/tasks"
 		};
 	}
 	//Retry tasks
@@ -451,17 +451,17 @@ service notification {
 			summary: "Retry tasks"
 		};
 		option (google.api.http) = {
-			post: "/v1/notifications/tasks:retry"
+			post: "/v1/tasks/retry"
 			body: "*"
 		};
 	}
-	//Create address
+	//Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list.
 	rpc CreateAddress (CreateAddressRequest) returns (CreateAddressResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create address"
+			summary: "Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list."
 		};
 		option (google.api.http) = {
-			post: "/v1/notifications/address"
+			post: "/v1/addresses"
 			body: "*"
 		};
 	}
@@ -471,7 +471,7 @@ service notification {
 			summary: "Describe addresses"
 		};
 		option (google.api.http) = {
-			get: "/v1/notifications/address"
+			get: "/v1/addresses"
 		};
 	}
 	//Modify address
@@ -480,7 +480,7 @@ service notification {
 			summary: "Modify address"
 		};
 		option (google.api.http) = {
-			patch: "/v1/notifications/address"
+			put: "/v1/addresses/{address_id}"
 			body: "*"
 		};
 	}
@@ -490,17 +490,17 @@ service notification {
 			summary: "Delete addresses"
 		};
 		option (google.api.http) = {
-			delete: "/v1/notifications/address"
+			delete: "/v1/addresses"
 			body: "*"
 		};
 	}
-	//Create address list
+	//Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list.
 	rpc CreateAddressList (CreateAddressListRequest) returns (CreateAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create address list"
+			summary: "Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list"
 		};
 		option (google.api.http) = {
-			post: "/v1/notifications/address_list"
+			post: "/v1/address_lists"
 			body: "*"
 		};
 	}
@@ -510,7 +510,7 @@ service notification {
 			summary: "Describe address list"
 		};
 		option (google.api.http) = {
-			get: "/v1/notifications/address_list"
+			get: "/v1/address_lists"
 		};
 	}
 	//Modify address list
@@ -519,7 +519,7 @@ service notification {
 			summary: "Modify address list"
 		};
 		option (google.api.http) = {
-			patch: "/v1/notifications/address_list"
+			put: "/v1/address_lists/{address_list_id}"
 			body: "*"
 		};
 	}
@@ -529,7 +529,7 @@ service notification {
 			summary: "delete address list"
 		};
 		option (google.api.http) = {
-			delete: "/v1/notifications/address_list"
+			delete: "/v1/address_lists"
 			body: "*"
 		};
 	}
@@ -539,7 +539,7 @@ service notification {
 			summary: "Set service configration"
 		};
 		option (google.api.http) = {
-			post: "/v1/notifications/set_service_config"
+			post: "/v1/service_configs"
 			body: "*"
 		};
 	}
@@ -549,8 +549,7 @@ service notification {
 			summary: "Get service configration"
 		};
 		option (google.api.http) = {
-			post: "/v1/notifications/get_service_config"
-			body: "*"
+			get: "/v1/service_configs"
 		};
 	}
 
@@ -560,7 +559,7 @@ service notification {
 			summary: "Validate email service"
 		};
 	option (google.api.http) = {
-			post: "/v1/notifications/validate_email_service"
+			post: "/v1/service_configs/validation"
 			body: "*"
 		};
 	}
