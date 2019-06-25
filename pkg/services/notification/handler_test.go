@@ -265,7 +265,7 @@ func TestCreateAddress(t *testing.T) {
 	defer cancel()
 
 	var req = &pb.CreateAddressRequest{
-		Address:          pbutil.ToProtoString("openpitrix@163.com"),
+		Address:          pbutil.ToProtoString("openpitrix2@163.com"),
 		Remarks:          pbutil.ToProtoString("sss2"),
 		VerificationCode: pbutil.ToProtoString("sss3"),
 		NotifyType:       pbutil.ToProtoString("email"),
@@ -297,7 +297,7 @@ func TestDescribeAddresses(t *testing.T) {
 	defer cancel()
 
 	var AddressIds []string
-	AddressIds = append(AddressIds, "addr-xPgQPnOJM36K")
+	AddressIds = append(AddressIds, "addr-4MMNPyVzqMEr")
 
 	var AddressListIds []string
 	AddressListIds = append(AddressListIds, "adl-lW4DmnoJWp98")
@@ -342,7 +342,7 @@ func TestModifyAddress(t *testing.T) {
 	defer cancel()
 
 	var req = &pb.ModifyAddressRequest{
-		AddressId:        pbutil.ToProtoString("addr-wRKQzOy7jAWZ"),
+		AddressId:        "addr-wRKQzOy7jAWZ",
 		Address:          pbutil.ToProtoString("hello@openpitrix.com"),
 		Remarks:          pbutil.ToProtoString("测试Remarks2211"),
 		VerificationCode: pbutil.ToProtoString("VerificationCode test"),
@@ -471,7 +471,7 @@ func TestModifyAddressList(t *testing.T) {
 	addressIds = append(addressIds, "addr-xNNWLDLvR36K")
 
 	var req = &pb.ModifyAddressListRequest{
-		AddressListId:   pbutil.ToProtoString("adl-2Enmg1466AYr"),
+		AddressListId:   "adl-2Enmg1466AYr",
 		AddressListName: pbutil.ToProtoString("updateTes"),
 		Status:          pbutil.ToProtoString(constants.StatusActive),
 		AddressId:       addressIds,
