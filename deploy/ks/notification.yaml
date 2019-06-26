@@ -111,8 +111,8 @@ spec:
           value: "redis"
         - name: NOTIFICATION_PUB_SUB_ADDR
           value: "redis://redis.kubesphere-system.svc:6379"
-        - name: NOTIFICATION_MYSQL_LOG_MODE
-          value: "false"
+        - name: NOTIFICATION_WEBSOCKET_SERVICE_MESSAGE_TYPES
+          value: "none"
         resources:
           limits:
             cpu: "1"

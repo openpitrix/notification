@@ -156,7 +156,7 @@ func (s *Server) mainHandler() http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("/", gwmux)
 
-	if cfg.Websocket.ServiceMessageTypes != "" {
+	if cfg.Websocket.ServiceMessageTypes != "none" {
 		/**********************************************************
 		** start ws_manager service **
 		**********************************************************/
