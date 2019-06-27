@@ -7,8 +7,8 @@ package notification
 import (
 	"google.golang.org/grpc"
 	"openpitrix.io/logger"
-	"openpitrix.io/notification/pkg/config"
 
+	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/manager"
 	"openpitrix.io/notification/pkg/pb"
 )
