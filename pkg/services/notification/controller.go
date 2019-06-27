@@ -28,7 +28,7 @@ type Controller struct {
 }
 
 func NewController() (*Controller, error) {
-	cfg := config.GetInstance().LoadConf()
+	cfg := config.GetInstance()
 	queueConnStr := cfg.Queue.Addr
 	queueType := cfg.Queue.Type
 

@@ -80,7 +80,8 @@ type Config struct {
 	}
 
 	Websocket struct {
-		ServiceMessageTypes string `default:"op/nf,op/event,ks/nf,ks/event"`
+		//ServiceMessageTypes string `default:"op/nf,op/event,ks/nf,ks/event"`
+		ServiceMessageTypes string `default:"none"`
 	}
 }
 
@@ -91,6 +92,7 @@ var once sync.Once
 func GetInstance() *Config {
 	once.Do(func() {
 		instance = &Config{}
+		instance.LoadConf()
 	})
 	return instance
 }
