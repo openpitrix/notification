@@ -455,10 +455,10 @@ service notification {
 			body: "*"
 		};
 	}
-	//Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list.
+	//Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list.
 	rpc CreateAddress (CreateAddressRequest) returns (CreateAddressResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list."
+			summary: "Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list."
 		};
 		option (google.api.http) = {
 			post: "/v1/addresses"
@@ -494,10 +494,10 @@ service notification {
 			body: "*"
 		};
 	}
-	//Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list.
+	//Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list.
 	rpc CreateAddressList (CreateAddressListRequest) returns (CreateAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list"
+			summary: "Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list"
 		};
 		option (google.api.http) = {
 			post: "/v1/address_lists"

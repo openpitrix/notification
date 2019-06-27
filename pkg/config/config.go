@@ -80,7 +80,8 @@ type Config struct {
 	}
 
 	Websocket struct {
-		ServiceMessageTypes string `default:"op/nf,op/event,ks/nf,ks/event"`
+		//ServiceMessageTypes string `default:"op/nf,op/event,ks/nf,ks/event"`
+		ServiceMessageTypes string `default:"none"`
 	}
 }
 

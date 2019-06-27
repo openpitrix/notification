@@ -165,7 +165,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list",
+        "summary": "Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list",
         "operationId": "CreateAddressList",
         "responses": {
           "200": {
@@ -372,7 +372,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then create use it to create address list.",
+        "summary": "Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list.",
         "operationId": "CreateAddress",
         "responses": {
           "200": {
