@@ -92,6 +92,7 @@ var once sync.Once
 func GetInstance() *Config {
 	once.Do(func() {
 		instance = &Config{}
+		instance.LoadConf()
 	})
 	return instance
 }
