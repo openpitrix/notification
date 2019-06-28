@@ -28,9 +28,216 @@ var Files = map[string]string{
     "application/json"
   ],
   "paths": {
-    "/v1/address_lists": {
+    "/v1/addresses": {
       "get": {
-        "summary": "Describe address list",
+        "summary": "Query a list of addresses that meet the query criteria.",
+        "operationId": "DescribeAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDescribeAddressesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address_id",
+            "description": "address id.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "address_list_id",
+            "description": "address list id.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "address",
+            "description": "address details, could be email address for email, user id for websocket, mobile number for sms.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "notify_type",
+            "description": "the notification type , eg:[email|websocket|sms|wechat].",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "status",
+            "description": "address status, eg:[active|disabled|deleted].",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "name": "limit",
+            "description": "data limit per page, default value 20, max value 200.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "offset",
+            "description": "beginning data offset of this page, default 0.",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "search_word",
+            "description": "query key, support these fields(address_id,address,notify_type,remarks).",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort_key",
+            "description": "sort key, order by sort_key, default create_time.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "reverse",
+            "description": "value = 0 sort ASC, value = 1 sort DESC.",
+            "in": "query",
+            "required": false,
+            "type": "boolean",
+            "format": "boolean"
+          },
+          {
+            "name": "display_columns",
+            "description": "select columns to display, currently not support.",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "delete": {
+        "summary": "Delete a list of addresses.",
+        "operationId": "DeleteAddresses",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbDeleteAddressesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbDeleteAddressesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      },
+      "post": {
+        "summary": "Create a recipient address.",
+        "operationId": "CreateAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateAddressResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateAddressRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/addresses/{address}": {
+      "put": {
+        "summary": "Modify one address.",
+        "operationId": "ModifyAddress",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbModifyAddressResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "address",
+            "description": "required, address id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbModifyAddressRequest"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
+    },
+    "/v1/addresslists": {
+      "get": {
+        "summary": "Query a list of addresslists that meet the query criteria.",
         "operationId": "DescribeAddressList",
         "responses": {
           "200": {
@@ -95,7 +302,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "data offset, default 0.",
+            "description": "beginning data offset of this page, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -140,7 +347,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "delete address list",
+        "summary": "Delete a list of addresslist.",
         "operationId": "DeleteAddressList",
         "responses": {
           "200": {
@@ -165,7 +372,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list",
+        "summary": "Create a list of addresses of the recipients.",
         "operationId": "CreateAddressList",
         "responses": {
           "200": {
@@ -190,9 +397,9 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/address_lists/{address_list_id}": {
+    "/v1/addresslists/{addresslist}": {
       "put": {
-        "summary": "Modify address list",
+        "summary": "Modify one address list.",
         "operationId": "ModifyAddressList",
         "responses": {
           "200": {
@@ -204,7 +411,7 @@ var Files = map[string]string{
         },
         "parameters": [
           {
-            "name": "address_list_id",
+            "name": "addresslist",
             "description": "required, address list id",
             "in": "path",
             "required": true,
@@ -216,213 +423,6 @@ var Files = map[string]string{
             "required": true,
             "schema": {
               "$ref": "#/definitions/pbModifyAddressListRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
-    "/v1/addresses": {
-      "get": {
-        "summary": "Describe addresses",
-        "operationId": "DescribeAddresses",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbDescribeAddressesResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "address_id",
-            "description": "address id.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "address_list_id",
-            "description": "address list id.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "address",
-            "description": "address details, could be email address for email, user id for websocket, mobile number for sms.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "notify_type",
-            "description": "the notify type , eg:[email|websocket|sms|wechat].",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "status",
-            "description": "address status, eg:[active|disabled|deleted].",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          },
-          {
-            "name": "limit",
-            "description": "data limit per page, default value 20, max value 200.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "offset",
-            "description": "data offset, default 0.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int64"
-          },
-          {
-            "name": "search_word",
-            "description": "query key, support these fields(address_id,address,notify_type,remarks).",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "sort_key",
-            "description": "sort key, order by sort_key, default create_time.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "reverse",
-            "description": "value = 0 sort ASC, value = 1 sort DESC.",
-            "in": "query",
-            "required": false,
-            "type": "boolean",
-            "format": "boolean"
-          },
-          {
-            "name": "display_columns",
-            "description": "select columns to display, currently not support.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      },
-      "delete": {
-        "summary": "Delete addresses",
-        "operationId": "DeleteAddresses",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbDeleteAddressesResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbDeleteAddressesRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      },
-      "post": {
-        "summary": "Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list.",
-        "operationId": "CreateAddress",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbCreateAddressResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbCreateAddressRequest"
-            }
-          }
-        ],
-        "tags": [
-          "notification"
-        ]
-      }
-    },
-    "/v1/addresses/{address_id}": {
-      "put": {
-        "summary": "Modify address",
-        "operationId": "ModifyAddress",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbModifyAddressResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "address_id",
-            "description": "required, address id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbModifyAddressRequest"
             }
           }
         ],
@@ -498,7 +498,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "data offset, default 0.",
+            "description": "beginning data offset of this page, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -595,7 +595,7 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/service_configs": {
+    "/v1/serviceconfigs": {
       "get": {
         "summary": "Get service configration",
         "operationId": "GetServiceConfig",
@@ -650,7 +650,7 @@ var Files = map[string]string{
         ]
       }
     },
-    "/v1/service_configs/validation": {
+    "/v1/serviceconfigs/validation": {
       "post": {
         "summary": "Validate email service",
         "operationId": "ValidateEmailService",
@@ -744,7 +744,7 @@ var Files = map[string]string{
           },
           {
             "name": "offset",
-            "description": "data offset, default 0.",
+            "description": "beginning data offset of this page, default 0.",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -862,7 +862,7 @@ var Files = map[string]string{
         },
         "notify_type": {
           "type": "string",
-          "title": "the notify type , eg:[email|websocket|sms|wechat]"
+          "title": "the notification type , eg:[email|websocket|sms|wechat]"
         }
       }
     },
@@ -950,7 +950,7 @@ var Files = map[string]string{
         },
         "notify_type": {
           "type": "string",
-          "title": "required, the notify type , eg:[email|websocket|sms|wechat]"
+          "title": "required, the notification type , eg:[email|websocket|sms|wechat]"
         }
       }
     },
@@ -1172,7 +1172,7 @@ var Files = map[string]string{
     "pbModifyAddressListRequest": {
       "type": "object",
       "properties": {
-        "address_list_id": {
+        "addresslist": {
           "type": "string",
           "title": "required, address list id"
         },
@@ -1209,11 +1209,11 @@ var Files = map[string]string{
     "pbModifyAddressRequest": {
       "type": "object",
       "properties": {
-        "address_id": {
+        "address": {
           "type": "string",
           "title": "required, address id"
         },
-        "address": {
+        "address_detail": {
           "type": "string",
           "description": "address details, could be email address for email, user id for websocket, mobile number for sms."
         },
@@ -1227,7 +1227,7 @@ var Files = map[string]string{
         },
         "notify_type": {
           "type": "string",
-          "title": "the notify type, eg:[email|websocket|sms|wechat]"
+          "title": "the notification type, eg:[email|websocket|sms|wechat]"
         }
       }
     },

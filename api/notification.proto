@@ -89,7 +89,7 @@ message DescribeNotificationsRequest {
 	repeated string status = 4;
 	//data limit per page, default value 20, max value 200
 	uint32 limit = 5;
-	//data offset, default 0
+	//beginning data offset of this page, default 0
 	uint32 offset = 6;
 	//query key, support these fields(notification_id,content_type,title,short_content,address_info,status,owner)
 	google.protobuf.StringValue search_word = 7;
@@ -147,7 +147,7 @@ message DescribeTasksRequest {
 	repeated string status = 4;
 	//data limit per page, default value 20, max value 200
 	uint32 limit = 5;
-	//data offset, default 0
+	//beginning data offset of this page, default 0
 	uint32 offset = 6;
 	//query key, support these fields(task_id,notification_id,status,error_code)
 	google.protobuf.StringValue search_word = 7;
@@ -183,7 +183,7 @@ message CreateAddressRequest {
 	google.protobuf.StringValue remarks = 2;
 	//verification code for register address at the first time
 	google.protobuf.StringValue verification_code = 3;
-	//required, the notify type , eg:[email|websocket|sms|wechat]
+	//required, the notification type , eg:[email|websocket|sms|wechat]
 	google.protobuf.StringValue notify_type = 4;
 }
 
@@ -199,13 +199,13 @@ message DescribeAddressesRequest {
 	repeated string address_list_id = 2;
 	//address details, could be email address for email, user id for websocket, mobile number for sms.
 	repeated string address = 3;
-	//the notify type , eg:[email|websocket|sms|wechat]
+	//the notification type , eg:[email|websocket|sms|wechat]
 	repeated string notify_type = 4;
 	//address status, eg:[active|disabled|deleted]
 	repeated string status = 5;
 	//data limit per page, default value 20, max value 200
 	uint32 limit = 6;
-	//data offset, default 0
+	//beginning data offset of this page, default 0
 	uint32 offset = 7;
 	//query key, support these fields(address_id,address,notify_type,remarks)
 	google.protobuf.StringValue search_word = 8;
@@ -236,7 +236,7 @@ message Address {
 	google.protobuf.Timestamp verify_time = 8;
 	//the status changed time of the address
 	google.protobuf.Timestamp status_time = 9;
-	//the notify type , eg:[email|websocket|sms|wechat]
+	//the notification type , eg:[email|websocket|sms|wechat]
 	google.protobuf.StringValue notify_type = 10;
 }
 
@@ -249,14 +249,14 @@ message DescribeAddressesResponse {
 
 message ModifyAddressRequest {
 	//required, address id
-	string address_id = 1;
+	string address = 1;
 	//address details, could be email address for email, user id for websocket, mobile number for sms.
-	google.protobuf.StringValue address = 2;
+	google.protobuf.StringValue address_detail = 2;
 	//remarks for address
 	google.protobuf.StringValue remarks = 3;
 	//verification code for register address at the first time
 	google.protobuf.StringValue verification_code = 4;
-	//the notify type, eg:[email|websocket|sms|wechat]
+	//the notification type, eg:[email|websocket|sms|wechat]
 	google.protobuf.StringValue notify_type = 5;
 }
 
@@ -300,7 +300,7 @@ message DescribeAddressListRequest {
 	repeated string status = 4;
 	//data limit per page, default value 20, max value 200
 	uint32 limit = 5;
-	//data offset, default 0
+	//beginning data offset of this page, default 0
 	uint32 offset = 6;
 	//query key, support these fields(address_list_id,address_list_name,address_list_name,extra)
 	google.protobuf.StringValue search_word = 7;
@@ -338,7 +338,7 @@ message DescribeAddressListResponse {
 
 message ModifyAddressListRequest {
 	//required, address list id
-	string address_list_id = 1;
+	string addresslist = 1;
 	//address list name
 	google.protobuf.StringValue address_list_name = 2;
 	//the extra info of the address list
@@ -455,81 +455,81 @@ service notification {
 			body: "*"
 		};
 	}
-	//Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list.
+	//Create a recipient address
 	rpc CreateAddress (CreateAddressRequest) returns (CreateAddressResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create address, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list."
+			summary: "Create a recipient address."
 		};
 		option (google.api.http) = {
 			post: "/v1/addresses"
 			body: "*"
 		};
 	}
-	//Describe addresses
+	//Query a list of addresses that meet the query criteria
 	rpc DescribeAddresses (DescribeAddressesRequest) returns (DescribeAddressesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Describe addresses"
+			summary: "Query a list of addresses that meet the query criteria."
 		};
 		option (google.api.http) = {
 			get: "/v1/addresses"
 		};
 	}
-	//Modify address
+	//Modify one address
 	rpc ModifyAddress (ModifyAddressRequest) returns (ModifyAddressResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Modify address"
+			summary: "Modify one address."
 		};
 		option (google.api.http) = {
-			put: "/v1/addresses/{address_id}"
+			put: "/v1/addresses/{address}"
 			body: "*"
 		};
 	}
-	//Delete addresses
+	//Delete a list of addresses
 	rpc DeleteAddresses (DeleteAddressesRequest) returns (DeleteAddressesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Delete addresses"
+			summary: "Delete a list of addresses."
 		};
 		option (google.api.http) = {
 			delete: "/v1/addresses"
 			body: "*"
 		};
 	}
-	//Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list.
+	//Create a list of addresses of the recipients.
 	rpc CreateAddressList (CreateAddressListRequest) returns (CreateAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create address list, sending notifications supports sending nitification to address list, before sending by this way, should create address beforehand, then use it to create address list"
+			summary: "Create a list of addresses of the recipients."
 		};
 		option (google.api.http) = {
-			post: "/v1/address_lists"
+			post: "/v1/addresslists"
 			body: "*"
 		};
 	}
-	//Describe address lists
+	//Query a list of address_lists that meet the query criteria
 	rpc DescribeAddressList (DescribeAddressListRequest) returns (DescribeAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Describe address list"
+			summary: "Query a list of addresslists that meet the query criteria."
 		};
 		option (google.api.http) = {
-			get: "/v1/address_lists"
+			get: "/v1/addresslists"
 		};
 	}
-	//Modify address list
+	//Modify one address list
 	rpc ModifyAddressList (ModifyAddressListRequest) returns (ModifyAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Modify address list"
+			summary: "Modify one address list."
 		};
 		option (google.api.http) = {
-			put: "/v1/address_lists/{address_list_id}"
+			put: "/v1/addresslists/{addresslist}"
 			body: "*"
 		};
 	}
-	//Delete address lists
+	//Delete a list of addresslist
 	rpc DeleteAddressList (DeleteAddressListRequest) returns (DeleteAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "delete address list"
+			summary: "Delete a list of addresslist."
 		};
 		option (google.api.http) = {
-			delete: "/v1/address_lists"
+			delete: "/v1/addresslists"
 			body: "*"
 		};
 	}
@@ -539,7 +539,7 @@ service notification {
 			summary: "Set service configration"
 		};
 		option (google.api.http) = {
-			post: "/v1/service_configs"
+			post: "/v1/serviceconfigs"
 			body: "*"
 		};
 	}
@@ -549,7 +549,7 @@ service notification {
 			summary: "Get service configration"
 		};
 		option (google.api.http) = {
-			get: "/v1/service_configs"
+			get: "/v1/serviceconfigs"
 		};
 	}
 
@@ -559,7 +559,7 @@ service notification {
 			summary: "Validate email service"
 		};
 	option (google.api.http) = {
-			post: "/v1/service_configs/validation"
+			post: "/v1/serviceconfigs/validation"
 			body: "*"
 		};
 	}

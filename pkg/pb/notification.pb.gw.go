@@ -146,15 +146,15 @@ func request_Notification_ModifyAddress_0(ctx context.Context, marshaler runtime
 		_   = err
 	)
 
-	val, ok = pathParams["address_id"]
+	val, ok = pathParams["address"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "address_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "address")
 	}
 
-	protoReq.AddressId, err = runtime.String(val)
+	protoReq.Address, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "address_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "address", err)
 	}
 
 	msg, err := client.ModifyAddress(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -220,15 +220,15 @@ func request_Notification_ModifyAddressList_0(ctx context.Context, marshaler run
 		_   = err
 	)
 
-	val, ok = pathParams["address_list_id"]
+	val, ok = pathParams["addresslist"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "address_list_id")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "addresslist")
 	}
 
-	protoReq.AddressListId, err = runtime.String(val)
+	protoReq.Addresslist, err = runtime.String(val)
 
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "address_list_id", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "addresslist", err)
 	}
 
 	msg, err := client.ModifyAddressList(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -812,23 +812,23 @@ var (
 
 	pattern_Notification_DescribeAddresses_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "addresses"}, ""))
 
-	pattern_Notification_ModifyAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "addresses", "address_id"}, ""))
+	pattern_Notification_ModifyAddress_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "addresses", "address"}, ""))
 
 	pattern_Notification_DeleteAddresses_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "addresses"}, ""))
 
-	pattern_Notification_CreateAddressList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "address_lists"}, ""))
+	pattern_Notification_CreateAddressList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "addresslists"}, ""))
 
-	pattern_Notification_DescribeAddressList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "address_lists"}, ""))
+	pattern_Notification_DescribeAddressList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "addresslists"}, ""))
 
-	pattern_Notification_ModifyAddressList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "address_lists", "address_list_id"}, ""))
+	pattern_Notification_ModifyAddressList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "addresslists", "addresslist"}, ""))
 
-	pattern_Notification_DeleteAddressList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "address_lists"}, ""))
+	pattern_Notification_DeleteAddressList_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "addresslists"}, ""))
 
-	pattern_Notification_SetServiceConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "service_configs"}, ""))
+	pattern_Notification_SetServiceConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "serviceconfigs"}, ""))
 
-	pattern_Notification_GetServiceConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "service_configs"}, ""))
+	pattern_Notification_GetServiceConfig_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "serviceconfigs"}, ""))
 
-	pattern_Notification_ValidateEmailService_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "service_configs", "validation"}, ""))
+	pattern_Notification_ValidateEmailService_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "serviceconfigs", "validation"}, ""))
 )
 
 var (
