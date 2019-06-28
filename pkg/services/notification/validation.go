@@ -171,7 +171,7 @@ func ValidateCreateAddressParams(ctx context.Context, req *pb.CreateAddressReque
 }
 
 func ValidateModifyAddressParams(ctx context.Context, req *pb.ModifyAddressRequest) error {
-	address := req.GetAddress().GetValue()
+	address := req.GetAddressDetail().GetValue()
 	notifyType := req.GetNotifyType().GetValue()
 
 	if notifyType == constants.NotifyTypeEmail {

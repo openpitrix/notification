@@ -342,8 +342,8 @@ func TestModifyAddress(t *testing.T) {
 	defer cancel()
 
 	var req = &pb.ModifyAddressRequest{
-		AddressId:        "addr-wRKQzOy7jAWZ",
-		Address:          pbutil.ToProtoString("hello@openpitrix.com"),
+		Address:          "addr-Q0rqVLlzXGwZ",
+		AddressDetail:    pbutil.ToProtoString("test@email.com"),
 		Remarks:          pbutil.ToProtoString("测试Remarks2211"),
 		VerificationCode: pbutil.ToProtoString("VerificationCode test"),
 		NotifyType:       pbutil.ToProtoString("email"),
@@ -467,14 +467,18 @@ func TestModifyAddressList(t *testing.T) {
 
 	var addressIds []string
 	addressIds = append(addressIds, "addr-vVlnxXyRR7WZ")
-	addressIds = append(addressIds, "addr-YZrP836RR3ZO")
-	addressIds = append(addressIds, "addr-xNNWLDLvR36K")
+	//addressIds = append(addressIds, "addr-YZrP836RR3ZO")
+	//addressIds = append(addressIds, "addr-xNNWLDLvR36K")
 
 	var req = &pb.ModifyAddressListRequest{
-		AddressListId:   "adl-2Enmg1466AYr",
-		AddressListName: pbutil.ToProtoString("updateTes"),
-		Status:          pbutil.ToProtoString(constants.StatusActive),
-		AddressId:       addressIds,
+		Addresslist:          "adl-BRGg8yq0EZYD",
+		AddressListName:      pbutil.ToProtoString("updateTes"),
+		Extra:                nil,
+		Status:               pbutil.ToProtoString(constants.StatusActive),
+		AddressId:            addressIds,
+		XXX_NoUnkeyedLiteral: struct{}{},
+		XXX_unrecognized:     nil,
+		XXX_sizecache:        0,
 	}
 
 	resp, err := s.ModifyAddressList(ctx, req)
