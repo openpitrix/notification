@@ -5,14 +5,17 @@
 package emailutil
 
 import (
+	"bytes"
 	"context"
 	"crypto/tls"
 	"errors"
+	"text/template"
 
 	gomail "gopkg.in/gomail.v2"
 	"openpitrix.io/logger"
 
 	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/pb"
 )
 
@@ -71,15 +74,16 @@ func SendMail4ValidateEmailService(ctx context.Context, req *pb.ServiceConfig) e
 	password := req.GetEmailServiceConfig().GetPassword().GetValue()
 	displaySender := req.GetEmailServiceConfig().GetDisplaySender().GetValue()
 	sslEnable := req.GetEmailServiceConfig().GetSslEnable().GetValue()
+	icon := req.GetEmailServiceConfig().GetValidationIcon().GetValue()
+	title := req.GetEmailServiceConfig().GetValidationTitle().GetValue()
 
 	emailAddr := email
-	header := "ValidateEmailService"
-	body := "<p>Email Service Config is working!</p>"
+	body := getDefaultMessage(icon)
 
 	m := gomail.NewMessage()
 	m.SetAddressHeader("From", email, displaySender)
 	m.SetHeader("To", emailAddr)
-	m.SetHeader("Subject", header)
+	m.SetHeader("Subject", title)
 	m.SetBody("text/html", body)
 
 	d := gomail.NewDialer(host, int(port), email, password)
@@ -110,4 +114,20 @@ func SendMail4ValidateEmailService(ctx context.Context, req *pb.ServiceConfig) e
 	}
 
 	return nil
+}
+
+type EmailIcon struct {
+	Icon string
+}
+
+func getDefaultMessage(iconstr string) string {
+	t, _ := template.New("validationEmail").Parse(constants.ValidationEmailNotifyTemplate)
+
+	b := bytes.NewBuffer([]byte{})
+	emailIcon := &EmailIcon{
+		Icon: iconstr,
+	}
+
+	t.Execute(b, emailIcon)
+	return b.String()
 }

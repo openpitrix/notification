@@ -1166,6 +1166,14 @@ var Files = map[string]string{
           "type": "boolean",
           "format": "boolean",
           "title": "is ssl enabled or not"
+        },
+        "validation_icon": {
+          "type": "string",
+          "title": "icon in validation email"
+        },
+        "validation_title": {
+          "type": "string",
+          "title": "email title for validation email"
         }
       }
     },
