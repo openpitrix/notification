@@ -379,6 +379,8 @@ message EmailServiceConfig {
 	google.protobuf.StringValue password = 6;
 	// is ssl enabled or not
 	google.protobuf.BoolValue ssl_enable = 7;
+	// icon in validation email
+	google.protobuf.StringValue icon = 8;
 }
 
 message ServiceConfig {
