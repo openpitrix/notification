@@ -21,10 +21,10 @@ type Config struct {
 	Grpc GrpcConfig
 
 	Mysql struct {
-		Host string `default:"notification-db"`
-		Port int    `default:"3306"`
-		//Host     string `default:"192.168.0.6"`
-		//Port     int    `default:"13306"`
+		//Host string `default:"notification-db"`
+		//Port int    `default:"3306"`
+		Host     string `default:"192.168.0.6"`
+		Port     int    `default:"13306"`
 		User     string `default:"root"`
 		Password string `default:"password"`
 		Database string `default:"notification"`
@@ -35,16 +35,16 @@ type Config struct {
 
 	Queue struct {
 		Type string `default:"redis"`
-		Addr string `default:"redis://notification-redis:6379"`
-		//Addr string `default:"redis://192.168.0.6:6379"`
+		//Addr string `default:"redis://notification-redis:6379"`
+		Addr string `default:"redis://192.168.0.6:6379"`
 		//Type string `default:"etcd"`
 		//Addr string `default:"192.168.0.6:12379"`
 	}
 
 	PubSub struct {
 		Type string `default:"redis"`
-		Addr string `default:"redis://notification-redis:6379"`
-		//Addr string `default:"redis://192.168.0.6:6379"`
+		//Addr string `default:"redis://notification-redis:6379"`
+		Addr string `default:"redis://192.168.0.6:6379"`
 		//Type string `default:"etcd"`
 		//Addr string `default:"192.168.0.6:12379"`
 	}
@@ -60,15 +60,15 @@ type Config struct {
 	}
 
 	App struct {
-		//Host string `default:"127.0.0.1"`
-		//Port int    `default:"9201"`
-		Host string `default:"notification-manager"`
+		Host string `default:"127.0.0.1"`
 		Port int    `default:"9201"`
+		//Host string `default:"notification-manager"`
+		//Port int    `default:"9201"`
 
-		//ApiHost string `default:"127.0.0.1"`
-		//ApiPort int    `default:"9200"`
-		ApiHost string `default:"notification-manager"`
+		ApiHost string `default:"127.0.0.1"`
 		ApiPort int    `default:"9200"`
+		//ApiHost string `default:"notification-manager"`
+		//ApiPort int    `default:"9200"`
 
 		MaxWorkingNotifications int `default:"5"`
 		MaxWorkingTasks         int `default:"5"`

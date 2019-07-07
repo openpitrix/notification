@@ -10,6 +10,7 @@ import (
 
 	"openpitrix.io/logger"
 
+	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/gerr"
 	"openpitrix.io/notification/pkg/models"
@@ -37,13 +38,16 @@ func (s *Server) SetServiceConfig(ctx context.Context, req *pb.ServiceConfig) (*
 		return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateEmailService)
 	}
 
-	rs.SetServiceConfig(req)
-	logger.Debugf(ctx, "Set service config successfully, %+v.", req)
+	err = rs.ModifyEmailConfig(ctx, req)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to set service config, %+v.", err)
+		return nil, err
+	}
 
+	logger.Debugf(ctx, "Set service config successfully, %+v.", config.GetInstance().Email)
 	return &pb.SetServiceConfigResponse{
 		IsSucc: pbutil.ToProtoBool(true),
 	}, nil
-
 }
 
 func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigRequest) (*pb.ServiceConfig, error) {
@@ -56,22 +60,28 @@ func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 		serviceTypes = ServiceTypes
 	}
 
-	var emailCfg *pb.EmailServiceConfig
+	var emailCfgPb *pb.EmailServiceConfig
 	scCfg := &pb.ServiceConfig{}
 	for _, scType := range serviceTypes {
 		if scType == constants.NotifyTypeEmail {
-			emailCfg = rs.GetEmailServiceConfig()
+			emailCfg, err := rs.GetEmailConfigFromDB(ctx)
+			if err != nil {
+				logger.Errorf(ctx, "Failed to get email config, %+v.", err)
+				return nil, err
+			}
+			emailCfgPb = models.EmailConfigToPb(emailCfg)
+			logger.Debugf(ctx, "Get service config [%+v] successfully.", emailCfg)
 			break
 		}
 	}
-	if emailCfg == nil {
-		logger.Errorf(ctx, "Failed to get service config, emailserviceconfig.")
-		err := gerr.NewWithDetail(ctx, gerr.Internal, fmt.Errorf("Failed to get service config, emailserviceconfig."), gerr.ErrorGetServiceConfigFailed)
+	if emailCfgPb == nil {
+		logger.Errorf(ctx, "Failed to get service config, email service config.")
+		err := gerr.NewWithDetail(ctx, gerr.Internal, fmt.Errorf("Failed to get service config, email service config."), gerr.ErrorGetServiceConfigFailed)
 		return nil, err
 	}
-	logger.Debugf(ctx, "Get service config [%+v] successfully.", emailCfg)
+	logger.Debugf(ctx, "Get service config [%+v] successfully.", emailCfgPb)
 
-	scCfg.EmailServiceConfig = emailCfg
+	scCfg.EmailServiceConfig = emailCfgPb
 	return scCfg, nil
 }
 

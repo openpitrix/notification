@@ -45,10 +45,6 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "NOTIFICATION_MYSQL_LOG_MODE : %+v", mycfg.Mysql.LogMode)
 	logger.Debugf(nil, "")
 
-	logger.Debugf(nil, "ETCD=========================================")
-	logger.Debugf(nil, "NOTIFICATION_ETCD_ENDPOINTS : %+v", mycfg.Etcd.Endpoints)
-	logger.Debugf(nil, "")
-
 	logger.Debugf(nil, "Queue=========================================")
 	logger.Debugf(nil, "NOTIFICATION_QUEUE_TYPE : %+v", mycfg.Queue.Type)
 	logger.Debugf(nil, "NOTIFICATION_QUEUE_ADDR : %+v", mycfg.Queue.Addr)

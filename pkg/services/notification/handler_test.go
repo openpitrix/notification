@@ -21,19 +21,19 @@ func TestSetServiceConfig(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 
-	config.GetInstance().LoadConf()
+	config.GetInstance()
 	controller, _ := NewController()
 	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
 	emailcfg := &pb.EmailServiceConfig{
-		Protocol:      pbutil.ToProtoString("POP3"),
-		EmailHost:     pbutil.ToProtoString("testhost"),
-		Port:          pbutil.ToProtoUInt32(888),
-		DisplaySender: pbutil.ToProtoString("tester"),
-		Email:         pbutil.ToProtoString("test@op.notification.com"),
-		Password:      pbutil.ToProtoString("passwordtest"),
+		Protocol:      pbutil.ToProtoString("SMTP"),
+		EmailHost:     pbutil.ToProtoString("smtp.qq.com"),
+		Port:          pbutil.ToProtoUInt32(25),
+		DisplaySender: pbutil.ToProtoString("tester0"),
+		Email:         pbutil.ToProtoString("openpitrix@foxmail.com"),
+		Password:      pbutil.ToProtoString("iusjafvwmjhddeaf"),
 		SslEnable:     pbutil.ToProtoBool(false),
 	}
 
@@ -54,7 +54,7 @@ func TestGetServiceConfig(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 
-	config.GetInstance().LoadConf()
+	config.GetInstance()
 	controller, _ := NewController()
 	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)

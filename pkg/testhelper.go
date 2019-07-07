@@ -7,6 +7,6 @@ package notification
 import "flag"
 
 var (
-	LocalDevEnvEnabled = flag.Bool("LocalDevEnvEnabled", false, "disenable Local Dev Env setting")
+	LocalDevEnvEnabled = flag.Bool("LocalDevEnvEnabled", false, "disable Local Dev Env setting")
 	//LocalDevEnvEnabled = flag.Bool("LocalDevEnvEnabled", true, "enable Local Dev Env setting")
 )

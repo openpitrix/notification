@@ -11,6 +11,7 @@ import (
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/manager"
 	"openpitrix.io/notification/pkg/pb"
+	rs "openpitrix.io/notification/pkg/services/notification/resource_control"
 )
 
 type Server struct {
@@ -19,6 +20,16 @@ type Server struct {
 
 func Serve() {
 	cfg := config.GetInstance()
+
+	//read email config data from db.
+	// check the data in data is default data or not
+	// 1.if data in DB is default data, use cfg from ENV to update data in DB.
+	// 2.if data in DB is not default data, use the data in DB.
+	err := rs.ResetEmailCfg(cfg)
+	if err != nil {
+		logger.Errorf(nil, "Failed to reset email config: %+v.", err)
+	}
+
 	controller, err := NewController()
 	if err != nil {
 		logger.Criticalf(nil, "Failed to start serve: %+v.", err)
