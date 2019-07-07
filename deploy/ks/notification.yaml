@@ -79,8 +79,6 @@ spec:
           value: 'openpitrix-db.openpitrix-system.svc'
         - name: NOTIFICATION_MYSQL_PORT
           value: '3306'
-        - name: NOTIFICATION_ETCD_ENDPOINTS
-          value: 'openpitrix-etcd.openpitrix-system.svc:2379'
         - name: NOTIFICATION_LOG_LEVEL
           value: "error"
         - name: NOTIFICATION_MYSQL_LOG_MODE

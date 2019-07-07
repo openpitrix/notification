@@ -6,7 +6,6 @@ package global
 
 import (
 	"os"
-	"strings"
 	"sync"
 
 	"github.com/google/gops/agent"
@@ -14,16 +13,13 @@ import (
 	"openpitrix.io/logger"
 
 	"openpitrix.io/notification/pkg/config"
-	"openpitrix.io/notification/pkg/constants"
 	nfdb "openpitrix.io/notification/pkg/db"
-	"openpitrix.io/notification/pkg/etcd"
 	wstypes "openpitrix.io/notification/pkg/services/websocket/types"
 )
 
 type GlobalCfg struct {
 	cfg          *config.Config
 	database     *gorm.DB
-	etcd         *etcd.Etcd
 	pubsubClient *wstypes.PubsubClient
 }
 
@@ -43,7 +39,6 @@ func newGlobalCfg() *GlobalCfg {
 
 	g.setLoggerLevel()
 	g.openDatabase()
-	g.openEtcd()
 	g.setPubSubClient()
 
 	if err := agent.Listen(agent.Options{
@@ -73,19 +68,6 @@ func (g *GlobalCfg) openDatabase() *GlobalCfg {
 	return g
 }
 
-func (g *GlobalCfg) openEtcd() *GlobalCfg {
-	endpoints := strings.Split(g.cfg.Etcd.Endpoints, ",")
-	e, err := etcd.Connect(endpoints, constants.EtcdPrefix)
-	if err != nil {
-		logger.Criticalf(nil, "%+s", "Failed to connect etcd...")
-		panic(err)
-	}
-	logger.Debugf(nil, "%+s", "Connect to etcd successfully.")
-	g.etcd = e
-	logger.Debugf(nil, "%+s", "Set globalcfg etcd value.")
-	return g
-}
-
 func (g *GlobalCfg) setLoggerLevel() *GlobalCfg {
 	AppLogMode := config.GetInstance().Log.Level
 	logger.SetLevelByString(AppLogMode)
@@ -108,10 +90,6 @@ func (g *GlobalCfg) setPubSubClient() *GlobalCfg {
 
 	g.pubsubClient = &psClient
 	return g
-}
-
-func (g *GlobalCfg) GetEtcd() *etcd.Etcd {
-	return g.etcd
 }
 
 func (g *GlobalCfg) GetDB() *gorm.DB {
