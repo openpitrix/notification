@@ -20,7 +20,7 @@ func TestDescribeNotifications4rc(t *testing.T) {
 		t.Skip("Local Dev testing env disabled.")
 	}
 
-	config.GetInstance().LoadConf()
+	config.GetInstance()
 
 	var nfIds []string
 	nfIds = append(nfIds, "nf-yM793AqkEmnj")
@@ -61,11 +61,10 @@ func TestRegisterNotification4rc(t *testing.T) {
 	if !*pkg.LocalDevEnvEnabled {
 		t.Skip("Local Dev testing env disabled.")
 	}
-	config.GetInstance().LoadConf()
-
+	config.GetInstance()
 	testAddrsStr := "{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"]}"
 	//testAddrListIds := "[\"adl-EgoLADQkwkEr\"]"
-	//testExtra := "{\"ws_service\": \"ks\",\"ws_message_type\": \"event\"}"
+	testExtra := "{\"ws_service\": \"ks\",\"ws_message_type\": \"event\"}"
 	var req = &pb.CreateNotificationRequest{
 		ContentType:        pbutil.ToProtoString("alert"),
 		Title:              pbutil.ToProtoString("testing alert"),
@@ -76,7 +75,7 @@ func TestRegisterNotification4rc(t *testing.T) {
 		AddressInfo:        pbutil.ToProtoString(testAddrsStr),
 		AvailableStartTime: pbutil.ToProtoString(""),
 		AvailableEndTime:   pbutil.ToProtoString(""),
-		//Extra:              pbutil.ToProtoString(testExtra),
+		Extra:              pbutil.ToProtoString(testExtra),
 	}
 
 	notification := models.NewNotification(req)

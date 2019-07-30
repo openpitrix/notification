@@ -21,32 +21,18 @@ type Config struct {
 	Grpc GrpcConfig
 
 	Mysql struct {
-		Host string `default:"notification-db"`
-		Port int    `default:"3306"`
-		//Host     string `default:"192.168.0.6"`
-		//Port     int    `default:"13306"`
+		Host     string `default:"notification-db"`
+		Port     int    `default:"3306"`
 		User     string `default:"root"`
 		Password string `default:"password"`
 		Database string `default:"notification"`
 		Disable  bool   `default:"false"`
-		//LogMode  bool   `default:"false"`
-		LogMode bool `default:"true"`
+		LogMode  bool   `default:"false"`
 	}
 
 	Queue struct {
-		Type string `default:"redis"`
 		Addr string `default:"redis://notification-redis:6379"`
-		//Addr string `default:"redis://192.168.0.6:6379"`
-		//Type string `default:"etcd"`
-		//Addr string `default:"192.168.0.6:12379"`
-	}
-
-	PubSub struct {
 		Type string `default:"redis"`
-		Addr string `default:"redis://notification-redis:6379"`
-		//Addr string `default:"redis://192.168.0.6:6379"`
-		//Type string `default:"etcd"`
-		//Addr string `default:"192.168.0.6:12379"`
 	}
 
 	Email struct {
@@ -60,13 +46,9 @@ type Config struct {
 	}
 
 	App struct {
-		//Host string `default:"127.0.0.1"`
-		//Port int    `default:"9201"`
 		Host string `default:"notification-manager"`
 		Port int    `default:"9201"`
 
-		//ApiHost string `default:"127.0.0.1"`
-		//ApiPort int    `default:"9200"`
 		ApiHost string `default:"notification-manager"`
 		ApiPort int    `default:"9200"`
 
@@ -75,8 +57,8 @@ type Config struct {
 	}
 
 	Websocket struct {
-		//ServiceMessageTypes string `default:"op/nf,op/event,ks/nf,ks/event"`
-		ServiceMessageTypes string `default:"none"`
+		//Service string `default:"op,ks"`
+		Service string `default:"none"`
 	}
 }
 
@@ -95,7 +77,7 @@ func GetInstance() *Config {
 
 type LogConfig struct {
 	//Level string `default:"error"` // debug, info, warn, error, fatal
-	Level string `default:"debug"`
+	Level string `default:"info"`
 }
 
 type GrpcConfig struct {

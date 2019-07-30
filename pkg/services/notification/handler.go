@@ -103,7 +103,11 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 	logger.Debugf(ctx, "Create notification [%s] in DB successfully.", notification.NotificationId)
 
 	//Step2:Process Task data.
-	//including 2.1.SplitNotificationIntoTasks, 2.2.createTasks in db, 2.3.Enqueue task id to queue.
+	//including:
+	// 2.1.SplitNotificationIntoTasks,
+	// 2.2.createTasks in db,
+	// 2.3.Enqueue task id to queue.
+	// 2.4 if it is websocket messge, publish to pubsub.
 	_, err = s.createTasksByNotification(ctx, notification)
 	if err != nil {
 		logger.Errorf(ctx, "Failed to create tasks by notification, %+v.", err)
@@ -126,6 +130,9 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 }
 
 func (s *Server) createTasksByNotification(ctx context.Context, nf *models.Notification) ([]*models.Task, error) {
+	//1.SplitNotificationIntoTasks
+	//
+	//2.createTasks
 	tasks, err := rs.SplitNotificationIntoTasks(ctx, nf)
 	if err != nil {
 		logger.Errorf(ctx, "Failed to split notification into tasks, %+v.", err)
@@ -512,4 +519,23 @@ func (s *Server) ValidateEmailService(ctx context.Context, req *pb.ServiceConfig
 	return &pb.ValidateEmailServiceResponse{
 		IsSucc: pbutil.ToProtoBool(true),
 	}, nil
+}
+
+func (s *Server) CreateNotificationChannel(req *pb.StreamReqData, res pb.Notification_CreateNotificationChannelServer) error {
+	service := req.GetService().GetValue()
+
+	for {
+		outMsg := <-s.controller.websocketMsgChanMap[service]
+		userMsg, err := models.UseMsgStringToPb(outMsg)
+		if err != nil {
+			logger.Errorf(nil, "Decode user message string to pb failed,err=%+v", err)
+		}
+		if service == userMsg.GetService().GetValue() {
+			streamRespData := pb.StreamRespData{
+				UserMsg: userMsg,
+			}
+			res.Send(&streamRespData)
+		}
+
+	}
 }

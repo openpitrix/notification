@@ -6,15 +6,19 @@ package notification
 
 import (
 	"context"
+	"errors"
 	"strconv"
+	"strings"
 	"time"
 
-	lib "openpitrix.io/libqueue"
-	q "openpitrix.io/libqueue/queue"
+	i "openpitrix.io/libqueue"
+	"openpitrix.io/libqueue/queue"
 	"openpitrix.io/logger"
 
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/global"
+	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/plugins"
 	rs "openpitrix.io/notification/pkg/services/notification/resource_control"
 	"openpitrix.io/notification/pkg/util/ctxutil"
@@ -23,33 +27,55 @@ import (
 type Controller struct {
 	runningTaskIds         chan string
 	runningNotificationIds chan string
-	taskQueue              lib.Topic
-	notificationQueue      lib.Topic
+	taskQueue              i.IQueue
+	notificationQueue      i.IQueue
+	websocketMsgChanMap    map[string]chan string
 }
 
 func NewController() (*Controller, error) {
-	cfg := config.GetInstance()
-	queueConnStr := cfg.Queue.Addr
-	queueType := cfg.Queue.Type
+	iClient := global.GetInstance().GetQueueClient()
 
-	queueConfigMap := map[string]interface{}{
-		"connStr": queueConnStr,
-	}
+	queueType := config.GetInstance().Queue.Type
+	var iqueue i.IQueue
+	var ipubsub i.IPubSub
+	var notificationQueue i.IQueue
+	var taskQueue i.IQueue
+	var err error
 
-	c, err := q.New(queueType, queueConfigMap)
+	var wsMsgStrChanMap map[string]chan string
+	wsMsgStrChanMap = make(map[string]chan string, 255)
+
+	iqueue, err = queue.NewIQueue(queueType, iClient)
 	if err != nil {
-		logger.Errorf(nil, "Failed to connect redis queue: %+v.", err)
 		return nil, err
 	}
+	notificationQueue = iqueue.SetTopic(constants.NotificationTopicPrefix)
+	taskQueue = iqueue.SetTopic(constants.NotificationTaskTopicPrefix)
 
-	notificationQueue, _ := c.SetTopic(constants.NotificationTopicPrefix)
+	if config.GetInstance().Websocket.Service != "none" {
+		ipubsub, err = queue.NewIPubSub(queueType, iClient)
+		if err != nil {
+			return nil, err
+		}
 
-	taskQueue, _ := c.SetTopic(constants.NotificationTaskTopicPrefix)
+		if queueType == constants.QueueTypeRedis {
+			ipubsub.SetChannel(constants.WsMessagePrefix + "/*")
+		} else if queueType == constants.QueueTypeEtcd {
+			ipubsub.SetChannel(constants.WsMessagePrefix)
+		} else {
+			return nil, errors.New("Unsupport queue type, currently support redis and etcd.")
+		}
+
+		go getMsgChanMap(ipubsub, wsMsgStrChanMap)
+
+	}
+
 	return &Controller{
-		taskQueue:              taskQueue,
-		notificationQueue:      notificationQueue,
 		runningTaskIds:         make(chan string),
 		runningNotificationIds: make(chan string),
+		taskQueue:              taskQueue,
+		notificationQueue:      notificationQueue,
+		websocketMsgChanMap:    wsMsgStrChanMap,
 	}, nil
 }
 
@@ -75,7 +101,7 @@ func (c *Controller) ExtractTasks() error {
 			continue
 		}
 
-		logger.Infof(nil, "Dequeue task [%s] from queue succeed", taskId)
+		logger.Debugf(nil, "Dequeue task [%s] from queue succeed", taskId)
 		c.runningTaskIds <- taskId
 	}
 }
@@ -89,7 +115,7 @@ func (c *Controller) ExtractNotifications() error {
 			continue
 		}
 
-		logger.Infof(nil, "Dequeue notification [%s] from queue succeed", notificationId)
+		logger.Debugf(nil, "Dequeue notification [%s] from queue succeed", notificationId)
 		c.runningNotificationIds <- notificationId
 	}
 }
@@ -196,7 +222,7 @@ func (c *Controller) HandleTask(handlerNum string) {
 			continue
 		}
 		if len(tasks) == 0 {
-			logger.Errorf(ctx, "Get task failed, [%+v]", err)
+			logger.Debugf(ctx, "tasks[%+v] do not exit.", taskIds)
 			continue
 		}
 
@@ -229,4 +255,27 @@ func (c *Controller) HandleTask(handlerNum string) {
 
 	}
 
+}
+
+func getMsgChanMap(ipubsub i.IPubSub, wsMsgStrChanMap map[string]chan string) {
+	serviceMessageTypes := strings.Split(config.GetInstance().Websocket.Service, ",")
+	for _, service := range serviceMessageTypes {
+		var wsMsgStrChan4Service chan string
+		wsMsgStrChan4Service = make(chan string, 255)
+		wsMsgStrChanMap[service] = wsMsgStrChan4Service
+	}
+
+	wsMsgStrChan := ipubsub.ReceiveMessage()
+	for outMsg := range wsMsgStrChan {
+		userMsg, err := models.UseMsgStringToPb(outMsg)
+		if err != nil {
+			logger.Errorf(nil, "Decode user message string to pb failed,err=%+v", err)
+		}
+
+		for _, service := range serviceMessageTypes {
+			if userMsg.Service.GetValue() == service {
+				wsMsgStrChanMap[service] <- outMsg
+			}
+		}
+	}
 }

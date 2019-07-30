@@ -8,8 +8,8 @@ package openpitrix;
 // set go package name to pb
 option go_package = "pb";
 
-import "google/protobuf/wrappers.proto";
-import "google/protobuf/timestamp.proto";
+//import "google/protobuf/wrappers.proto";
+//import "google/protobuf/timestamp.proto";
 
 message ErrorDetail {
 	string error_name = 1;

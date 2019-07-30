@@ -1,7 +1,7 @@
 # Copyright 2018 The OpenPitrix Authors. All rights reserved.
 # Use of this source code is governed by a Apache license
 # that can be found in the LICENSE file.
-FROM golang:1.11-alpine3.7 as builder
+FROM golang:1.12-alpine3.9 as builder
 
 # install tools
 RUN apk add --no-cache git

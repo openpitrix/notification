@@ -405,7 +405,29 @@ message ValidateEmailServiceResponse{
 	google.protobuf.BoolValue is_succ = 1;
 }
 
+message StreamReqData {
+	google.protobuf.StringValue service =1;
+}
 
+message StreamRespData {
+	UserMessage user_msg = 1;
+}
+
+message UserMessage {
+	google.protobuf.StringValue user_id = 1;
+	google.protobuf.StringValue service = 2;
+	google.protobuf.StringValue message_type = 3;
+	MessageDetail msg_detail=4;
+
+}
+
+message MessageDetail {
+	google.protobuf.StringValue message_id = 1;
+	google.protobuf.StringValue user_id = 2;
+	google.protobuf.StringValue service = 3;
+	google.protobuf.StringValue message_type = 4;
+	google.protobuf.StringValue message_content = 5;
+}
 
 
 service notification {
@@ -566,6 +588,9 @@ service notification {
 			post: "/v1/serviceconfigs/validation"
 			body: "*"
 		};
+	}
+
+	rpc CreateNotificationChannel (StreamReqData) returns (stream StreamRespData){
 	}
 
 

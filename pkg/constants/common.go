@@ -13,7 +13,6 @@ const (
 )
 
 const (
-	EtcdPrefix                  = "notification/"
 	NotificationTaskTopicPrefix = "nf-task"
 	NotificationTopicPrefix     = "nf-job"
 	MaxWorkingTasks             = 5
@@ -85,11 +84,16 @@ var RecordStatuses = []string{
 const (
 	WsService       = "ws_service"
 	WsMessageType   = "ws_message_type"
-	WsMessagePrefix = "ws_"
+	WsMessagePrefix = "ws"
 )
 
 const (
 	ContentFmt       = "content_fmt"
 	ContentFmtHtml   = "html"
 	ContentFmtNormal = "normal"
+)
+
+const (
+	QueueTypeRedis = "redis"
+	QueueTypeEtcd  = "etcd"
 )

@@ -5,22 +5,28 @@
 package global
 
 import (
+	"errors"
 	"os"
 	"sync"
 
 	"github.com/google/gops/agent"
 	"github.com/jinzhu/gorm"
+	i "openpitrix.io/libqueue"
+	qetcd "openpitrix.io/libqueue/etcd"
+	q "openpitrix.io/libqueue/queue"
+	qredis "openpitrix.io/libqueue/redis"
 	"openpitrix.io/logger"
 
 	"openpitrix.io/notification/pkg/config"
+	"openpitrix.io/notification/pkg/constants"
 	nfdb "openpitrix.io/notification/pkg/db"
-	wstypes "openpitrix.io/notification/pkg/services/websocket/types"
 )
 
 type GlobalCfg struct {
-	cfg          *config.Config
-	database     *gorm.DB
-	pubsubClient *wstypes.PubsubClient
+	cfg         *config.Config
+	database    *gorm.DB
+	queueClient *i.IClient
+	pubsub      *i.IPubSub
 }
 
 var instance *GlobalCfg
@@ -39,7 +45,13 @@ func newGlobalCfg() *GlobalCfg {
 
 	g.setLoggerLevel()
 	g.openDatabase()
-	g.setPubSubClient()
+	g.setQueueClient()
+	if config.GetInstance().Websocket.Service != "none" {
+		_, err := g.setPubSub()
+		if err != nil {
+			logger.Errorf(nil, "Failed to set pubsub,err=%+v", err)
+		}
+	}
 
 	if err := agent.Listen(agent.Options{
 		ShutdownCleanup: true,
@@ -75,26 +87,49 @@ func (g *GlobalCfg) setLoggerLevel() *GlobalCfg {
 	return g
 }
 
-func (g *GlobalCfg) setPubSubClient() *GlobalCfg {
-	pubsubConnStr := g.cfg.PubSub.Addr
-	pubsubType := g.cfg.PubSub.Type
+func (g *GlobalCfg) GetDB() *gorm.DB {
+	return g.database
+}
+
+func (g *GlobalCfg) setQueueClient() *GlobalCfg {
+	pubsubConnStr := g.cfg.Queue.Addr
+	pubsubType := g.cfg.Queue.Type
 
 	pubsubConfigMap := map[string]interface{}{
 		"connStr": pubsubConnStr,
 	}
 
-	psClient, err := wstypes.New(pubsubType, pubsubConfigMap)
+	qClient, err := q.NewIClient(pubsubType, pubsubConfigMap)
 	if err != nil {
-		logger.Errorf(nil, "Failed to connect pubsub server: %+v.", err)
+		logger.Errorf(nil, "Failed to connect %s pubsub server: %+v.", pubsubType, err)
 	}
 
-	g.pubsubClient = &psClient
+	g.queueClient = &qClient
 	return g
 }
 
-func (g *GlobalCfg) GetDB() *gorm.DB {
-	return g.database
+func (g *GlobalCfg) GetQueueClient() *i.IClient {
+	return g.queueClient
 }
-func (g *GlobalCfg) GetPubSubClient() *wstypes.PubsubClient {
-	return g.pubsubClient
+
+func (g *GlobalCfg) setPubSub() (*GlobalCfg, error) {
+	queueType := config.GetInstance().Queue.Type
+	var ipubsub i.IPubSub
+	if queueType == constants.QueueTypeRedis {
+		redisPubSub := qredis.RedisPubSub{}
+		ipubsub = &redisPubSub
+	} else if queueType == constants.QueueTypeEtcd {
+		etcdPubSub := qetcd.EtcdPubSub{}
+		ipubsub = &etcdPubSub
+	} else {
+		return nil, errors.New("Unsupport queue type, currently support redis and etcd.")
+	}
+
+	ipubsub.SetClient(g.queueClient)
+	g.pubsub = &ipubsub
+	return g, nil
+}
+
+func (g *GlobalCfg) GetPubSub() *i.IPubSub {
+	return g.pubsub
 }
