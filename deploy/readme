@@ -9,4 +9,6 @@
 
 5.etcd.yaml
 
-6.notification.yaml
+6.redis.yaml
+
+7.notification.yaml

@@ -26,6 +26,7 @@ import (
 
 	staticSpec "openpitrix.io/notification/pkg/apigateway/spec"
 	staticSwaggerUI "openpitrix.io/notification/pkg/apigateway/swagger-ui"
+	"openpitrix.io/notification/pkg/client/websocket"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/pb"
 )
@@ -154,6 +155,23 @@ func (s *Server) mainHandler() http.Handler {
 	mux := http.NewServeMux()
 	mux.Handle("/", gwmux)
 
+	/**********************************************************
+	** start ws_manager service **
+	**********************************************************/
+	logger.Infof(nil, "[%s]", "/**********************************************************")
+	logger.Infof(nil, "[%s]", "** start ws_manager service **")
+	logger.Infof(nil, "[%s]", "**********************************************************/")
+
+	var messageTypes []string
+	messageTypes = append(messageTypes, "nf")
+	messageTypes = append(messageTypes, "event")
+	accessServiceName := "op"
+	wsm, err := websocket.NewWsManager(accessServiceName, messageTypes)
+	if err != nil {
+		logger.Errorf(nil, "Failed to new websocket manager.: %+v", err)
+	}
+	go wsm.Run()
+	mux.HandleFunc("/v1/io", wsm.HandleWsTask())
 	return formWrapper(mux)
 }
 

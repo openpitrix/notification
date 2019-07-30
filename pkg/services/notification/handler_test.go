@@ -78,8 +78,7 @@ func TestCreateNotification(t *testing.T) {
 	if !*pkg.LocalDevEnvEnabled {
 		t.Skip("Local Dev testing env disabled.")
 	}
-
-	config.GetInstance().LoadConf()
+	config.GetInstance()
 	controller, _ := NewController()
 	s := &Server{controller: controller}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)

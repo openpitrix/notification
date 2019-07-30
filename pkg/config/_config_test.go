@@ -30,20 +30,12 @@ type Config struct {
 		Database string `default:"notification"`
 		Disable  bool   `default:"false"`
 		//LogMode  bool   `default:"false"`
-		LogMode bool `default:"true"`
+		LogMode bool `default:"false"`
 	}
 
 	Queue struct {
-		Type string `default:"redis"`
 		//Addr string `default:"redis://notification-redis:6379"`
-		Addr string `default:"redis://192.168.0.6:6379"`
-		//Type string `default:"etcd"`
-		//Addr string `default:"192.168.0.6:12379"`
-	}
-
-	PubSub struct {
 		Type string `default:"redis"`
-		//Addr string `default:"redis://notification-redis:6379"`
 		Addr string `default:"redis://192.168.0.6:6379"`
 		//Type string `default:"etcd"`
 		//Addr string `default:"192.168.0.6:12379"`
@@ -75,8 +67,7 @@ type Config struct {
 	}
 
 	Websocket struct {
-		//ServiceMessageTypes string `default:"op/nf,op/event,ks/nf,ks/event"`
-		ServiceMessageTypes string `default:"none"`
+		Service string `default:"op,ks"`
 	}
 }
 
@@ -95,7 +86,7 @@ func GetInstance() *Config {
 
 type LogConfig struct {
 	//Level string `default:"error"` // debug, info, warn, error, fatal
-	Level string `default:"debug"`
+	Level string `default:"info"`
 }
 
 type GrpcConfig struct {

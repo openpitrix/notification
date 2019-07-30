@@ -48,12 +48,6 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "Queue=========================================")
 	logger.Debugf(nil, "NOTIFICATION_QUEUE_TYPE : %+v", mycfg.Queue.Type)
 	logger.Debugf(nil, "NOTIFICATION_QUEUE_ADDR : %+v", mycfg.Queue.Addr)
-
-	logger.Debugf(nil, "")
-
-	logger.Debugf(nil, "PubSub=========================================")
-	logger.Debugf(nil, "NOTIFICATION_PUB_SUB_TYPE : %+v", mycfg.PubSub.Type)
-	logger.Debugf(nil, "NOTIFICATION_PUB_SUB_ADDR : %+v", mycfg.PubSub.Addr)
 	logger.Debugf(nil, "")
 
 	logger.Debugf(nil, "Email=========================================")
@@ -76,7 +70,7 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "")
 
 	logger.Debugf(nil, "Websocket=========================================")
-	logger.Debugf(nil, "NOTIFICATION_WEBSOCKET_SERVICE_MESSAGE_TYPES : %+v", mycfg.Websocket.ServiceMessageTypes)
+	logger.Debugf(nil, "NOTIFICATION_WEBSOCKET_SERVICE : %+v", mycfg.Websocket.Service)
 	logger.Debugf(nil, "")
 
 	mycfg.PrintUsage()

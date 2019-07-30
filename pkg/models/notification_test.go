@@ -8,6 +8,7 @@ import (
 	pkg "openpitrix.io/notification/pkg"
 	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
+	"openpitrix.io/notification/pkg/util/jsonutil"
 )
 
 func TestDecodeNotificationExtra(t *testing.T) {
@@ -44,7 +45,7 @@ func TestCheckExtra(t *testing.T) {
 	if !*pkg.LocalDevEnvEnabled {
 		t.Skip("Local Dev testing env disabled.")
 	}
-	config.GetInstance().LoadConf()
+	config.GetInstance()
 	testExtra := "{\"ws_service1\": \"op\",\"ws_message_type\": \"event\"}"
 
 	err := CheckExtra(nil, testExtra)
@@ -52,5 +53,22 @@ func TestCheckExtra(t *testing.T) {
 		logger.Errorf(nil, "error=[%+v]", err)
 
 	}
+
+}
+
+func TestUseMsgStringToPb(t *testing.T) {
+	if !*pkg.LocalDevEnvEnabled {
+		t.Skip("Local Dev testing env disabled.")
+	}
+
+	dataStr := `{"user_id":"huojiao","service":"ks","message_type":"event","MessageDetail":{"ws_message_id":"msg-XXy43Kkkl95V","ws_user_id":"huojiao","ws_service":"ks","ws_message_type":"event","ws_message":"test_content_normal"}}`
+	userMsg := new(UserMessage)
+	err := jsonutil.Decode([]byte(dataStr), userMsg)
+	if err != nil {
+		logger.Errorf(nil, "Decode [%s] into UserMessage failed: %+v", dataStr, err)
+	}
+	pbUserMsg := UserMessageToPb(userMsg)
+
+	logger.Infof(nil, "pbUserMsg=%+v", pbUserMsg)
 
 }

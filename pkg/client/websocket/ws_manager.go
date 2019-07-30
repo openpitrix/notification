@@ -6,19 +6,25 @@ package websocket
 
 import (
 	"context"
-	"fmt"
+	"io"
 	"net/http"
-	"strings"
 	"sync"
 
 	"github.com/gorilla/websocket"
 	"openpitrix.io/logger"
 
-	"openpitrix.io/notification/pkg/config"
-	wstypes "openpitrix.io/notification/pkg/services/websocket/types"
-	"openpitrix.io/notification/pkg/services/websocket/ws_message/ws_message_etcd"
-	"openpitrix.io/notification/pkg/services/websocket/ws_message/ws_message_redis"
+	nfclient "openpitrix.io/notification/pkg/client/notification"
+	"openpitrix.io/notification/pkg/models"
+	"openpitrix.io/notification/pkg/pb"
+	"openpitrix.io/notification/pkg/util/pbutil"
 )
+
+type Receiver struct {
+	Service     string
+	MessageType string
+	UserId      string
+	Conn        *websocket.Conn
+}
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -32,32 +38,39 @@ var upgrader = websocket.Upgrader{
 type receiversT map[*websocket.Conn]*sync.Mutex
 
 type wsManager struct {
-	psClient    *wstypes.PubsubClient
-	receiverMap map[string]receiversT
-	addReceiver chan wstypes.Receiver
-	delReceiver chan wstypes.Receiver
-	msgChan     chan wstypes.UserMessage
+	accessServiceName string
+	messageTypes      []string
+	receiverMap       map[string]receiversT
+	addReceiver       chan Receiver
+	delReceiver       chan Receiver
+	msgChan           chan models.UserMessage
 }
 
-func NewWsManager(pubsubType string, psClient *wstypes.PubsubClient) (*wsManager, error) {
+func NewWsManager(accessServiceName string, messageTypes []string) (*wsManager, error) {
 	var wsm wsManager
-	wsm.psClient = psClient
+	wsm.accessServiceName = accessServiceName
+	wsm.messageTypes = messageTypes
+	wsm.addReceiver = make(chan Receiver, 255)
+	wsm.delReceiver = make(chan Receiver, 255)
+	wsm.receiverMap = make(map[string]receiversT)
 
-	if pubsubType == "etcd" {
-		m := ws_message_etcd.WsMessageEtcd{}
-		eClient := (*psClient).(wstypes.EtcdClient)
-		wsm.msgChan = m.WatchWsMessages(&eClient)
-	} else if pubsubType == "redis" {
-		m := ws_message_redis.WsMessageRedis{}
-		rClient := (*psClient).(wstypes.RedisClient)
-		wsm.msgChan = m.WatchWsMessages(&rClient)
-	} else {
-		return nil, fmt.Errorf("unsupported queueType [%s]", pubsubType)
+	client, err := nfclient.NewClient()
+	if err != nil {
+		logger.Errorf(nil, "failed to create nfclient,err=%+v", err)
+		return nil, err
 	}
 
-	wsm.addReceiver = make(chan wstypes.Receiver, 255)
-	wsm.delReceiver = make(chan wstypes.Receiver, 255)
-	wsm.receiverMap = make(map[string]receiversT)
+	reqstreamData := &pb.StreamReqData{
+		Service: pbutil.ToProtoString(wsm.accessServiceName),
+	}
+	ctx := context.Background()
+	channelClient, err := client.CreateNotificationChannel(ctx, reqstreamData)
+	if err != nil {
+		logger.Errorf(nil, "failed to get msgs by grpc stream,err=%+v", err)
+		return nil, err
+	}
+
+	wsm.msgChan = wsm.ReceiveMsg(client, channelClient, ctx)
 	return &wsm, nil
 }
 
@@ -81,15 +94,15 @@ func (wsm *wsManager) Run() {
 			userMsgType := userMsg.MessageType
 			userId := userMsg.UserId
 
-			userServiceMessageType := service + "/" + userMsgType
-			serviceMessageTypes := strings.Split(config.GetInstance().Websocket.ServiceMessageTypes, ",")
+			serviceMsgTypeFromData := service + "/" + userMsgType
 
-			for _, serviceMessageType := range serviceMessageTypes {
-				if serviceMessageType == userServiceMessageType {
+			for _, msgType := range wsm.messageTypes {
+				s := wsm.accessServiceName + "/" + msgType
+				if s == serviceMsgTypeFromData {
 					receivers := wsm.getReceivers(service, userMsgType, userId)
 
 					for r, mutex := range receivers {
-						go writeMessage(r, service, userMsgType, mutex, userMsg)
+						go wsm.writeMessage(r, service, userMsgType, mutex, userMsg)
 					}
 				}
 			}
@@ -107,19 +120,19 @@ func (wsm *wsManager) getReceivers(service string, messageType string, userId st
 	return receiverT
 }
 
-func writeMessage(conn *websocket.Conn, service string, messageType string, mutex *sync.Mutex, userMsg wstypes.UserMessage) {
+func (wsm *wsManager) writeMessage(conn *websocket.Conn, service string, messageType string, mutex *sync.Mutex, userMsg models.UserMessage) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	var err error
 	if service == userMsg.Service && messageType == userMsg.MessageType {
-		err = conn.WriteJSON(userMsg.MessageDetail)
-	}
+		var err error
+		err = conn.WriteJSON(userMsg)
 
-	if err != nil {
-		logger.Errorf(nil, "Failed to send message [%+v] to [%+v], error: %+v", userMsg, conn, err)
+		if err != nil {
+			logger.Errorf(nil, "Failed to send message [%+v] to [%+v], error: %+v", userMsg, conn, err)
+		}
+		logger.Debugf(nil, "Message sent [%+v]", userMsg)
 	}
-	logger.Debugf(nil, "Message sent [%+v]", userMsg)
 }
 
 func (wsm *wsManager) HandleWsTask() func(w http.ResponseWriter, r *http.Request) {
@@ -144,11 +157,11 @@ func (wsm *wsManager) HandleWsTask() func(w http.ResponseWriter, r *http.Request
 
 		c, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			logger.Infof(nil, "Upgrade websocket_manager request failed: %+v", err)
+			logger.Errorf(nil, "Upgrade websocket_manager request failed: %+v", err)
 			return
 		}
 
-		receiver := wstypes.Receiver{
+		receiver := Receiver{
 			Service:     service,
 			MessageType: messageType,
 			UserId:      userId,
@@ -166,25 +179,27 @@ func (wsm *wsManager) HandleWsTask() func(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func PushWsMessage(ctx context.Context, pubsubType string, psClient *wstypes.PubsubClient, userMsg *wstypes.UserMessage) error {
-	if pubsubType == "etcd" {
-		wsMessageEtcd := new(ws_message_etcd.WsMessageEtcd)
-		eClient := (*psClient).(wstypes.EtcdClient)
-		err := wsMessageEtcd.PushWsMessage(ctx, &eClient, userMsg)
-		if err != nil {
-			return err
-		}
-	} else if pubsubType == "redis" {
-		wsMessageRedis := new(ws_message_redis.WsMessageRedis)
-		rClient := (*psClient).(wstypes.RedisClient)
+func (wsm *wsManager) ReceiveMsg(client *nfclient.Client, channelClient pb.Notification_CreateNotificationChannelClient, ctx context.Context) chan models.UserMessage {
+	var msgChan = make(chan models.UserMessage, 255)
+	go wsm.getMsgsByGrpcStream(client, channelClient, ctx, msgChan)
+	return msgChan
+}
 
-		err := wsMessageRedis.PublishWsMessage(ctx, &rClient, userMsg)
+func (wsm *wsManager) getMsgsByGrpcStream(client *nfclient.Client, channelClient pb.Notification_CreateNotificationChannelClient, ctx context.Context, msgChan chan models.UserMessage) {
+	for {
+		userWsMsgStreamData, err := channelClient.Recv()
 		if err != nil {
-			return err
+			logger.Errorf(nil, "failed to recv: %+v", err)
+			continue
 		}
-	} else {
-		return fmt.Errorf("unsupported queueType [%s]", pubsubType)
+
+		userMsg := models.PbToUserMessage(userWsMsgStreamData.UserMsg)
+		if userMsg.Service == wsm.accessServiceName {
+			msgChan <- *userMsg
+		}
+		if err == io.EOF {
+			break
+		}
 	}
 
-	return nil
 }

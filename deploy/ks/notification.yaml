@@ -75,42 +75,26 @@ spec:
           value: 'notification.kubesphere-alerting-system'
         - name: NOTIFICATION_APP_API_HOST
           value: 'notification.kubesphere-alerting-system'
-        - name: NOTIFICATION_MYSQL_HOST
-          value: 'openpitrix-db.openpitrix-system.svc'
-        - name: NOTIFICATION_MYSQL_PORT
-          value: '3306'
-        - name: NOTIFICATION_LOG_LEVEL
-          value: "error"
-        - name: NOTIFICATION_MYSQL_LOG_MODE
-          value: "false"
-        - name: NOTIFICATION_APP_MAX_WORKING_NOTIFICATIONS
-          value: "5"
-        - name: NOTIFICATION_APP_MAX_WORKING_TASKS
-          value: "5"
         - name: NOTIFICATION_EMAIL_PROTOCOL
           value: 'SMTP'
         - name: NOTIFICATION_EMAIL_EMAIL_HOST
-          value: "mail.example.com"
+          value: 'mail.app-center.cn'
         - name: NOTIFICATION_EMAIL_PORT
-          value: "25"
+          value: '25'
         - name: NOTIFICATION_EMAIL_DISPLAY_SENDER
-          value: "KubeSphere"
+          value: 'admin_openpitrix'
         - name: NOTIFICATION_EMAIL_EMAIL
-          value: "admin@example.com"
+          value: 'openpitrix@app-center.cn'
         - name: NOTIFICATION_EMAIL_PASSWORD
-          value: "password"
+          value: 'openpitrix'
         - name: NOTIFICATION_EMAIL_SSL_ENABLE
-          value: "False"
+          value: 'false'
+        - name: NOTIFICATION_WEBSOCKET_SERVICE_MESSAGE_TYPES
+          value: "none"
         - name: NOTIFICATION_QUEUE_TYPE
           value: "redis"
         - name: NOTIFICATION_QUEUE_ADDR
           value: "redis://redis.kubesphere-system.svc:6379"
-        - name: NOTIFICATION_PUB_SUB_TYPE
-          value: "redis"
-        - name: NOTIFICATION_PUB_SUB_ADDR
-          value: "redis://redis.kubesphere-system.svc:6379"
-        - name: NOTIFICATION_WEBSOCKET_SERVICE_MESSAGE_TYPES
-          value: "none"
         resources:
           limits:
             cpu: "1"

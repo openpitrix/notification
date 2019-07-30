@@ -8,6 +8,8 @@ package notification
 
 import (
 	"context"
+	"io"
+	"log"
 	"strconv"
 	"testing"
 	"time"
@@ -53,7 +55,7 @@ func TestNotification(t *testing.T) {
 
 }
 
-func createNF2(i string) {
+func createNF(i string) {
 	client, err := nfclient.NewClient()
 	if err != nil {
 		logger.Errorf(nil, "failed to create nfclient.")
@@ -85,15 +87,41 @@ func createNF2(i string) {
 }
 
 const (
-	Maxtasks2 = 1000
+	Maxtasks = 1000
 )
 
 func TestCreateNotificationByPressure(t *testing.T) {
-	for i := 0; i < Maxtasks2; i++ {
-		go createNF2(strconv.Itoa(i))
+	for i := 0; i < Maxtasks; i++ {
+		go createNF(strconv.Itoa(i))
 	}
 
 	for {
 		time.Sleep(time.Second * 1)
 	}
+}
+
+func TestGetStream(t *testing.T) {
+	client, err := nfclient.NewClient()
+	if err != nil {
+		t.Fatalf("failed to create nfclient.")
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Hour)
+	defer cancel()
+
+	reqstreamData := &pb.StreamReqData{}
+	res, _ := client.GetStream(ctx, reqstreamData)
+
+	for {
+		userWsMsg, err := res.Recv()
+		logger.Infof(nil, "userWsMsg=%+v", userWsMsg)
+
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Printf("failed to recv: %+v", err)
+		}
+		t.Log(userWsMsg)
+	}
+
 }

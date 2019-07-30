@@ -7,18 +7,16 @@ package resource_control
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"openpitrix.io/logger"
 
-	"openpitrix.io/notification/pkg/config"
 	"openpitrix.io/notification/pkg/constants"
 	nfdb "openpitrix.io/notification/pkg/db"
 	"openpitrix.io/notification/pkg/global"
 	"openpitrix.io/notification/pkg/models"
 	"openpitrix.io/notification/pkg/pb"
-	"openpitrix.io/notification/pkg/services/websocket"
-	wstypes "openpitrix.io/notification/pkg/services/websocket/types"
 	"openpitrix.io/notification/pkg/util/jsonutil"
 	"openpitrix.io/notification/pkg/util/pbutil"
 	"openpitrix.io/notification/pkg/util/stringutil"
@@ -122,7 +120,6 @@ func GetNfsByNfIds(ctx context.Context, nfIds []string) ([]*models.Notification,
 }
 
 func SplitNotificationIntoTasks(ctx context.Context, notification *models.Notification) ([]*models.Task, error) {
-
 	//Step1: check addressInfo format is like address_info = {"email": ["xxx@abc.com", "xxx@xxx.com"],"websocket": ["system", "huojiao"]}
 	_, decodeMapErr := models.DecodeAddressInfo(notification.AddressInfo)
 
@@ -230,47 +227,60 @@ func processsAddressInfo4AddressMap(ctx context.Context, notification *models.No
 }
 
 func pushTask2WsPubSub(ctx context.Context, task *models.Task, nf *models.Notification) error {
-	service, messageType := models.DecodeNotificationExtra4ws(nf.Extra)
-
-	//if notify type is websocket,call websocket PushWsMessage to pubsub.
+	//if notify type is websocket, publish message to pubsub.
 	if task.NotifyType == constants.NotifyTypeWebsocket {
-		//Get contentStr from nf.Content, nf.Content Fmt is like {"content_type": "content"}
-		//if contains normal content_type, use normal content as websocket Content.
-		//if no normal content_type, use the whole nf.Content as websocket Content.
-		contentStruct, _ := models.DecodeContent(nf.Content)
-		contentFmtNormal, ok := (*contentStruct)[constants.ContentFmtNormal]
-		if !ok {
-			contentFmtNormal = nf.Content
-		}
-		taskDirective, err := models.DecodeTaskDirective(task.Directive)
+		service, messageType := models.DecodeNotificationExtra4ws(nf.Extra)
+		channel := fmt.Sprintf("%s/%s/%s", constants.WsMessagePrefix, service, messageType)
+		ipubsub := *(global.GetInstance().GetPubSub())
+		ipubsub.SetChannel(channel)
+
+		userMsgStr, err := nfToString(task, nf)
 		if err != nil {
+			logger.Errorf(ctx, "Push websocket message Directive[%s] to pubsub failed: %+v", jsonutil.ToString(task.Directive), err)
 			return err
 		}
-		userId := taskDirective.Address
 
-		msgDetail := wstypes.MessageDetail{
-			MessageId:      wstypes.NewWsMessageId(),
-			UserId:         userId,
-			Service:        service,
-			MessageType:    messageType,
-			MessageContent: contentFmtNormal,
-		}
-
-		userMsg := wstypes.UserMessage{
-			UserId:        userId,
-			Service:       service,
-			MessageType:   messageType,
-			MessageDetail: msgDetail,
-		}
-		err = websocket.PushWsMessage(context.Background(), config.GetInstance().PubSub.Type, global.GetInstance().GetPubSubClient(), &userMsg)
+		err = ipubsub.Publish(userMsgStr)
 		if err != nil {
-			logger.Errorf(ctx, "Push user [%s] websocket message id [%s] failed: %+v", userId, task.TaskId, err)
+			logger.Errorf(ctx, "Push websocket message directive[%s] to pubsub failed: %+v", jsonutil.ToString(task.Directive), err)
 			return err
 		}
-		logger.Infof(ctx, "Push user [%s] websocket message id [%s] ,Directive[%s] to pubsub.", userId, task.TaskId, task.Directive)
+		logger.Debugf(ctx, "Push websocket message directive[%s] to pubsub successfully.", jsonutil.ToString(task.Directive))
+
 		return nil
 	} else {
 		return errors.New("unsupported notify type for websocket")
 	}
+}
 
+func nfToString(task *models.Task, nf *models.Notification) (string, error) {
+	//Get contentStr from nf.Content, nf.Content Fmt is like {"content_type": "content"}
+	//if contains normal content_type, use normal content as websocket Content.
+	//if no normal content_type, use the whole nf.Content as websocket Content.
+	service, messageType := models.DecodeNotificationExtra4ws(nf.Extra)
+	contentStruct, _ := models.DecodeContent(nf.Content)
+	contentFmtNormal, ok := (*contentStruct)[constants.ContentFmtNormal]
+	if !ok {
+		contentFmtNormal = nf.Content
+	}
+	taskDirective, err := models.DecodeTaskDirective(task.Directive)
+	if err != nil {
+		return "", err
+	}
+	userId := taskDirective.Address
+	msgDetail := models.MessageDetail{
+		MessageId:      models.NewWsMessageId(),
+		UserId:         userId,
+		Service:        service,
+		MessageType:    messageType,
+		MessageContent: contentFmtNormal,
+	}
+	userMsg := models.UserMessage{
+		UserId:        userId,
+		Service:       service,
+		MessageType:   messageType,
+		MessageDetail: msgDetail,
+	}
+	userMsgStr := jsonutil.ToString(userMsg)
+	return userMsgStr, nil
 }
