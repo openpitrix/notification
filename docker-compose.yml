@@ -51,8 +51,8 @@ services:
   # notification service
   notification-manager:
     #build: .
-    image: "notification:latest"
-    #image: "kubespheredev/notification:v0.2.0"
+    #image: "notification:latest"
+    image: "openpitrix/notification:v0.2.2"
     command: "notification"
     links:
     - notification-db:notification-db
