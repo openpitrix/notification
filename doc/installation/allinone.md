@@ -28,15 +28,15 @@ All-in-One 模式部署由 [Docker-Compose](https://github.com/docker/compose) �
 
 ## 第二步: 准备 Notification 源文件压缩包
 
-1. 可通过 wget 命令从 GitHub 指定的 URL 下载 [Notification](https://github.com/openpitrix/notification/releases/tag/v0.2.1) 的源文件压缩包。
+1. 可通过 wget 命令从 GitHub 指定的 URL 下载 [Notification](https://github.com/openpitrix/notification/releases/tag/v0.2.2) 的源文件压缩包。
 
 ```bash
-$ wget https://github.com/openpitrix/notification/archive/v0.2.1.tar.gz
+$ wget https://github.com/openpitrix/notification/archive/v0.2.2.tar.gz
 ```
 2. 解压压缩包：
 
 ```bash
-$ tar -zxf notification-0.2.1.tar.gz
+$ tar -zxf notification-0.2.2.tar.gz
 ```
 
 ## 第三步: 部署 Notification
@@ -44,8 +44,7 @@ $ tar -zxf notification-0.2.1.tar.gz
 进入 解压后的 Notification 目录，编译项目。该过程需要拉取多个 Notification 相关的 docker 镜像，拉取镜像和安装速度与网络也有关系，需要等待几分钟。
 
 ```bash
-$ cd notification-0.2.1/
-$ make build
+$ cd notification-0.2.2/ 
 $ make compose-up
 ```
 
@@ -64,13 +63,11 @@ notification-notification-db-ctrl   flyway -url=jdbc:mysql://n ...   Exit 1
 notification-redis                  docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp  
 ```
 
-2. 您可以通过浏览器，使用运行该服务的服务器的 IP 地址和 SwaggerUI 端口号即 `<NodeIP>:9200` 可以内部网络访问 SwaggerUI 页面，如 `http://192.168.0.4:9200/swagger-ui/#/notification`。
+2. 您可以通过浏览器，使用运行该服务的服务器的 IP 地址和 SwaggerUI 端口号即 `<NodeIP>:9200` 可以内部网络访问 SwaggerUI 页面，如 `http://192.168.0.4:9200/swagger-ui/`。
 
 若需要在外网访问，在云平台需要在端口转发规则中将上述的**内网端口** 9200 转发到**源端口** 9200，然后在防火墙开放这个**源端口**，确保外网流量可以通过该端口。
 
 > 提示：例如在 QingCloud 平台配置端口转发和防火墙规则，则可以参考 [云平台配置端口转发和防火墙](https://openpitrix.io/docs/v0.4/zh-CN/appendix/qingcloud-manipulation)。
-
-然后可以通过 `<EIP>:9200` 的方式访问控制台，如：`http://139.198.111.111:9200`，即可进入 Notification Swagger 页面。
 
 ![swaggerUI](../images/swaggerUI.png) 
 
