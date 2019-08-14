@@ -34,32 +34,31 @@ services:
     container_name: "notification-redis"
 
   # notification etcd
-  notification-etcd:
-    image: "quay.io/coreos/etcd:v3.2.18"
-    command: etcd --data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://notification-etcd:2379 --max-snapshots 5 --max-wals 5 --auto-compaction-retention=168
-    volumes:
-    - ${DATA_PATH}/etcd:/data
-    ports:
-    - "12379:2379" # for unit-test & debug
-    container_name: "notification-etcd"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: ${NOTIFICATION_LOG_MAX_SIZE}
-        max-file: ${NOTIFICATION_LOG_MAX_FILE}
+#  notification-etcd:
+#    image: "quay.io/coreos/etcd:v3.2.18"
+#    command: etcd --data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://notification-etcd:2379 --max-snapshots 5 --max-wals 5 --auto-compaction-retention=168
+#    volumes:
+#    - ${DATA_PATH}/etcd:/data
+#    ports:
+#    - "12379:2379" # for unit-test & debug
+#    container_name: "notification-etcd"
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: ${NOTIFICATION_LOG_MAX_SIZE}
+#        max-file: ${NOTIFICATION_LOG_MAX_FILE}
 
   # notification service
   notification-manager:
     #build: .
-    #image: "notification:latest"
-    image: "openpitrix/notification:v0.2.2"
+    image: "notification:latest"
+    #image: "openpitrix/notification:v0.2.2"
     command: "notification"
     links:
     - notification-db:notification-db
-    - notification-etcd:notification-etcd
     depends_on:
     - notification-notification-db-ctrl
-    - notification-etcd
+    - notification-redis
     container_name: "notification-manager"
     environment:
     - NOTIFICATION_LOG_LEVEL=${NOTIFICATION_LOG_LEVEL}
@@ -69,13 +68,6 @@ services:
     - NOTIFICATION_LOG_LEVEL=debug
     - NOTIFICATION_APP_MAX_WORKING_NOTIFICATIONS=5
     - NOTIFICATION_APP_MAX_WORKING_TASKS=5
-    - NOTIFICATION_EMAIL_PROTOCOL=SMTP
-    - NOTIFICATION_EMAIL_EMAIL_HOST=mail.example.com
-    - NOTIFICATION_EMAIL_PORT=25
-    - NOTIFICATION_EMAIL_DISPLAY_SENDER=KubeSphere
-    - NOTIFICATION_EMAIL_EMAIL=admin@example.com
-    - NOTIFICATION_EMAIL_PASSWORD=password
-    - NOTIFICATION_EMAIL_SSL_ENABLE=False
     logging:
       driver: "json-file"
       options:

@@ -87,7 +87,7 @@ func GetChain(tx *gorm.DB) *Chain {
 	}
 }
 
-func (c *Chain) BuildFilterConditions(req Request, tableName string, exclude ...string) *Chain {
+func (c *Chain) BuildFilterConditions(req Request, tableName string, andOr string, exclude ...string) *Chain {
 	for _, field := range structs.Fields(req) {
 		column := GetFieldName(field)
 		param := field.Value()
@@ -101,13 +101,13 @@ func (c *Chain) BuildFilterConditions(req Request, tableName string, exclude ...
 		}
 		if column == SearchWordColumnName && stringutil.Contains(models.SearchWordColumnTable, tableName) {
 			value := getReqValue(param)
-			c.getSearchFilter(false, tableName, value, exclude...)
+			c.getSearchFilter(false, tableName, value, andOr, exclude...)
 		}
 	}
 	return c
 }
 
-func (c *Chain) BuildFilterConditionsWithPrefix(req Request, tableName string, exclude ...string) *Chain {
+func (c *Chain) BuildFilterConditionsWithPrefix(req Request, tableName string, andOr string, exclude ...string) *Chain {
 	for _, field := range structs.Fields(req) {
 		column := GetFieldName(field)
 		param := field.Value()
@@ -126,7 +126,7 @@ func (c *Chain) BuildFilterConditionsWithPrefix(req Request, tableName string, e
 
 		if column == SearchWordColumnName && stringutil.Contains(models.SearchWordColumnTable, tableName) {
 			value := getReqValue(param)
-			c.getSearchFilter(true, tableName, value, exclude...)
+			c.getSearchFilter(true, tableName, value, andOr, exclude...)
 		}
 	}
 	return c
@@ -167,7 +167,7 @@ func (c *Chain) AddQueryOrderDir(req Request, defaultColumn string) *Chain {
 	return c
 }
 
-func (c *Chain) getSearchFilter(withPrefix bool, tableName string, value interface{}, exclude ...string) {
+func (c *Chain) getSearchFilter(withPrefix bool, tableName string, value interface{}, andOr string, exclude ...string) {
 	var conditions []string
 	if vs, ok := value.([]string); ok {
 		for _, v := range vs {
@@ -194,5 +194,10 @@ func (c *Chain) getSearchFilter(withPrefix bool, tableName string, value interfa
 		logger.Warnf(nil, "search_word [%+v] is not string", value)
 	}
 	condition := strings.Join(conditions, " OR ")
-	c.DB = c.DB.Where(condition)
+	if andOr == "or" {
+		c.DB = c.DB.Or(condition)
+	} else {
+		c.DB = c.DB.Where(condition)
+	}
+
 }

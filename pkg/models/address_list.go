@@ -7,9 +7,12 @@ package models
 import (
 	"time"
 
+	"openpitrix.io/logger"
+
 	"openpitrix.io/notification/pkg/constants"
 	"openpitrix.io/notification/pkg/pb"
 	"openpitrix.io/notification/pkg/util/idutil"
+	"openpitrix.io/notification/pkg/util/jsonutil"
 	"openpitrix.io/notification/pkg/util/pbutil"
 )
 
@@ -81,4 +84,13 @@ func AddressListSet2PbSet(inAddrLists []*AddressList) []*pb.AddressList {
 		pbAddrsLists = append(pbAddrsLists, pbAddrList)
 	}
 	return pbAddrsLists
+}
+
+func DecodeExtra(data string) (*map[string]string, error) {
+	extra := new(map[string]string)
+	err := jsonutil.Decode([]byte(data), extra)
+	if err != nil {
+		logger.Errorf(nil, "Decode [%s] into notification extra failed: %+v", data, err)
+	}
+	return extra, err
 }

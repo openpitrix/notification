@@ -21,6 +21,9 @@ import (
 	"openpitrix.io/notification/pkg/util/stringutil"
 )
 
+//****************************************
+//ServiceConfig
+//****************************************
 func (s *Server) SetServiceConfig(ctx context.Context, req *pb.ServiceConfig) (*pb.SetServiceConfigResponse, error) {
 	err := ValidateSetServiceConfigParams(ctx, req)
 	if err != nil {
@@ -85,9 +88,25 @@ func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 	return scCfg, nil
 }
 
+func (s *Server) ValidateEmailService(ctx context.Context, req *pb.ServiceConfig) (*pb.ValidateEmailServiceResponse, error) {
+	err := emailutil.SendMail4ValidateEmailService(nil, req)
+	if err != nil {
+		logger.Errorf(nil, "send email failed, [%+v]", err)
+		return &pb.ValidateEmailServiceResponse{
+			IsSucc: pbutil.ToProtoBool(false),
+		}, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateEmailService)
+	}
+	return &pb.ValidateEmailServiceResponse{
+		IsSucc: pbutil.ToProtoBool(true),
+	}, nil
+}
+
+//****************************************
+//Notification
+//****************************************
 func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificationRequest) (*pb.CreateNotificationResponse, error) {
 	//Step0:Validate params.
-	err := ValidateCreateNotificationParams(ctx, req)
+	err := ValidateCreateNotification(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +119,7 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 		logger.Errorf(ctx, "Failed to register notification, %+v.", err)
 		return nil, err
 	}
-	logger.Debugf(ctx, "Create notification [%s] in DB successfully.", notification.NotificationId)
+	logger.Debugf(ctx, "Create notification[%s] in DB successfully.", notification.NotificationId)
 
 	//Step2:Process Task data.
 	//including:
@@ -113,25 +132,23 @@ func (s *Server) CreateNotification(ctx context.Context, req *pb.CreateNotificat
 		logger.Errorf(ctx, "Failed to create tasks by notification, %+v.", err)
 		return nil, err
 	}
-	logger.Debugf(ctx, "Create tasks by notification [%s] in DB successfully.", notification.NotificationId)
+	logger.Debugf(ctx, "Create tasks by notification[%s] in DB successfully.", notification.NotificationId)
 
 	//Step3:Enqueue notification id to queue.
 	err = s.controller.notificationQueue.Enqueue(notification.NotificationId)
 
 	if err != nil {
-		logger.Errorf(ctx, "Push notification [%s] into queue failed, %+v.", notification.NotificationId, err)
+		logger.Errorf(ctx, "Push notification[%s] into queue failed, %+v.", notification.NotificationId, err)
 		return nil, err
 	}
-	logger.Debugf(ctx, "Push notification [%s] into queue successfully.", notification.NotificationId)
+	logger.Debugf(ctx, "Push notification[%s] into queue successfully.", notification.NotificationId)
 
 	return &pb.CreateNotificationResponse{
 		NotificationId: pbutil.ToProtoString(notification.NotificationId),
 	}, nil
 }
-
 func (s *Server) createTasksByNotification(ctx context.Context, nf *models.Notification) ([]*models.Task, error) {
 	//1.SplitNotificationIntoTasks
-	//
 	//2.createTasks
 	tasks, err := rs.SplitNotificationIntoTasks(ctx, nf)
 	if err != nil {
@@ -147,7 +164,6 @@ func (s *Server) createTasksByNotification(ctx context.Context, nf *models.Notif
 
 	return tasks, nil
 }
-
 func (s *Server) createTasks(ctx context.Context, tasks []*models.Task) error {
 	var err error
 	for _, task := range tasks {
@@ -155,15 +171,15 @@ func (s *Server) createTasks(ctx context.Context, tasks []*models.Task) error {
 		if err != nil {
 			return err
 		}
-		logger.Debugf(ctx, "Create task [%s] in DB successfully.", task.TaskId)
+		logger.Debugf(ctx, "Create task[%s] in DB successfully.", task.TaskId)
 
 		if task.NotifyType == constants.NotifyTypeEmail {
 			err = s.controller.taskQueue.Enqueue(task.TaskId)
 			if err != nil {
-				logger.Errorf(ctx, "Failed to push task [%s] into queue, %+v.", task.TaskId, err)
+				logger.Errorf(ctx, "Failed to push task[%s] into queue, %+v.", task.TaskId, err)
 				return err
 			}
-			logger.Debugf(ctx, "Push task [%s] into queue successfully.", task.TaskId)
+			logger.Debugf(ctx, "Push task[%s] into queue successfully.", task.TaskId)
 		}
 	}
 
@@ -172,20 +188,20 @@ func (s *Server) createTasks(ctx context.Context, tasks []*models.Task) error {
 
 func (s *Server) RetryNotifications(ctx context.Context, req *pb.RetryNotificationsRequest) (*pb.RetryNotificationsResponse, error) {
 	nfIds := stringutil.SimplifyStringList(req.NotificationId)
-	nfs, err := rs.GetNfsByNfIds(ctx, req.NotificationId)
+	nfs, err := rs.GetFailedNfsByNfIds(ctx, req.NotificationId)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to get notifications [%+v], %+v.", nfIds, err)
+		logger.Errorf(ctx, "Failed to get notifications[%+v], %+v.", nfIds, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, nfIds)
 	}
 
 	if len(nfs) != len(nfIds) {
-		logger.Errorf(ctx, "Retry notifications [%+v] do not exit.", nfIds)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorNotificationNotExist, nfIds)
+		logger.Errorf(ctx, "Retry notifications[%+v] do not exit.", nfIds)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotExist, nfIds)
 	}
 
 	for _, nf := range nfs {
 		if !(nf.Status == constants.StatusSuccessful || nf.Status == constants.StatusFailed) {
-			logger.Errorf(ctx, "Retry notifications [%+v] status is not %s or %s.", nfIds, constants.StatusSuccessful, constants.StatusFailed)
+			logger.Errorf(ctx, "Retry notifications[%+v] status is not %s or %s.", nfIds, constants.StatusSuccessful, constants.StatusFailed)
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRetryNotificationsFailed, nfIds)
 		}
 	}
@@ -193,15 +209,15 @@ func (s *Server) RetryNotifications(ctx context.Context, req *pb.RetryNotificati
 	for _, nfId := range nfIds {
 		err = s.controller.notificationQueue.Enqueue(nfId)
 		if err != nil {
-			logger.Errorf(ctx, "Push notification [%s] into queue failed, %+v.", nfId, err)
+			logger.Errorf(ctx, "Push notification[%s] into queue failed, %+v.", nfId, err)
 			return nil, err
 		}
-		logger.Debugf(ctx, "Push notification [%s] into queue successfully.", nfId)
+		logger.Debugf(ctx, "Push notification[%s] into queue successfully.", nfId)
 	}
 
 	err = rs.UpdateNotificationsStatus(ctx, nfIds, constants.StatusSending)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to update notifications [%+v] status to pending, %+v.", nfIds, err)
+		logger.Errorf(ctx, "Failed to update notifications[%+v] status to pending, %+v.", nfIds, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryNotificationsFailed, nfIds)
 	}
 
@@ -213,11 +229,11 @@ func (s *Server) RetryNotifications(ctx context.Context, req *pb.RetryNotificati
 
 	err = s.retryTasksByTaskIds(ctx, taskIds)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to retry tasks [%+v], %+v.", taskIds, err)
+		logger.Errorf(ctx, "Failed to retry tasks[%+v], %+v.", taskIds, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryNotificationsFailed, nfIds)
 	}
 
-	logger.Debugf(ctx, "Retry notifications [%+v] successfully.", nfIds)
+	logger.Debugf(ctx, "Retry notifications[%+v] successfully.", nfIds)
 
 	nfPbSet := models.NotificationSet2PbSet(nfs)
 	res := &pb.RetryNotificationsResponse{
@@ -230,24 +246,24 @@ func (s *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb
 	taskIds := stringutil.SimplifyStringList(req.TaskId)
 	tasks, err := rs.GetTasksByTaskIds(ctx, taskIds)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to get tasks [%+v], %+v.", taskIds, err)
+		logger.Errorf(ctx, "Failed to get tasks[%+v], %+v.", taskIds, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, taskIds)
 	}
 	if len(tasks) != len(taskIds) {
-		logger.Errorf(ctx, "Retry tasks [%+v] do not exit.", taskIds)
-		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorTaskNotExist, taskIds)
+		logger.Errorf(ctx, "Retry tasks[%+v] do not exit.", taskIds)
+		return nil, gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorResourceNotExist, taskIds)
 	}
 
 	for _, task := range tasks {
 		if !(task.Status == constants.StatusSuccessful || task.Status == constants.StatusFailed) {
-			logger.Errorf(ctx, "Retry tasks [%+v] status is not %s or %s.", taskIds, constants.StatusSuccessful, constants.StatusFailed)
+			logger.Errorf(ctx, "Retry tasks[%+v] status is not %s or %s.", taskIds, constants.StatusSuccessful, constants.StatusFailed)
 			return nil, gerr.NewWithDetail(ctx, gerr.PermissionDenied, err, gerr.ErrorRetryTaskFailed, taskIds)
 		}
 	}
 
 	err = s.retryTasksByTaskIds(ctx, taskIds)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to retry tasks [%+v], %+v.", taskIds, err)
+		logger.Errorf(ctx, "Failed to retry tasks[%+v], %+v.", taskIds, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, taskIds)
 	}
 	taskPbSet := models.TaskSet2PbSet(tasks)
@@ -259,18 +275,18 @@ func (s *Server) RetryTasks(ctx context.Context, req *pb.RetryTasksRequest) (*pb
 func (s *Server) retryTasksByTaskIds(ctx context.Context, taskIds []string) error {
 	err := rs.UpdateTasksStatus(ctx, taskIds, constants.StatusPending)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to update tasks [%+v] status to pending, %+v.", taskIds, err)
+		logger.Errorf(ctx, "Failed to update tasks[%+v] status to pending, %+v.", taskIds, err)
 		return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, taskIds)
 	}
 	for _, taskId := range taskIds {
 		err = s.controller.taskQueue.Enqueue(taskId)
 		if err != nil {
-			logger.Errorf(ctx, "Failed to push task [%+v] into queue, %+v.", taskIds, err)
+			logger.Errorf(ctx, "Failed to push task[%+v] into queue, %+v.", taskIds, err)
 			return gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorRetryTaskFailed, taskIds)
 		}
-		logger.Debugf(ctx, "Push task [%s] into queue successfully.", taskId)
+		logger.Debugf(ctx, "Push task[%s] into queue successfully.", taskId)
 	}
-	logger.Debugf(ctx, "Push tasks [%+v] into queue successfully.", taskIds)
+	logger.Debugf(ctx, "Push tasks[%+v] into queue successfully.", taskIds)
 	return nil
 }
 
@@ -306,26 +322,15 @@ func (s *Server) DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest
 	return res, nil
 }
 
+//****************************************
+//Address
+//****************************************
 func (s *Server) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
-	//Step1:check Address existed or not, if exist just return the address id
-	addr := req.GetAddress().GetValue()
-	var addrs []string
-	addrs = append(addrs, addr)
-
-	var reqDescribeAddresses = &pb.DescribeAddressesRequest{
-		Address: addrs,
-	}
-	respDescribeAddresses, err := s.DescribeAddresses(ctx, reqDescribeAddresses)
+	//step1:validate
+	err := ValidateCreateAddress(ctx, req)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to describe addresses, %+v.", err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
-	if respDescribeAddresses.GetTotalCount() != 0 {
-		return &pb.CreateAddressResponse{
-			AddressId: respDescribeAddresses.GetAddressSet()[0].AddressId,
-		}, nil
-	}
-
 	//Step2:if address does not exist,create it.
 	resp, err := s.createAddress(ctx, req)
 	if err != nil {
@@ -334,21 +339,14 @@ func (s *Server) CreateAddress(ctx context.Context, req *pb.CreateAddressRequest
 	}
 	return resp, nil
 }
-
 func (s *Server) createAddress(ctx context.Context, req *pb.CreateAddressRequest) (*pb.CreateAddressResponse, error) {
-	err := ValidateCreateAddressParams(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-
 	addr := models.NewAddress(req)
 	addrId, err := rs.CreateAddress(ctx, addr)
 	if err != nil {
 		logger.Errorf(ctx, "Failed to create address, %+v.", err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
+		return nil, err
 	}
-
-	logger.Debugf(ctx, "Create address [%s] successfully.", addr.AddressId)
+	logger.Debugf(ctx, "Create address[%s] successfully.", addr.AddressId)
 	return &pb.CreateAddressResponse{
 		AddressId: pbutil.ToProtoString(addrId),
 	}, nil
@@ -360,6 +358,7 @@ func (s *Server) DescribeAddresses(ctx context.Context, req *pb.DescribeAddresse
 		logger.Errorf(ctx, "Failed to describe addresses, %+v.", err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDescribeResourcesFailed)
 	}
+
 	addressPbSet := models.AddressWithListIdSet2PbSet(addrs)
 	res := &pb.DescribeAddressesResponse{
 		TotalCount: uint32(addrCnt),
@@ -372,11 +371,15 @@ func (s *Server) DescribeAddresses(ctx context.Context, req *pb.DescribeAddresse
 
 func (s *Server) ModifyAddress(ctx context.Context, req *pb.ModifyAddressRequest) (*pb.ModifyAddressResponse, error) {
 	var err error
-	err = ValidateModifyAddressParams(ctx, req)
+	//step1:validate
+	err = ValidateModifyAddress(ctx, req)
 	if err != nil {
 		return nil, err
 	}
 
+	//step2:update, at first check record exist or not,
+	//if not exist throw error
+	//if exist lock the records in tx, then update.
 	addressId := req.Address
 	attributes := make(map[string]interface{})
 	if req.AddressDetail.GetValue() != "" {
@@ -394,11 +397,10 @@ func (s *Server) ModifyAddress(ctx context.Context, req *pb.ModifyAddressRequest
 
 	err = rs.ModifyAddress(ctx, addressId, attributes)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to modify address [%s], %+v.", addressId, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed, addressId)
+		logger.Errorf(ctx, "Failed to modify address[%s], %+v.", addressId, err)
+		return nil, err
 	}
-
-	logger.Debugf(ctx, "Modify address [%s] successfully.", addressId)
+	logger.Debugf(ctx, "Modify address[%s] successfully.", addressId)
 
 	return &pb.ModifyAddressResponse{
 		AddressId: pbutil.ToProtoString(addressId),
@@ -407,25 +409,42 @@ func (s *Server) ModifyAddress(ctx context.Context, req *pb.ModifyAddressRequest
 }
 
 func (s *Server) DeleteAddresses(ctx context.Context, req *pb.DeleteAddressesRequest) (*pb.DeleteAddressesResponse, error) {
-	addressIds := stringutil.SimplifyStringList(req.AddressId)
-	err := rs.DeleteAddresses(ctx, addressIds)
+	//step1:validate
+	err := ValidateDeleteAddresses(ctx, req)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to delete addresses [%+v], %+v.", addressIds, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, addressIds)
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
 	}
 
-	logger.Debugf(ctx, "Delete addresses [%+v] successfully.", addressIds)
+	//step2:delete
+	addrIds := stringutil.Unique(stringutil.SimplifyStringList(req.GetAddressId()))
+	err = rs.DeleteAddresses(ctx, addrIds)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to delete addresses[%+v], %+v.", addrIds, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, addrIds)
+	}
+
+	logger.Debugf(ctx, "Delete addresses[%+v] successfully.", addrIds)
 	return &pb.DeleteAddressesResponse{
-		AddressId: addressIds,
+		AddressId: addrIds,
 	}, nil
 
 }
 
+//****************************************
+//AddressList
+//****************************************
 func (s *Server) CreateAddressList(ctx context.Context, req *pb.CreateAddressListRequest) (*pb.CreateAddressListResponse, error) {
-	addrList := models.NewAddressList(req)
-	addrIds := req.GetAddressId()
-	var addrListId string
+	//step1:validate
 	var err error
+	err = ValidateCreateAddressList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	//step2:create
+	addrList := models.NewAddressList(req)
+	addrIds := stringutil.Unique(stringutil.SimplifyStringList(req.GetAddressId()))
+	var addrListId string
 
 	if addrIds != nil {
 		addrListId, err = rs.CreateAddressListWithAddrIDs(ctx, addrList, addrIds)
@@ -437,8 +456,7 @@ func (s *Server) CreateAddressList(ctx context.Context, req *pb.CreateAddressLis
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorCreateResourcesFailed)
 	}
 
-	logger.Debugf(ctx, "Create addressList[%s] successfully.", addrList.AddressListId)
-
+	logger.Debugf(ctx, "Create addressList[%s] successfully.", addrListId)
 	return &pb.CreateAddressListResponse{
 		AddressListId: pbutil.ToProtoString(addrListId),
 	}, nil
@@ -476,16 +494,20 @@ func (s *Server) ModifyAddressList(ctx context.Context, req *pb.ModifyAddressLis
 	}
 
 	if addrIds != nil {
+		err = ValidatModifyAddressList(ctx, req)
+		if err != nil {
+			return nil, err
+		}
 		err = rs.ModifyAddressListWithAddrIDs(ctx, addressListId, attributes, addrIds)
 	} else {
 		err = rs.ModifyAddressList(ctx, addressListId, attributes)
 	}
 	if err != nil {
-		logger.Errorf(ctx, "Failed to modify addressList [%s], %+v.", addressListId, err)
-		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed, addressListId)
+		logger.Errorf(ctx, "Failed to modify addressList[%s], %+v.", addressListId, err)
+		return nil, err
 	}
 
-	logger.Debugf(ctx, "Modify addressList [%s] successfully.", addressListId)
+	logger.Debugf(ctx, "Modify addressList[%s] successfully.", addressListId)
 
 	return &pb.ModifyAddressListResponse{
 		AddressListId: pbutil.ToProtoString(addressListId),
@@ -493,32 +515,25 @@ func (s *Server) ModifyAddressList(ctx context.Context, req *pb.ModifyAddressLis
 }
 
 func (s *Server) DeleteAddressList(ctx context.Context, req *pb.DeleteAddressListRequest) (*pb.DeleteAddressListResponse, error) {
-	addressListIds := stringutil.SimplifyStringList(req.AddressListId)
-	err := rs.DeleteAddressLists(ctx, addressListIds)
+	//step1:validate
+	err := ValidateDeleteAddressesList(ctx, req)
 	if err != nil {
-		logger.Errorf(ctx, "Failed to delete address lists [%+v], %+v.", addressListIds, err)
+		return nil, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateFailed)
+	}
+	//step2:delete
+	addressListIds := stringutil.Unique(stringutil.SimplifyStringList(req.AddressListId))
+	err = rs.DeleteAddressLists(ctx, addressListIds)
+	if err != nil {
+		logger.Errorf(ctx, "Failed to delete address lists[%+v], %+v.", addressListIds, err)
 		return nil, gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorDeleteResourceFailed, addressListIds)
 	}
 
-	logger.Debugf(ctx, "Delete address list [%+v] successfully.", addressListIds)
+	logger.Debugf(ctx, "Delete address list[%+v] successfully.", addressListIds)
 
 	return &pb.DeleteAddressListResponse{
 		AddressListId: addressListIds,
 	}, nil
 
-}
-
-func (s *Server) ValidateEmailService(ctx context.Context, req *pb.ServiceConfig) (*pb.ValidateEmailServiceResponse, error) {
-	err := emailutil.SendMail4ValidateEmailService(nil, req)
-	if err != nil {
-		logger.Errorf(nil, "send email failed, [%+v]", err)
-		return &pb.ValidateEmailServiceResponse{
-			IsSucc: pbutil.ToProtoBool(false),
-		}, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateEmailService)
-	}
-	return &pb.ValidateEmailServiceResponse{
-		IsSucc: pbutil.ToProtoBool(true),
-	}, nil
 }
 
 func (s *Server) CreateNotificationChannel(req *pb.StreamReqData, res pb.Notification_CreateNotificationChannelServer) error {

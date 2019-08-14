@@ -20,15 +20,13 @@ message CreateNotificationRequest {
 	google.protobuf.StringValue content = 3;
 	//notification short content
 	google.protobuf.StringValue short_content = 4;
-	//notification expired days,  0 is for never expired.
+	//notification expired days, 0 is for never expired
 	google.protobuf.UInt32Value expired_days = 5;
 	//notification owner
 	google.protobuf.StringValue owner = 6;
-	//the address to send the notification, json fmt, currently support 2 kinds types.
-	//1.key/value Type, key is the notification send Type,the value is the list of address,
-	//eg:{"email": ["xxx1@163.com", "xxx2@163.com"],"websocket": ["system", "user1"]}
-	//2.Array Type, eg:["adl-xxxx1", "adl-xxxx2"],
-	//the item is the address list id which is already created in advance.
+	//The addresses to receive the notification,json fmt, currently support 2 kinds fmt types.
+	//1.key/value Type, key is the notification send Type,the value is the list of address, eg:{"email":["xxx1@163.com","xxx2@163.com"],"websocket":["system", "user1"]}
+	//2.Array Type, eg:["adl-xxxx1","adl-xxxx2"], the item is the address list id which is already created in advance
 	google.protobuf.StringValue address_info = 7;
 	//the available start time to receive notification
 	google.protobuf.StringValue available_start_time = 8;
@@ -65,9 +63,9 @@ message Notification {
 	google.protobuf.Timestamp status_time = 9;
 	//the owner of the notification
 	google.protobuf.StringValue owner = 10;
-	//the address to send the notification, json fmt, currently support 2 kinds types.
-	//1.key/value Type, key is the notification send Type,the value is the list of address, eg:{"email": ["openpitrix@163.com", "openpitrix@163.com"],"websocket": ["system", "jo"]}
-	//2.Array Type, eg:["adl-xxxx1", "adl-xxxx2"], the item is the address list id which is already created in advance.
+	//The addresses to receive the notification,json fmt, currently support 2 kinds fmt types.
+	//1.key/value Type, key is the notification send Type,the value is the list of address, eg:{"email":["xxx1@163.com","xxx2@163.com"],"websocket":["system", "user1"]}
+	//2.Array Type, eg:["adl-xxxx1","adl-xxxx2"], the item is the address list id which is already created in advance
 	google.protobuf.StringValue address_info = 11;
 	//the available start time to receive notification
 	google.protobuf.StringValue available_start_time = 12;
@@ -177,7 +175,7 @@ message RetryTasksResponse {
 }
 
 message CreateAddressRequest {
-	//required, address details, could be email address for email, user id for websocket, mobile number for sms.
+	//required, address details, could be email address for email, user id for websocket, mobile number for sms
 	google.protobuf.StringValue address = 1;
 	//remarks for address
 	google.protobuf.StringValue remarks = 2;
@@ -197,7 +195,7 @@ message DescribeAddressesRequest {
 	repeated string address_id = 1;
 	//address list id
 	repeated string address_list_id = 2;
-	//address details, could be email address for email, user id for websocket, mobile number for sms.
+	//address details, could be email address for email, user id for websocket, mobile number for sms
 	repeated string address = 3;
 	//the notification type , eg:[email|websocket|sms|wechat]
 	repeated string notify_type = 4;
@@ -222,7 +220,7 @@ message Address {
 	google.protobuf.StringValue address_id = 1;
 	//address list id
 	google.protobuf.StringValue address_list_id = 2;
-	//address details, could be email address for email, user id for websocket, mobile number for sms.
+	//address details, could be email address for email, user id for websocket, mobile number for sms
 	google.protobuf.StringValue address = 3;
 	//remarks for address
 	google.protobuf.StringValue remarks = 4;
@@ -250,7 +248,7 @@ message DescribeAddressesResponse {
 message ModifyAddressRequest {
 	//required, address id
 	string address = 1;
-	//address details, could be email address for email, user id for websocket, mobile number for sms.
+	//address details, could be email address for email, user id for websocket, mobile number for sms
 	google.protobuf.StringValue address_detail = 2;
 	//remarks for address
 	google.protobuf.StringValue remarks = 3;
@@ -258,6 +256,8 @@ message ModifyAddressRequest {
 	google.protobuf.StringValue verification_code = 4;
 	//the notification type, eg:[email|websocket|sms|wechat]
 	google.protobuf.StringValue notify_type = 5;
+	//status,eg:[active|disabled]
+//	google.protobuf.StringValue status = 6;
 }
 
 message ModifyAddressResponse {
@@ -337,7 +337,7 @@ message DescribeAddressListResponse {
 }
 
 message ModifyAddressListRequest {
-	//required, address list id
+	//required,address list id
 	string addresslist = 1;
 	//address list name
 	google.protobuf.StringValue address_list_name = 2;
@@ -345,7 +345,7 @@ message ModifyAddressListRequest {
 	google.protobuf.StringValue extra = 3;
 	//address list status, eg:[active|disabled|deleted]
 	google.protobuf.StringValue status = 4;
-	//address ids of the address list
+	//address ids which the address list includes
 	repeated string address_id = 5;
 }
 
@@ -355,7 +355,7 @@ message ModifyAddressListResponse {
 }
 
 message DeleteAddressListRequest {
-	//required, address list id
+	//required,address list id
 	repeated string address_list_id = 1;
 }
 
@@ -431,10 +431,10 @@ message MessageDetail {
 
 
 service notification {
-	//Create notification
+	//Create one notification.
 	rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create notification"
+			summary: "Create one notification."
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications"
@@ -442,65 +442,65 @@ service notification {
 		};
 	}
 
-	//Describe notifications
+	//Describe notifications, the return result includes multiple records.
 	rpc DescribeNotifications (DescribeNotificationsRequest) returns (DescribeNotificationsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Describe notifications"
+			summary: "Describe notifications, the return result includes multiple records."
 		};
 		option (google.api.http) = {
 			get: "/v1/notifications"
 		};
 	}
 
-	//Retry notifications
+	//Retry notifications.
 	rpc RetryNotifications (RetryNotificationsRequest) returns (RetryNotificationsResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Retry notifications"
+			summary: "Retry notifications."
 		};
 		option (google.api.http) = {
 			post: "/v1/notifications/retry"
 			body: "*"
 		};
 	}
-	//Describe tasks
+	//Describe tasks.
 	rpc DescribeTasks (DescribeTasksRequest) returns (DescribeTasksResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Describe tasks"
+			summary: "Describe tasks."
 		};
 		option (google.api.http) = {
 			get: "/v1/tasks"
 		};
 	}
-	//Retry tasks
+	//Retry tasks, the return result includes multiple records.
 	rpc RetryTasks (RetryTasksRequest) returns (RetryTasksResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Retry tasks"
+			summary: "Retry tasks, the return result includes multiple records."
 		};
 		option (google.api.http) = {
 			post: "/v1/tasks/retry"
 			body: "*"
 		};
 	}
-	//Create a recipient address
+	//Create one address.
 	rpc CreateAddress (CreateAddressRequest) returns (CreateAddressResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create a recipient address."
+			summary: "Create one address."
 		};
 		option (google.api.http) = {
 			post: "/v1/addresses"
 			body: "*"
 		};
 	}
-	//Query a list of addresses that meet the query criteria
+	//Query addresses, the return result includes multiple records.
 	rpc DescribeAddresses (DescribeAddressesRequest) returns (DescribeAddressesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Query a list of addresses that meet the query criteria."
+			summary: "Query addresses, the return result includes multiple records."
 		};
 		option (google.api.http) = {
 			get: "/v1/addresses"
 		};
 	}
-	//Modify one address
+	//Modify one address.
 	rpc ModifyAddress (ModifyAddressRequest) returns (ModifyAddressResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "Modify one address."
@@ -510,36 +510,36 @@ service notification {
 			body: "*"
 		};
 	}
-	//Delete a list of addresses
+	//Delete multiple addresses.
 	rpc DeleteAddresses (DeleteAddressesRequest) returns (DeleteAddressesResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Delete a list of addresses."
+			summary: "Delete multiple addresses."
 		};
 		option (google.api.http) = {
 			delete: "/v1/addresses"
 			body: "*"
 		};
 	}
-	//Create a list of addresses of the recipients.
+	//Create one address list.
 	rpc CreateAddressList (CreateAddressListRequest) returns (CreateAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Create a list of addresses of the recipients."
+			summary: "Create one address list."
 		};
 		option (google.api.http) = {
 			post: "/v1/addresslists"
 			body: "*"
 		};
 	}
-	//Query a list of address_lists that meet the query criteria
+	//Query address list, the return result includes multiple records.
 	rpc DescribeAddressList (DescribeAddressListRequest) returns (DescribeAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Query a list of addresslists that meet the query criteria."
+			summary: "Query address list, the return result includes multiple records."
 		};
 		option (google.api.http) = {
 			get: "/v1/addresslists"
 		};
 	}
-	//Modify one address list
+	//Modify one address list.
 	rpc ModifyAddressList (ModifyAddressListRequest) returns (ModifyAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
 			summary: "Modify one address list."
@@ -549,40 +549,40 @@ service notification {
 			body: "*"
 		};
 	}
-	//Delete a list of addresslist
+	//Delete multiple address lists.
 	rpc DeleteAddressList (DeleteAddressListRequest) returns (DeleteAddressListResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Delete a list of addresslist."
+			summary: "Delete multiple address lists."
 		};
 		option (google.api.http) = {
 			delete: "/v1/addresslists"
 			body: "*"
 		};
 	}
-	//Set service configration
+	//Set service configration.
 	rpc SetServiceConfig (ServiceConfig) returns (SetServiceConfigResponse) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Set service configration"
+			summary: "Set service configration."
 		};
 		option (google.api.http) = {
 			post: "/v1/serviceconfigs"
 			body: "*"
 		};
 	}
-	//Get service configration
+	//Get service configration.
 	rpc GetServiceConfig (GetServiceConfigRequest) returns (ServiceConfig) {
 		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Get service configration"
+			summary: "Get service configration."
 		};
 		option (google.api.http) = {
 			get: "/v1/serviceconfigs"
 		};
 	}
 
-	//Validate email service
+	//Validate email service.
 	rpc ValidateEmailService(ServiceConfig)  returns (ValidateEmailServiceResponse){
 	option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
-			summary: "Validate email service"
+			summary: "Validate email service."
 		};
 	option (google.api.http) = {
 			post: "/v1/serviceconfigs/validation"

@@ -57,7 +57,8 @@ type Config struct {
 	}
 
 	Websocket struct {
-		Service string `default:"op,ks"`
+		//Service string `default:"op,ks"`
+		Service string `default:"none"`
 	}
 }
 

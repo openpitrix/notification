@@ -92,7 +92,7 @@ func DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) ([]*models
 
 	if err := nfdb.GetChain(global.GetInstance().GetDB().Table(models.TableTask)).
 		AddQueryOrderDir(req, models.TaskColCreateTime).
-		BuildFilterConditions(req, models.TableTask).
+		BuildFilterConditions(req, models.TableTask, "and").
 		Offset(offset).
 		Limit(limit).
 		Find(&tasks).Error; err != nil {
@@ -101,7 +101,7 @@ func DescribeTasks(ctx context.Context, req *pb.DescribeTasksRequest) ([]*models
 	}
 
 	if err := nfdb.GetChain(global.GetInstance().GetDB().Table(models.TableTask)).
-		BuildFilterConditions(req, models.TableTask).
+		BuildFilterConditions(req, models.TableTask, "and").
 		Count(&count).Error; err != nil {
 		logger.Errorf(ctx, "Failed to describe task count, %+v", err)
 		return nil, 0, err

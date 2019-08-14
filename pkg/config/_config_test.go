@@ -29,8 +29,7 @@ type Config struct {
 		Password string `default:"password"`
 		Database string `default:"notification"`
 		Disable  bool   `default:"false"`
-		//LogMode  bool   `default:"false"`
-		LogMode bool `default:"false"`
+		LogMode  bool   `default:"true"`
 	}
 
 	Queue struct {
