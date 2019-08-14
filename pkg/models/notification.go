@@ -164,24 +164,24 @@ func DecodeNotificationExtra4ws(data string) (ws_service string, ws_message_type
 func CheckExtra(ctx context.Context, extraStr string) error {
 	if extraStr == "" {
 		logger.Errorf(ctx, "Failed to validate addressInfo, extra is blank: [%s].", extraStr)
-		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationExtra, extraStr)
+		return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorDecodeExtraFailed)
 	} else {
 		//	check Extra:  "{\"ws_service\": \"op\",\"ws_message_type\": \"event\"}"
 		nfExtraMap, err := DecodeNotificationExtra(extraStr)
 		if err != nil {
 			logger.Errorf(ctx, "Failed to validate notification extra [%s], should be: {\"ws_service\": \"xxx\",\"ws_message_type\": \"xxx\"}", extraStr)
-			return err
+			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorDecodeExtraFailed)
 		}
 		_, ok := (*nfExtraMap)[constants.WsService]
 		if !ok {
 			logger.Errorf(ctx, "Failed to validate notification extra [%s], should be: {\"ws_service\": \"xxx\",\"ws_message_type\": \"xxx\"}", extraStr)
-			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationExtra, extraStr)
+			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorDecodeExtraFailed)
 		}
 
 		_, ok = (*nfExtraMap)[constants.WsMessageType]
 		if !ok {
 			logger.Errorf(ctx, "Failed to validate notification extra [%s], should be: {\"ws_service\": \"xxx\",\"ws_message_type\": \"xxx\"}", extraStr)
-			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorIllegalNotificationExtra, extraStr)
+			return gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorDecodeExtraFailed)
 		}
 	}
 	return nil

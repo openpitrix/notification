@@ -26,25 +26,23 @@ All-in-One 模式部署由 [Docker-Compose](https://github.com/docker/compose) �
 
 > 说明：若主机已安装 Kubernetes 环境，可能会造成 docker 容器之间网络不通。
 
-## 第二步: 准备 Notification 源文件压缩包
+## 第二步: 准备 Notification 源文件
 
-1. 可通过 wget 命令从 GitHub 指定的 URL 下载 [Notification](https://github.com/openpitrix/notification/releases/tag/v0.2.2) 的源文件压缩包。
-
-```bash
-$ wget https://github.com/openpitrix/notification/archive/v0.2.2.tar.gz
-```
-2. 解压压缩包：
+可通过 git clone 命令从 GitHub 指定的 URL 下载 [Notification](https://github.com/openpitrix/notification) 的最新的源代码文件。
 
 ```bash
-$ tar -zxf notification-0.2.2.tar.gz
+$ git clone https://github.com/openpitrix/notification.git
 ```
-
+ 
 ## 第三步: 部署 Notification
 
 进入 解压后的 Notification 目录，编译项目。该过程需要拉取多个 Notification 相关的 docker 镜像，拉取镜像和安装速度与网络也有关系，需要等待几分钟。
 
 ```bash
-$ cd notification-0.2.2/ 
+$ cd notification
+$ export GO111MODULE=on
+$ make generate
+$ make build
 $ make compose-up
 ```
 

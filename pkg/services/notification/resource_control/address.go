@@ -5,8 +5,6 @@ package resource_control
 
 import (
 	"context"
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -44,8 +42,8 @@ func DescribeAddressesWithAddrListId(ctx context.Context, req *pb.DescribeAddres
 	var count uint64
 
 	dbChain = dbChain.
-		BuildFilterConditionsWithPrefix(req, models.TableAddress).
-		BuildFilterConditionsWithPrefix(req, models.TableAddressList, models.AddrLsColStatus).
+		BuildFilterConditionsWithPrefix(req, models.TableAddress, "or").
+		BuildFilterConditionsWithPrefix(req, models.TableAddressList, "or", models.AddrLsColStatus).
 		AddQueryOrderDirWithPrefix(models.TableAddress, req, models.AddrColCreateTime)
 
 	err := dbChain.
@@ -68,19 +66,22 @@ func DescribeAddressesWithAddrListId(ctx context.Context, req *pb.DescribeAddres
 }
 
 func ModifyAddress(ctx context.Context, addressId string, attributes map[string]interface{}) error {
+	//check record exist, only active address could be modify
 	tx := global.GetInstance().GetDB().Begin()
-	addrs, err := GetAddressesByIds(ctx, tx, []string{addressId})
-	if len(addrs) == 0 {
+	addrInDB, err := GetAddressesByIdsAndStatues(ctx, tx, []string{addressId}, []string{constants.StatusActive})
+	if len(addrInDB) == 0 {
 		tx.Rollback()
-		err := gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorAddressNotExist, addressId)
-		logger.Errorf(ctx, "Failed to update address [%s],address does not exits, %+v.", addressId, err)
+		logger.Errorf(ctx, "Failed to update address[%s],address does not exits, %+v.", addressId, err)
+		err := gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotExist, addressId)
 		return err
 	}
 
+	//update
 	err = tx.Table(models.TableAddress).Where(models.AddrColId+" = ?", addressId).Updates(attributes).Error
 	if err != nil {
 		tx.Rollback()
-		logger.Errorf(ctx, "Failed to update address [%s], %+v.", addressId, err)
+		logger.Errorf(ctx, "Failed to update address[%s], %+v.", addressId, err)
+		err = gerr.NewWithDetail(ctx, gerr.Internal, err, gerr.ErrorUpdateResourceFailed, addressId)
 		return err
 	}
 	tx.Commit()
@@ -89,15 +90,7 @@ func ModifyAddress(ctx context.Context, addressId string, attributes map[string]
 
 func DeleteAddresses(ctx context.Context, addressIds []string) error {
 	tx := global.GetInstance().GetDB().Begin()
-	addrs, err := GetAddressesByIds(ctx, tx, addressIds)
-	if len(addrs) != len(addressIds) {
-		tx.Rollback()
-		logger.Errorf(ctx, "Failed to delete address [%s], address does not exits, %+v.", addressIds, err)
-		err := gerr.NewWithDetail(ctx, gerr.NotFound, err, gerr.ErrorAddressNotExist, strings.Trim(fmt.Sprint(addressIds), "[]"))
-		return err
-	}
-
-	err = tx.Table(models.TableAddress).Where(models.AddrColId+" in (?)", addressIds).Updates(map[string]interface{}{models.AddrColStatus: constants.StatusDeleted, models.AddrColStatusTime: time.Now()}).Error
+	err := tx.Table(models.TableAddress).Where(models.AddrColId+" in (?)", addressIds).Updates(map[string]interface{}{models.AddrColStatus: constants.StatusDeleted, models.AddrColStatusTime: time.Now()}).Error
 	if err != nil {
 		tx.Rollback()
 		logger.Errorf(ctx, "Failed to update address status to deleted, %+v.", err)
@@ -134,16 +127,49 @@ func GetAddressesByListIds(ctx context.Context, listIds []string) ([]*models.Add
 	return addrs, nil
 }
 
-func GetAddressesByIds(ctx context.Context, tx *gorm.DB, addressIds []string) ([]*models.Address, error) {
+func GetAddressesByIdsAndStatues(ctx context.Context, tx *gorm.DB, addressIds []string, statuses []string) ([]*models.Address, error) {
 	var addrs []*models.Address
 	err := tx.Table(models.TableAddress).
 		Select("*").
 		Where(models.AddrColId+" in ( ? )", addressIds).
+		Where(models.AddrColStatus+" in ( ? )", statuses).
 		Set("gorm:query_option", "FOR UPDATE").
 		Scan(&addrs).Error
 	if err != nil {
 		tx.Rollback()
 		logger.Errorf(ctx, "Failed to get address by ids [%+v], %+v.", addressIds, err)
+		return nil, err
+	}
+	return addrs, nil
+}
+
+func GetDeletedAddressesByIds(ctx context.Context, tx *gorm.DB, addressIds []string) ([]*models.Address, error) {
+	var addrs []*models.Address
+	err := tx.Table(models.TableAddress).
+		Select("*").
+		Where(models.AddrColId+" in ( ? )", addressIds).
+		Where(models.AddrColStatus+" in ( '"+constants.StatusDeleted+"' )").
+		Set("gorm:query_option", "FOR UPDATE").
+		Scan(&addrs).Error
+	if err != nil {
+		tx.Rollback()
+		logger.Errorf(ctx, "Failed to get deleted address by ids [%+v], %+v.", addressIds, err)
+		return nil, err
+	}
+	return addrs, nil
+}
+
+func GetActiveAddressesByIds(ctx context.Context, addressIds []string) ([]*models.Address, error) {
+	var addrs []*models.Address
+	db := global.GetInstance().GetDB()
+
+	err := db.Table(models.TableAddress).
+		Select("*").
+		Where(models.AddrColStatus+" in ( '"+constants.StatusActive+"' )").
+		Where(models.AddrColId+" in ( ? )", addressIds).
+		Scan(&addrs).Error
+	if err != nil {
+		logger.Errorf(ctx, "Failed to get active address by list ids [%+v], %+v.", addressIds, err)
 		return nil, err
 	}
 	return addrs, nil

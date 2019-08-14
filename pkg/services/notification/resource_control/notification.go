@@ -88,7 +88,7 @@ func DescribeNotifications(ctx context.Context, req *pb.DescribeNotificationsReq
 	err := nfdb.GetChain(global.GetInstance().GetDB().
 		Table(models.TableNotification)).
 		AddQueryOrderDir(req, models.NfColCreateTime).
-		BuildFilterConditions(req, models.TableNotification).
+		BuildFilterConditions(req, models.TableNotification, "and").
 		Offset(offset).
 		Limit(limit).
 		Find(&nfs).Error
@@ -99,7 +99,7 @@ func DescribeNotifications(ctx context.Context, req *pb.DescribeNotificationsReq
 	}
 
 	if err := nfdb.GetChain(global.GetInstance().GetDB().Table(models.TableNotification)).
-		BuildFilterConditions(req, models.TableNotification).
+		BuildFilterConditions(req, models.TableNotification, "and").
 		Count(&count).Error; err != nil {
 		logger.Errorf(ctx, "Failed to describe notification count, %+v.", err)
 		return nil, 0, err
@@ -114,6 +114,17 @@ func GetNfsByNfIds(ctx context.Context, nfIds []string) ([]*models.Notification,
 	err := db.Where("notification_id in( ? )", nfIds).Find(&nfs).Error
 	if err != nil {
 		logger.Errorf(ctx, "Failed to get notifications by ids [%+v], %+v.", nfIds, err)
+		return nil, err
+	}
+	return nfs, nil
+}
+
+func GetFailedNfsByNfIds(ctx context.Context, nfIds []string) ([]*models.Notification, error) {
+	db := global.GetInstance().GetDB()
+	var nfs []*models.Notification
+	err := db.Where("notification_id in( ? )", nfIds).Where(models.NfColStatus + " in ( '" + constants.StatusFailed + "' )").Find(&nfs).Error
+	if err != nil {
+		logger.Errorf(ctx, "Failed to get failed notifications by ids [%+v], %+v.", nfIds, err)
 		return nil, err
 	}
 	return nfs, nil

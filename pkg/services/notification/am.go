@@ -27,7 +27,7 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 			Exec()
 	case *pb.CreateNotificationRequest:
 		return manager.NewChecker(ctx, r).
-			Required(models.NfColContentType, models.NfColTitle, models.NfColAddressInfo).
+			Required(models.NfColContentType, models.NfColContent, models.NfColTitle, models.NfColAddressInfo).
 			StringChosen(models.NfColContentType, models.ContentTypes).
 			Exec()
 	case *pb.DescribeNotificationsRequest:
@@ -55,7 +55,7 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 	case *pb.ModifyAddressRequest:
 		return manager.NewChecker(ctx, r).
 			Required(models.AddrColId).
-			StringChosen(models.ServiceType, constants.NotifyTypes).
+			StringChosen(models.AddrColNotifyType, constants.NotifyTypes).
 			Exec()
 	case *pb.DeleteAddressesRequest:
 		return manager.NewChecker(ctx, r).

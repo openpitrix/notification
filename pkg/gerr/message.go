@@ -135,8 +135,8 @@ var (
 	}
 	ErrorIllegalNotificationAddressInfo = ErrorMessage{
 		Name: "illegal_notification_address_format",
-		en:   "illegal notification address format [%s]",
-		zhCN: "错误的通知地址格式[%s]",
+		en:   "illegal notification address format, fmt should be {\"email\": [\"xxx@abc.com\",\"xxx@xxx.com\"]},或者[\"adl-xxx1\", \"adl-xxx2\"].",
+		zhCN: "错误的通知地址格式，通知地址格式应为{\"email\": [\"xxx@abc.com\",\"xxx@xxx.com\"]},或者[\"adl-xxx1\", \"adl-xxx2\"].",
 	}
 	ErrorIllegalNotificationType = ErrorMessage{
 		Name: "illegal_notification_type",
@@ -148,9 +148,69 @@ var (
 		en:   "illegal notification address list [%s]",
 		zhCN: "错误的通知列表[%s]",
 	}
+	ErrorDecodeContentFailed = ErrorMessage{
+		Name: "error_decode_content_failed",
+		en:   "error decode content failed, fmt should be [{\"content_type\": \"content\"}].",
+		zhCN: "解码内容失败，内容字段格式应为[{\"content_type\": \"content\"}].",
+	}
+	ErrorExistAddress = ErrorMessage{
+		Name: "error_exist_address",
+		en:   "error exist address [%s]",
+		zhCN: "已存在该地址信息[%s]",
+	}
+	ErrorNotifyType = ErrorMessage{
+		Name: "error_notify_type",
+		en:   "error notify type [%s]",
+		zhCN: "错误的通知类型[%s]",
+	}
+	ErrorNotExistItemInList = ErrorMessage{
+		Name: "not_exist_item_in_list",
+		en:   "not exist item in list [%s]",
+		zhCN: "列表[%s]中某些元素不存在",
+	}
+	ErrorAlreadyDeletedItemInList = ErrorMessage{
+		Name: "already_deleted_item_in_list",
+		en:   "already deleted item in list [%s]",
+		zhCN: "列表[%s]中某些元素已经被删除",
+	}
+	ErrorIllegalItemInList = ErrorMessage{
+		Name: "illegal_item_in_list",
+		en:   "illegal item in list [%s]",
+		zhCN: "列表[%s]中某些元素不合法",
+	}
+	ErrorExtraIsNotJsonFmt = ErrorMessage{
+		Name: "is_not_json_fmt",
+		en:   "is not json fmt [%s]",
+		zhCN: "不是JSON格式[%s]",
+	}
+	ErrorResourceNotExist = ErrorMessage{
+		Name: "resource_not_exist",
+		en:   "resource [%s] not exist",
+		zhCN: "资源[%s]不存在",
+	}
+	ErrorAlreadyExistResource = ErrorMessage{
+		Name: "error_already_exist_resource",
+		en:   "error already exist resource [%s]",
+		zhCN: "已存在该资源[%s]",
+	}
+	ErrorIllegalWebsocketDisabled = ErrorMessage{
+		Name: "illegal_websocket_disabled",
+		en:   "illegal websocket disabled [%s]",
+		zhCN: "websocket配置尚未启用[%s]",
+	}
+	ErrorIllegalNotificationExtraBlank = ErrorMessage{
+		Name: "illegal_notification_extra_blank",
+		en:   "illegal notification extra, extra should be blank.",
+		zhCN: "未设置websocket用户信息，extra应为空.",
+	}
 	ErrorIllegalNotificationExtra = ErrorMessage{
 		Name: "illegal_notification_extra",
 		en:   "illegal notification extra [%s]",
 		zhCN: "错误的通知附加信息[%s]",
+	}
+	ErrorDecodeExtraFailed = ErrorMessage{
+		Name: "error_decode_extra_failed",
+		en:   "error decode extra failed, fmt should be [{\"ws_service\": \"xxx\",\"ws_message_type\": \"xxx\"}].",
+		zhCN: "解码extra字段失败，extra字段格式应为[{\"ws_service\": \"xxx\",\"ws_message_type\": \"xxx\"}].",
 	}
 )

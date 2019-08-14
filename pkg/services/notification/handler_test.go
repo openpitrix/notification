@@ -295,36 +295,37 @@ func TestDescribeAddresses(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	var AddressIds []string
-	AddressIds = append(AddressIds, "addr-4MMNPyVzqMEr")
-
-	var AddressListIds []string
-	AddressListIds = append(AddressListIds, "adl-lW4DmnoJWp98")
-
-	var statuses []string
-	statuses = append(statuses, "active")
-
-	var nfTypes []string
-	nfTypes = append(nfTypes, "email")
-
-	var addrs []string
-	addrs = append(addrs, "openpitrix@foxmail.com")
-
-	var req = &pb.DescribeAddressesRequest{
-		AddressId:     AddressIds,
-		AddressListId: AddressListIds,
-		Address:       addrs,
-		NotifyType:    nfTypes,
-		Status:        statuses,
-		Limit:         20,
-		Offset:        0,
-		SearchWord:    pbutil.ToProtoString("successful"),
-		SortKey:       pbutil.ToProtoString("status"),
-		Reverse:       pbutil.ToProtoBool(true),
-	}
+	//var AddressIds []string
+	//AddressIds = append(AddressIds, "addr-4MMNPyVzqMEr")
+	//
+	//var AddressListIds []string
+	//AddressListIds = append(AddressListIds, "adl-lW4DmnoJWp98")
+	//
+	//var statuses []string
+	//statuses = append(statuses, "active")
+	//
+	//var nfTypes []string
+	//nfTypes = append(nfTypes, "email")
+	//
+	//var addrs []string
+	//addrs = append(addrs, "openpitrix@foxmail.com")
+	//
+	//var req = &pb.DescribeAddressesRequest{
+	//	AddressId:     AddressIds,
+	//	AddressListId: AddressListIds,
+	//	Address:       addrs,
+	//	NotifyType:    nfTypes,
+	//	Status:        statuses,
+	//	Limit:         20,
+	//	Offset:        0,
+	//	SearchWord:    pbutil.ToProtoString("successful"),
+	//	SortKey:       pbutil.ToProtoString("status"),
+	//	Reverse:       pbutil.ToProtoBool(true),
+	//}
+	var req = &pb.DescribeAddressesRequest{SearchWord: pbutil.ToProtoString("adl-Bmwv3o4yyBvo")}
 	resp, err := s.DescribeAddresses(ctx, req)
 	if err != nil {
-		t.Fatalf("TestDescribeAddresses failed[%s]", AddressIds)
+		t.Fatalf("TestDescribeAddresses failed[%+v]", req)
 	}
 	t.Log(nil, "Test Passed, TestDescribeAddresses", resp)
 
@@ -367,7 +368,7 @@ func TestDeleteAddresses(t *testing.T) {
 	defer cancel()
 
 	var addressIds []string
-	addressIds = append(addressIds, "addr-wRKQzOy7jAWZ")
+	addressIds = append(addressIds, "addr-nYY9L5L8gqMP")
 
 	var req = &pb.DeleteAddressesRequest{
 		AddressId: addressIds,
@@ -395,14 +396,13 @@ func TestCreateAddressList(t *testing.T) {
 	//addressIds = append(addressIds, "addr-5mwjWpjrZ1YD")
 	//addressIds = append(addressIds, "addr-79ME9JRwyM94")
 	//addressIds = append(addressIds, "addr-vApolRp19pnj")
-
-	addressIds = append(addressIds, "addr-4MMNPyVzqMEr")
+	addressIds = append(addressIds, "addr-Q0rqVLlzXGwZ")
 	//addressIds = append(addressIds, "addr-zP8zA0mZqYvj")
 
 	var req = &pb.CreateAddressListRequest{
 		AddressListName: pbutil.ToProtoString("通知列表1"),
 		//Extra:           pbutil.ToProtoString("{\"email\": [\"openpitrix@163.com\", \"513590612@qq.com\"]}"),
-		//Extra:     pbutil.ToProtoString("{}"),
+		Extra:     pbutil.ToProtoString("{111}"),
 		AddressId: addressIds,
 	}
 	resp, err := s.CreateAddressList(ctx, req)
