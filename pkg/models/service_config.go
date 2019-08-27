@@ -18,6 +18,10 @@ const (
 )
 
 const (
+	TestEmailRecipient = "test_email_recipient"
+)
+
+const (
 	ProtocolTypeSMTP = "SMTP"
 	ProtocolTypePOP3 = "POP3"
 	ProtocolTypeIMAP = "IMAP"

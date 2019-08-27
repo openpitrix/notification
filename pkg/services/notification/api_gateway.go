@@ -128,6 +128,7 @@ func (s *Server) run() error {
 	r.Use(recovery())
 	r.Any("/swagger-ui/*filepath", gin.WrapH(handleSwagger()))
 	r.Any("/v1/*filepath", mainHandler)
+	r.Any("/v2/*filepath", mainHandler)
 	r.Any("/api/*filepath", mainHandler)
 
 	cfg := config.GetInstance()

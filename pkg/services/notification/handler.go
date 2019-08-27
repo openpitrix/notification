@@ -25,18 +25,8 @@ import (
 //ServiceConfig
 //****************************************
 func (s *Server) SetServiceConfig(ctx context.Context, req *pb.ServiceConfig) (*pb.SetServiceConfigResponse, error) {
-	err := ValidateSetServiceConfigParams(ctx, req)
+	err := ValidateSetServiceConfigParams(ctx, req.GetEmailServiceConfig(), "")
 	if err != nil {
-		return nil, err
-	}
-
-	respValidate, err := s.ValidateEmailService(ctx, req)
-	if err != nil {
-		logger.Errorf(ctx, "Failed to set service config, %+v.", err)
-		return nil, err
-	}
-
-	if !respValidate.IsSucc.GetValue() {
 		logger.Errorf(ctx, "Failed to set service config.")
 		return nil, gerr.New(ctx, gerr.InvalidArgument, gerr.ErrorValidateEmailService)
 	}
@@ -89,7 +79,30 @@ func (s *Server) GetServiceConfig(ctx context.Context, req *pb.GetServiceConfigR
 }
 
 func (s *Server) ValidateEmailService(ctx context.Context, req *pb.ServiceConfig) (*pb.ValidateEmailServiceResponse, error) {
-	err := emailutil.SendMail4ValidateEmailService(nil, req)
+	err := ValidateSetServiceConfigParams(ctx, req.GetEmailServiceConfig(), "")
+	if err != nil {
+		return nil, err
+	}
+
+	err = emailutil.SendMail4ValidateEmailService(nil, req.GetEmailServiceConfig(), "")
+	if err != nil {
+		logger.Errorf(nil, "send email failed, [%+v]", err)
+		return &pb.ValidateEmailServiceResponse{
+			IsSucc: pbutil.ToProtoBool(false),
+		}, gerr.NewWithDetail(ctx, gerr.InvalidArgument, err, gerr.ErrorValidateEmailService)
+	}
+	return &pb.ValidateEmailServiceResponse{
+		IsSucc: pbutil.ToProtoBool(true),
+	}, nil
+}
+
+func (s *Server) ValidateEmailServiceV2(ctx context.Context, req *pb.ValidateEmailServiceV2Request) (*pb.ValidateEmailServiceResponse, error) {
+	err := ValidateSetServiceConfigParams(ctx, req.GetEmailServiceConfig(), req.GetTestEmailRecipient().GetValue())
+	if err != nil {
+		return nil, err
+	}
+
+	err = emailutil.SendMail4ValidateEmailService(nil, req.GetEmailServiceConfig(), req.GetTestEmailRecipient().GetValue())
 	if err != nil {
 		logger.Errorf(nil, "send email failed, [%+v]", err)
 		return &pb.ValidateEmailServiceResponse{
