@@ -9,12 +9,19 @@ import (
 	"net/smtp"
 )
 
-type unencryptedPlainAuth struct {
-	identity, username, password string
-	host                         string
+type noStartTLSPlainAuth struct {
+	identity string
+	username string
+	password string
+	host     string
 }
 
-func (a *unencryptedPlainAuth) Start(server *smtp.ServerInfo) (string, []byte, error) {
+func (a *noStartTLSPlainAuth) Start(server *smtp.ServerInfo) (string, []byte, error) {
+	//compared net/smtp  Auth.go  PlainAuth,remove below lines.
+	//if !server.TLS && !isLocalhost(server.Name) {
+	//	return "", nil, errors.New("unencrypted connection")
+	//}
+
 	if server.Name != a.host {
 		return "", nil, errors.New("wrong host name")
 	}
@@ -22,7 +29,7 @@ func (a *unencryptedPlainAuth) Start(server *smtp.ServerInfo) (string, []byte, e
 	return "PLAIN", resp, nil
 }
 
-func (a *unencryptedPlainAuth) Next(fromServer []byte, more bool) ([]byte, error) {
+func (a *noStartTLSPlainAuth) Next(fromServer []byte, more bool) ([]byte, error) {
 	if more {
 		// We've already sent everything.
 		return nil, errors.New("unexpected server challenge")

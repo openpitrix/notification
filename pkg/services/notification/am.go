@@ -20,6 +20,11 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 			Required(models.ServiceCfgProtocol, models.ServiceCfgEmailHost, models.ServiceCfgPort, models.ServiceCfgDisplayEmail, models.ServiceCfgEmail, models.ServiceCfgPassword).
 			StringChosen(models.ServiceCfgProtocol, models.ProtocolTypes).
 			Exec()
+	case *pb.ValidateEmailServiceV2Request:
+		return manager.NewChecker(ctx, r).
+			Required(models.ServiceCfgProtocol, models.ServiceCfgEmailHost, models.ServiceCfgPort, models.ServiceCfgDisplayEmail, models.ServiceCfgEmail, models.ServiceCfgPassword, models.TestEmailRecipient).
+			StringChosen(models.ServiceCfgProtocol, models.ProtocolTypes).
+			Exec()
 	case *pb.GetServiceConfigRequest:
 		return manager.NewChecker(ctx, r).
 			Required(models.ServiceType).

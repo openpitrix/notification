@@ -35,6 +35,6 @@ generate: $(PROTO_FILES) Makefile
 
 
 clean:
-	rm -rf $(GOPATH)/src/openpitrix.io/iam/pkg/pb
+	rm -rf $(GOPATH)/src/openpitrix.io/notification/pkg/pb
 
 

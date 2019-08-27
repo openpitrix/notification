@@ -430,6 +430,15 @@ message MessageDetail {
 }
 
 
+message ValidateEmailServiceV2Request {
+	//email to receive verification email server
+	google.protobuf.StringValue test_email_recipient = 1;
+	//email config
+	EmailServiceConfig email_service_config = 2;
+}
+
+
+
 service notification {
 	//Create one notification.
 	rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse) {
@@ -586,6 +595,16 @@ service notification {
 		};
 	option (google.api.http) = {
 			post: "/v1/serviceconfigs/validation"
+			body: "*"
+		};
+	}
+
+	rpc ValidateEmailServiceV2(ValidateEmailServiceV2Request)  returns (ValidateEmailServiceResponse){
+		option (grpc.gateway.protoc_gen_swagger.options.openapiv2_operation) = {
+			summary: "Validate email service."
+		};
+		option (google.api.http) = {
+			post: "/v2/serviceconfigs/validation"
 			body: "*"
 		};
 	}

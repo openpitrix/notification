@@ -30,7 +30,7 @@ var Files = map[string]string{
   "paths": {
     "/v1/addresses": {
       "get": {
-        "summary": "Query a list of addresses that meet the query criteria.",
+        "summary": "Query addresses, the return result includes multiple records.",
         "operationId": "DescribeAddresses",
         "responses": {
           "200": {
@@ -151,7 +151,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "Delete a list of addresses.",
+        "summary": "Delete multiple addresses.",
         "operationId": "DeleteAddresses",
         "responses": {
           "200": {
@@ -176,7 +176,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "Create a recipient address.",
+        "summary": "Create one address.",
         "operationId": "CreateAddress",
         "responses": {
           "200": {
@@ -237,7 +237,7 @@ var Files = map[string]string{
     },
     "/v1/addresslists": {
       "get": {
-        "summary": "Query a list of addresslists that meet the query criteria.",
+        "summary": "Query address list, the return result includes multiple records.",
         "operationId": "DescribeAddressList",
         "responses": {
           "200": {
@@ -347,7 +347,7 @@ var Files = map[string]string{
         ]
       },
       "delete": {
-        "summary": "Delete a list of addresslist.",
+        "summary": "Delete multiple address lists.",
         "operationId": "DeleteAddressList",
         "responses": {
           "200": {
@@ -372,7 +372,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "Create a list of addresses of the recipients.",
+        "summary": "Create one address list.",
         "operationId": "CreateAddressList",
         "responses": {
           "200": {
@@ -412,7 +412,7 @@ var Files = map[string]string{
         "parameters": [
           {
             "name": "addresslist",
-            "description": "required, address list id",
+            "description": "required,address list id",
             "in": "path",
             "required": true,
             "type": "string"
@@ -433,7 +433,7 @@ var Files = map[string]string{
     },
     "/v1/notifications": {
       "get": {
-        "summary": "Describe notifications",
+        "summary": "Describe notifications, the return result includes multiple records.",
         "operationId": "DescribeNotifications",
         "responses": {
           "200": {
@@ -543,7 +543,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "Create notification",
+        "summary": "Create one notification.",
         "operationId": "CreateNotification",
         "responses": {
           "200": {
@@ -570,7 +570,7 @@ var Files = map[string]string{
     },
     "/v1/notifications/retry": {
       "post": {
-        "summary": "Retry notifications",
+        "summary": "Retry notifications.",
         "operationId": "RetryNotifications",
         "responses": {
           "200": {
@@ -597,7 +597,7 @@ var Files = map[string]string{
     },
     "/v1/serviceconfigs": {
       "get": {
-        "summary": "Get service configration",
+        "summary": "Get service configration.",
         "operationId": "GetServiceConfig",
         "responses": {
           "200": {
@@ -625,7 +625,7 @@ var Files = map[string]string{
         ]
       },
       "post": {
-        "summary": "Set service configration",
+        "summary": "Set service configration.",
         "operationId": "SetServiceConfig",
         "responses": {
           "200": {
@@ -652,7 +652,7 @@ var Files = map[string]string{
     },
     "/v1/serviceconfigs/validation": {
       "post": {
-        "summary": "Validate email service",
+        "summary": "Validate email service.",
         "operationId": "ValidateEmailService",
         "responses": {
           "200": {
@@ -679,7 +679,7 @@ var Files = map[string]string{
     },
     "/v1/tasks": {
       "get": {
-        "summary": "Describe tasks",
+        "summary": "Describe tasks.",
         "operationId": "DescribeTasks",
         "responses": {
           "200": {
@@ -791,7 +791,7 @@ var Files = map[string]string{
     },
     "/v1/tasks/retry": {
       "post": {
-        "summary": "Retry tasks",
+        "summary": "Retry tasks, the return result includes multiple records.",
         "operationId": "RetryTasks",
         "responses": {
           "200": {
@@ -815,6 +815,33 @@ var Files = map[string]string{
           "notification"
         ]
       }
+    },
+    "/v2/serviceconfigs/validation": {
+      "post": {
+        "summary": "Validate email service.",
+        "operationId": "ValidateEmailServiceV2",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbValidateEmailServiceResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbValidateEmailServiceV2Request"
+            }
+          }
+        ],
+        "tags": [
+          "notification"
+        ]
+      }
     }
   },
   "definitions": {
@@ -831,7 +858,7 @@ var Files = map[string]string{
         },
         "address": {
           "type": "string",
-          "description": "address details, could be email address for email, user id for websocket, mobile number for sms."
+          "title": "address details, could be email address for email, user id for websocket, mobile number for sms"
         },
         "remarks": {
           "type": "string",
@@ -938,7 +965,7 @@ var Files = map[string]string{
       "properties": {
         "address": {
           "type": "string",
-          "description": "required, address details, could be email address for email, user id for websocket, mobile number for sms."
+          "title": "required, address details, could be email address for email, user id for websocket, mobile number for sms"
         },
         "remarks": {
           "type": "string",
@@ -985,7 +1012,7 @@ var Files = map[string]string{
         "expired_days": {
           "type": "integer",
           "format": "int64",
-          "description": "notification expired days,  0 is for never expired."
+          "title": "notification expired days, 0 is for never expired"
         },
         "owner": {
           "type": "string",
@@ -993,7 +1020,7 @@ var Files = map[string]string{
         },
         "address_info": {
           "type": "string",
-          "description": "the address to send the notification, json fmt, currently support 2 kinds types.\n1.key/value Type, key is the notification send Type,the value is the list of address,\neg:{\"email\": [\"xxx1@163.com\", \"xxx2@163.com\"],\"websocket\": [\"system\", \"user1\"]}\n2.Array Type, eg:[\"adl-xxxx1\", \"adl-xxxx2\"],\nthe item is the address list id which is already created in advance."
+          "title": "The addresses to receive the notification,json fmt, currently support 2 kinds fmt types.\n1.key/value Type, key is the notification send Type,the value is the list of address, eg:{\"email\":[\"xxx1@163.com\",\"xxx2@163.com\"],\"websocket\":[\"system\", \"user1\"]}\n2.Array Type, eg:[\"adl-xxxx1\",\"adl-xxxx2\"], the item is the address list id which is already created in advance"
         },
         "available_start_time": {
           "type": "string",
@@ -1026,7 +1053,7 @@ var Files = map[string]string{
           "items": {
             "type": "string"
           },
-          "title": "required, address list id"
+          "title": "required,address list id"
         }
       }
     },
@@ -1202,7 +1229,7 @@ var Files = map[string]string{
       "properties": {
         "addresslist": {
           "type": "string",
-          "title": "required, address list id"
+          "title": "required,address list id"
         },
         "address_list_name": {
           "type": "string",
@@ -1221,7 +1248,7 @@ var Files = map[string]string{
           "items": {
             "type": "string"
           },
-          "title": "address ids of the address list"
+          "title": "address ids which the address list includes"
         }
       }
     },
@@ -1243,7 +1270,7 @@ var Files = map[string]string{
         },
         "address_detail": {
           "type": "string",
-          "description": "address details, could be email address for email, user id for websocket, mobile number for sms."
+          "title": "address details, could be email address for email, user id for websocket, mobile number for sms"
         },
         "remarks": {
           "type": "string",
@@ -1316,7 +1343,7 @@ var Files = map[string]string{
         },
         "address_info": {
           "type": "string",
-          "description": "the address to send the notification, json fmt, currently support 2 kinds types.\n1.key/value Type, key is the notification send Type,the value is the list of address, eg:{\"email\": [\"openpitrix@163.com\", \"openpitrix@163.com\"],\"websocket\": [\"system\", \"jo\"]}\n2.Array Type, eg:[\"adl-xxxx1\", \"adl-xxxx2\"], the item is the address list id which is already created in advance."
+          "title": "The addresses to receive the notification,json fmt, currently support 2 kinds fmt types.\n1.key/value Type, key is the notification send Type,the value is the list of address, eg:{\"email\":[\"xxx1@163.com\",\"xxx2@163.com\"],\"websocket\":[\"system\", \"user1\"]}\n2.Array Type, eg:[\"adl-xxxx1\",\"adl-xxxx2\"], the item is the address list id which is already created in advance"
         },
         "available_start_time": {
           "type": "string",
@@ -1467,6 +1494,19 @@ var Files = map[string]string{
           "type": "boolean",
           "format": "boolean",
           "title": "validate service config ok or not"
+        }
+      }
+    },
+    "pbValidateEmailServiceV2Request": {
+      "type": "object",
+      "properties": {
+        "test_email_recipient": {
+          "type": "string",
+          "title": "email to receive verification email server"
+        },
+        "email_service_config": {
+          "$ref": "#/definitions/pbEmailServiceConfig",
+          "title": "email config"
         }
       }
     },

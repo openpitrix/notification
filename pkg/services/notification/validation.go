@@ -24,16 +24,16 @@ import (
 //****************************************
 //Validate ServiceConfig
 //****************************************
-func ValidateSetServiceConfigParams(ctx context.Context, req *pb.ServiceConfig) error {
-	email := req.GetEmailServiceConfig().GetEmail().GetValue()
-	err := VerifyEmailFmt(ctx, email)
-	if err != nil {
-		logger.Errorf(ctx, "Failed to validate email [%s]: %+v", email, err)
-		return err
+func ValidateSetServiceConfigParams(ctx context.Context, emailServiceConfig *pb.EmailServiceConfig, testEmailRecipient string) error {
+	if testEmailRecipient != "" {
+		err := VerifyEmailFmt(ctx, testEmailRecipient)
+		if err != nil {
+			logger.Errorf(ctx, "Failed to validate TestEmailRecipient [%s]: %+v", testEmailRecipient, err)
+			return err
+		}
 	}
-
-	port := req.GetEmailServiceConfig().GetPort().GetValue()
-	err = VerifyPortFmt(ctx, int32(port))
+	port := emailServiceConfig.GetPort().GetValue()
+	err := VerifyPortFmt(ctx, int32(port))
 	if err != nil {
 		logger.Errorf(ctx, "Failed to validate port [%d]: %+v", port, err)
 		return err
