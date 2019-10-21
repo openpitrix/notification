@@ -1183,7 +1183,7 @@ var Files = map[string]string{
         },
         "email": {
           "type": "string",
-          "title": "send email address"
+          "description": "In fact email is the SMTP user which used to validate access to SMTP Server with password."
         },
         "password": {
           "type": "string",
@@ -1201,6 +1201,10 @@ var Files = map[string]string{
         "validation_title": {
           "type": "string",
           "title": "email title for validation email"
+        },
+        "from_email_addr": {
+          "type": "string",
+          "title": "from email address"
         }
       }
     },

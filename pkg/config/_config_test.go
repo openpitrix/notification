@@ -23,7 +23,7 @@ type Config struct {
 	Mysql struct {
 		//Host string `default:"notification-db"`
 		//Port int    `default:"3306"`
-		Host     string `default:"192.168.0.6"`
+		Host     string `default:"192.168.0.8"`
 		Port     int    `default:"13306"`
 		User     string `default:"root"`
 		Password string `default:"password"`
@@ -35,7 +35,7 @@ type Config struct {
 	Queue struct {
 		//Addr string `default:"redis://notification-redis:6379"`
 		Type string `default:"redis"`
-		Addr string `default:"redis://192.168.0.6:6379"`
+		Addr string `default:"redis://192.168.0.8:6379"`
 		//Type string `default:"etcd"`
 		//Addr string `default:"192.168.0.6:12379"`
 	}
@@ -48,6 +48,7 @@ type Config struct {
 		Email         string `default:"openpitrix@app-center.cn"`
 		Password      string `default:"openpitrix"`
 		SSLEnable     bool   `default:"false"`
+		FromEmailAddr string `default:"openpitrix@app-center.cn"`
 	}
 
 	App struct {

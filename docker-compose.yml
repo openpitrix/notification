@@ -5,7 +5,6 @@
 version: '3'
 
 services:
-  # notification mysql db
   notification-db:
     image: "mysql:8.0.11"
     environment:
@@ -13,7 +12,7 @@ services:
     volumes:
     - ${DATA_PATH}/mysql:/var/lib/mysql
     - ./pkg/db/ddl:/docker-entrypoint-initdb.d
-    command: --lower_case_table_names=0 --max_allowed_packet=10485760 --max_connections=256
+    command: --lower_case_table_names=0 --default-authentication-plugin=mysql_native_password  --max_allowed_packet=10485760 --max_connections=256 --connect-timeout=5
     ports:
     - "13306:3306" # for unit-test & debug
     container_name: "notification-db"
@@ -23,7 +22,19 @@ services:
         max-size: ${NOTIFICATION_LOG_MAX_SIZE}
         max-file: ${NOTIFICATION_LOG_MAX_FILE}
 
-  # notification redis
+
+  notification-db-ctrl:
+    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
+    command: -url=jdbc:mysql://notification-db/notification -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
+    volumes:
+    - ./pkg/db/schema/notification:/flyway/sql
+    links:
+    - notification-db:notification-db
+    depends_on:
+    - notification-db
+    container_name: "notification-db-ctrl"
+
+#notification redis
   notification-redis:
     image: "redis:5.0.5-alpine"
     volumes:
@@ -31,33 +42,19 @@ services:
     command: redis-server
     ports:
     - "6379:6379"
+    depends_on:
+    - notification-db-ctrl
     container_name: "notification-redis"
 
-  # notification etcd
-#  notification-etcd:
-#    image: "quay.io/coreos/etcd:v3.2.18"
-#    command: etcd --data-dir /data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://notification-etcd:2379 --max-snapshots 5 --max-wals 5 --auto-compaction-retention=168
-#    volumes:
-#    - ${DATA_PATH}/etcd:/data
-#    ports:
-#    - "12379:2379" # for unit-test & debug
-#    container_name: "notification-etcd"
-#    logging:
-#      driver: "json-file"
-#      options:
-#        max-size: ${NOTIFICATION_LOG_MAX_SIZE}
-#        max-file: ${NOTIFICATION_LOG_MAX_FILE}
-
-  # notification service
+# notification service
   notification-manager:
     #build: .
     image: "notification:latest"
-    #image: "openpitrix/notification:v0.2.2"
     command: "notification"
     links:
     - notification-db:notification-db
     depends_on:
-    - notification-notification-db-ctrl
+    - notification-db-ctrl
     - notification-redis
     container_name: "notification-manager"
     environment:
@@ -76,13 +73,4 @@ services:
     ports:
     - "9200:9200"
     - "9201:9201"
-  notification-notification-db-ctrl:
-    image: dhoer/flyway:5.1.4-mysql-8.0.11-alpine
-    command: -url=jdbc:mysql://notification-db/notification -user=root -password=${MYSQL_ROOT_PASSWORD} -validateOnMigrate=false migrate
-    volumes:
-    - ./pkg/db/schema/notification:/flyway/sql
-    links:
-    - notification-db:notification-db
-    depends_on:
-    - notification-db
-    container_name: "notification-notification-db-ctrl"
+

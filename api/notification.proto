@@ -373,7 +373,7 @@ message EmailServiceConfig {
 	google.protobuf.UInt32Value port = 3;
 	//notification display sender
 	google.protobuf.StringValue display_sender = 4;
-	//send email address
+	//In fact email is the SMTP user which used to validate access to SMTP Server with password.
 	google.protobuf.StringValue email = 5;
 	//send email address password
 	google.protobuf.StringValue password = 6;
@@ -383,6 +383,8 @@ message EmailServiceConfig {
 	google.protobuf.StringValue  validation_icon = 8;
 	// email title for validation email
 	google.protobuf.StringValue validation_title = 9;
+	//from email address
+	google.protobuf.StringValue from_email_addr = 10;
 }
 
 message ServiceConfig {
