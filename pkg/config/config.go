@@ -43,6 +43,7 @@ type Config struct {
 		Email         string `default:"openpitrix@app-center.cn"`
 		Password      string `default:"openpitrix"`
 		SSLEnable     bool   `default:"false"`
+		FromEmailAddr string `default:"openpitrix@app-center.cn"`
 	}
 
 	App struct {

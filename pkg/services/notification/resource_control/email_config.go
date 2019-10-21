@@ -35,6 +35,7 @@ func modifyEmailConfigFromCfg(cfg *config.Config) error {
 	attributes[models.EmailCfgColSSLEnable] = cfg.Email.SSLEnable
 	attributes[models.EmailCfgColEmail] = cfg.Email.Email
 	attributes[models.EmailCfgColStatusTime] = time.Now()
+	attributes[models.EmailCfgColFromEmailAddr] = cfg.Email.FromEmailAddr
 
 	tx := global.GetInstance().GetDB().Begin()
 	_, err := GetEmailConfig4Modify(nil, tx)
@@ -107,6 +108,9 @@ func getModifyAttributes(req *pb.ServiceConfig) map[string]interface{} {
 	if req.EmailServiceConfig.GetSslEnable().GetValue() != false {
 		attributes[models.EmailCfgColSSLEnable] = req.EmailServiceConfig.GetSslEnable().GetValue()
 	}
+	if req.EmailServiceConfig.GetFromEmailAddr().GetValue() != "" {
+		attributes[models.EmailCfgColFromEmailAddr] = req.EmailServiceConfig.GetFromEmailAddr().GetValue()
+	}
 	return attributes
 }
 func ModifyEmailConfig(ctx context.Context, req *pb.ServiceConfig) error {
@@ -166,7 +170,7 @@ func resetConfig4EmailCfg(emailCfg *models.EmailConfig) {
 	os.Setenv("NOTIFICATION_EMAIL_EMAIL", emailCfg.Email)
 	os.Setenv("NOTIFICATION_EMAIL_PASSWORD", emailCfg.Password)
 	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", strconv.FormatBool(emailCfg.SSLEnable))
-
+	os.Setenv("NOTIFICATION_EMAIL_FROM_EMAIL_ADDR", emailCfg.FromEmailAddr)
 	config.GetInstance().LoadConf()
 }
 func resetConfig4EmailCfgFromReq(req *pb.ServiceConfig) {
@@ -177,6 +181,7 @@ func resetConfig4EmailCfgFromReq(req *pb.ServiceConfig) {
 	os.Setenv("NOTIFICATION_EMAIL_DISPLAY_SENDER", req.EmailServiceConfig.GetDisplaySender().GetValue())
 	os.Setenv("NOTIFICATION_EMAIL_EMAIL", req.EmailServiceConfig.GetEmail().GetValue())
 	os.Setenv("NOTIFICATION_EMAIL_PASSWORD", req.EmailServiceConfig.GetPassword().GetValue())
+	os.Setenv("NOTIFICATION_EMAIL_FROM_EMAIL_ADDR", req.EmailServiceConfig.GetFromEmailAddr().GetValue())
 	s := strconv.FormatBool(req.EmailServiceConfig.GetSslEnable().GetValue())
 	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", s)
 
@@ -191,6 +196,7 @@ func resetConfig4EmailCfgFromConfig(cfg *config.Config) {
 	os.Setenv("NOTIFICATION_EMAIL_EMAIL", cfg.Email.Email)
 	os.Setenv("NOTIFICATION_EMAIL_PASSWORD", cfg.Email.Password)
 	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", strconv.FormatBool(cfg.Email.SSLEnable))
+	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", cfg.Email.FromEmailAddr)
 
 	config.GetInstance().LoadConf()
 }

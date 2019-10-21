@@ -15,11 +15,12 @@ type EmailConfig struct {
 	EmailHost     string    `gorm:"column:email_host"`
 	Port          uint32    `gorm:"column:port"`
 	DisplaySender string    `gorm:"column:display_sender"`
-	Email         string    `gorm:"column:email"`
+	Email         string    `gorm:"column:smtp_user_name"`
 	Password      string    `gorm:"column:password"`
 	SSLEnable     bool      `gorm:"column:ssl_enable"`
 	CreateTime    time.Time `gorm:"column:create_time"`
 	StatusTime    time.Time `gorm:"column:status_time"`
+	FromEmailAddr string    `gorm:"column:from_email_addr"`
 }
 
 //table name
@@ -33,11 +34,12 @@ const (
 	EmailCfgColEmailHost     = "email_host"
 	EmailCfgColPort          = "port"
 	EmailCfgColDisplaySender = "display_sender"
-	EmailCfgColEmail         = "email"
+	EmailCfgColEmail         = "smtp_user_name"
 	EmailCfgColPassword      = "password"
 	EmailCfgColSSLEnable     = "ssl_enable"
 	EmailCfgColCreateTime    = "create_time"
 	EmailCfgColStatusTime    = "status_time"
+	EmailCfgColFromEmailAddr = "from_email_addr"
 )
 
 func NewEmailConfig(req *pb.ServiceConfig) *EmailConfig {
@@ -49,6 +51,7 @@ func NewEmailConfig(req *pb.ServiceConfig) *EmailConfig {
 		Email:         req.GetEmailServiceConfig().GetEmail().GetValue(),
 		Password:      req.GetEmailServiceConfig().GetPassword().GetValue(),
 		SSLEnable:     req.GetEmailServiceConfig().GetSslEnable().GetValue(),
+		FromEmailAddr: req.GetEmailServiceConfig().GetFromEmailAddr().GetValue(),
 		CreateTime:    time.Now(),
 		StatusTime:    time.Now(),
 	}
@@ -64,5 +67,6 @@ func EmailConfigToPb(emailConfig *EmailConfig) *pb.EmailServiceConfig {
 	pbEmailConfig.Email = pbutil.ToProtoString(emailConfig.Email)
 	pbEmailConfig.Password = pbutil.ToProtoString(emailConfig.Password)
 	pbEmailConfig.SslEnable = pbutil.ToProtoBool(emailConfig.SSLEnable)
+	pbEmailConfig.FromEmailAddr = pbutil.ToProtoString(emailConfig.FromEmailAddr)
 	return &pbEmailConfig
 }

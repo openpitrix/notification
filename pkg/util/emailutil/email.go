@@ -9,6 +9,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"regexp"
 	"text/template"
 
 	gomail "gopkg.in/gomail.v2"
@@ -22,13 +23,21 @@ import (
 func SendMail(ctx context.Context, emailAddr string, header string, body string, fmtType string) error {
 	host := config.GetInstance().Email.EmailHost
 	port := config.GetInstance().Email.Port
-	email := config.GetInstance().Email.Email
+	//In fact email is the SMTP user which used to validate access to SMTP Server with password.
+	//for some SMTP server, SMTP user is an email address, for other SMPT server, smtp user is not an email address.
+	usernameOfSMTP := config.GetInstance().Email.Email
 	password := config.GetInstance().Email.Password
 	displaySender := config.GetInstance().Email.DisplaySender
 	sslEnable := config.GetInstance().Email.SSLEnable
+	fromEmailAddr := config.GetInstance().Email.FromEmailAddr
+
+	if fromEmailAddr == "" && VerifyEmailFmt(ctx, usernameOfSMTP) {
+		fromEmailAddr = usernameOfSMTP
+	}
 
 	m := gomail.NewMessage()
-	m.SetAddressHeader("From", email, displaySender)
+	m.SetAddressHeader("From", fromEmailAddr, displaySender)
+
 	m.SetHeader("To", emailAddr)
 	m.SetHeader("Subject", header)
 	contentType := "text/html"
@@ -37,8 +46,16 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string,
 	}
 	m.SetBody(contentType, body)
 
-	d := gomail.NewDialer(host, port, email, password)
+	// For some special SMTP server, no need password to send mail
+	if password == "" {
+		d2 := gomail.Dialer{Host: host, Port: port}
+		if err := d2.DialAndSend(m); err != nil {
+			logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
+			return err
+		}
+	}
 
+	d := gomail.NewDialer(host, port, usernameOfSMTP, password)
 	//note:if the smtp server supports certificate,should not skip InsecureSkipVerify
 	//if just internal smtp server and without certification, should skip InsecureSkipVerify,otherwise email can not be sent out by stmp.
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
@@ -50,18 +67,7 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string,
 		//so if the email server is without TSL setting, the mail can not be sent.
 		//Here is to add noStartTLSPlainAuth to support this scenario.
 		if !sslEnable && err.Error() == errors.New("unencrypted connection").Error() {
-			logger.Debugf(ctx, "Try to use noStartTLSPlainAuth to send mail.")
-			d.Auth = &noStartTLSPlainAuth{
-				identity: "",
-				username: d.Username,
-				password: d.Password,
-				host:     d.Host,
-			}
-			if err = d.DialAndSend(m); err != nil {
-				logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
-				return err
-			}
-			logger.Debugf(ctx, "Send out mail by noStartTLSPlainAuth successfully.")
+			err = dialAndSendByNoStartTLSPlainAuth(ctx, emailAddr, d, m)
 		} else {
 			logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
 			return err
@@ -90,25 +96,31 @@ func getDefaultMessage(iconstr string) string {
 func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.EmailServiceConfig, testEmailRecipient string) error {
 	host := emailServiceConfig.GetEmailHost().GetValue()
 	port := emailServiceConfig.GetPort().GetValue()
-	email := emailServiceConfig.GetEmail().GetValue() //smtp user
+	usernameOfSMTP := emailServiceConfig.GetEmail().GetValue() //smtp user
 	password := emailServiceConfig.GetPassword().GetValue()
 	displaySender := emailServiceConfig.GetDisplaySender().GetValue()
 	sslEnable := emailServiceConfig.GetSslEnable().GetValue()
 	icon := emailServiceConfig.GetValidationIcon().GetValue()
 	title := emailServiceConfig.GetValidationTitle().GetValue()
+	fromEmailAddr := emailServiceConfig.FromEmailAddr.GetValue()
+
+	if fromEmailAddr == "" && VerifyEmailFmt(ctx, usernameOfSMTP) {
+		fromEmailAddr = usernameOfSMTP
+	}
+
 	if testEmailRecipient == "" {
-		testEmailRecipient = email
+		testEmailRecipient = fromEmailAddr
 	}
 
 	body := getDefaultMessage(icon)
 
 	m := gomail.NewMessage()
-	m.SetAddressHeader("From", email, displaySender)
+	m.SetAddressHeader("From", fromEmailAddr, displaySender)
 	m.SetHeader("To", testEmailRecipient)
 	m.SetHeader("Subject", title)
 	m.SetBody("text/html", body)
 
-	d := gomail.NewDialer(host, int(port), email, password)
+	d := gomail.NewDialer(host, int(port), usernameOfSMTP, password)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
 	if err := d.DialAndSend(m); err != nil {
 		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", testEmailRecipient, err)
@@ -117,18 +129,7 @@ func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.E
 		//so if the email server is without TSL setting, the mail can not be sent.
 		//Here is to add noStartTLSPlainAuth to support this scenario.
 		if !sslEnable && err.Error() == errors.New("unencrypted connection").Error() {
-			logger.Debugf(ctx, "Try to use noStartTLSPlainAuth to send mail.")
-			d.Auth = &noStartTLSPlainAuth{
-				identity: "",
-				username: d.Username,
-				password: d.Password,
-				host:     d.Host,
-			}
-			if err = d.DialAndSend(m); err != nil {
-				logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", testEmailRecipient, err)
-				return err
-			}
-			logger.Debugf(ctx, "Send out mail by noStartTLSPlainAuth successfully.")
+			err = dialAndSendByNoStartTLSPlainAuth(ctx, testEmailRecipient, d, m)
 		} else {
 			logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", testEmailRecipient, err)
 			return err
@@ -136,4 +137,31 @@ func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.E
 	}
 
 	return nil
+}
+
+func dialAndSendByNoStartTLSPlainAuth(ctx context.Context, emailAddr string, d *gomail.Dialer, m *gomail.Message) error {
+	logger.Debugf(ctx, "Try to use noStartTLSPlainAuth to send mail.")
+	d.Auth = &noStartTLSPlainAuth{
+		identity: "",
+		username: d.Username,
+		password: d.Password,
+		host:     d.Host,
+	}
+	if err := d.DialAndSend(m); err != nil {
+		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
+		return err
+	}
+	logger.Debugf(ctx, "Send out mail by noStartTLSPlainAuth successfully.")
+	return nil
+}
+
+func VerifyEmailFmt(ctx context.Context, emailStr string) bool {
+	pattern := `\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*`
+	reg := regexp.MustCompile(pattern)
+	result := reg.MatchString(emailStr)
+	if result {
+		return true
+	} else {
+		return false
+	}
 }
