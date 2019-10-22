@@ -17,12 +17,12 @@ func (s *Server) Checker(ctx context.Context, req interface{}) error {
 	switch r := req.(type) {
 	case *pb.ServiceConfig:
 		return manager.NewChecker(ctx, r).
-			Required(models.ServiceCfgProtocol, models.ServiceCfgEmailHost, models.ServiceCfgPort, models.ServiceCfgDisplayEmail, models.ServiceCfgEmail, models.ServiceCfgPassword).
+			Required(models.ServiceCfgProtocol, models.ServiceCfgEmailHost, models.ServiceCfgPort, models.ServiceCfgDisplayEmail).
 			StringChosen(models.ServiceCfgProtocol, models.ProtocolTypes).
 			Exec()
 	case *pb.ValidateEmailServiceV2Request:
 		return manager.NewChecker(ctx, r).
-			Required(models.ServiceCfgProtocol, models.ServiceCfgEmailHost, models.ServiceCfgPort, models.ServiceCfgDisplayEmail, models.ServiceCfgEmail).
+			Required(models.ServiceCfgProtocol, models.ServiceCfgEmailHost, models.ServiceCfgPort, models.ServiceCfgDisplayEmail).
 			StringChosen(models.ServiceCfgProtocol, models.ProtocolTypes).
 			Exec()
 	case *pb.GetServiceConfigRequest:
