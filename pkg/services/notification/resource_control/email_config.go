@@ -190,7 +190,7 @@ func resetConfig4EmailCfgFromConfig(cfg *config.Config) {
 	os.Setenv("NOTIFICATION_EMAIL_EMAIL", cfg.Email.Email)
 	os.Setenv("NOTIFICATION_EMAIL_PASSWORD", cfg.Email.Password)
 	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", strconv.FormatBool(cfg.Email.SSLEnable))
-	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", cfg.Email.FromEmailAddr)
+	os.Setenv("NOTIFICATION_EMAIL_FROM_EMAIL_ADDR", cfg.Email.FromEmailAddr)
 
 	config.GetInstance().LoadConf()
 }
