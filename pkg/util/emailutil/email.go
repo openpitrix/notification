@@ -46,15 +46,6 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string,
 	}
 	m.SetBody(contentType, body)
 
-	// For some special SMTP server, no need password to send mail
-	if password == "" {
-		d2 := gomail.Dialer{Host: host, Port: port}
-		if err := d2.DialAndSend(m); err != nil {
-			logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
-			return err
-		}
-	}
-
 	d := gomail.NewDialer(host, port, usernameOfSMTP, password)
 	//note:if the smtp server supports certificate,should not skip InsecureSkipVerify
 	//if just internal smtp server and without certification, should skip InsecureSkipVerify,otherwise email can not be sent out by stmp.

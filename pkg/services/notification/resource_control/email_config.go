@@ -97,20 +97,14 @@ func getModifyAttributes(req *pb.ServiceConfig) map[string]interface{} {
 		attributes[models.EmailCfgColDisplaySender] = req.EmailServiceConfig.GetDisplaySender().GetValue()
 	}
 
-	if req.EmailServiceConfig.GetEmail().GetValue() != "" {
-		attributes[models.EmailCfgColEmail] = req.EmailServiceConfig.GetEmail().GetValue()
-	}
+	attributes[models.EmailCfgColEmail] = req.EmailServiceConfig.GetEmail().GetValue()
 
-	if req.EmailServiceConfig.GetPassword().GetValue() != "" {
-		attributes[models.EmailCfgColPassword] = req.EmailServiceConfig.GetPassword().GetValue()
-	}
+	attributes[models.EmailCfgColPassword] = req.EmailServiceConfig.GetPassword().GetValue()
 
 	if req.EmailServiceConfig.GetSslEnable().GetValue() != false {
 		attributes[models.EmailCfgColSSLEnable] = req.EmailServiceConfig.GetSslEnable().GetValue()
 	}
-	if req.EmailServiceConfig.GetFromEmailAddr().GetValue() != "" {
-		attributes[models.EmailCfgColFromEmailAddr] = req.EmailServiceConfig.GetFromEmailAddr().GetValue()
-	}
+	attributes[models.EmailCfgColFromEmailAddr] = req.EmailServiceConfig.GetFromEmailAddr().GetValue()
 	return attributes
 }
 func ModifyEmailConfig(ctx context.Context, req *pb.ServiceConfig) error {
@@ -196,7 +190,7 @@ func resetConfig4EmailCfgFromConfig(cfg *config.Config) {
 	os.Setenv("NOTIFICATION_EMAIL_EMAIL", cfg.Email.Email)
 	os.Setenv("NOTIFICATION_EMAIL_PASSWORD", cfg.Email.Password)
 	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", strconv.FormatBool(cfg.Email.SSLEnable))
-	os.Setenv("NOTIFICATION_EMAIL_SSL_ENABLE", cfg.Email.FromEmailAddr)
+	os.Setenv("NOTIFICATION_EMAIL_FROM_EMAIL_ADDR", cfg.Email.FromEmailAddr)
 
 	config.GetInstance().LoadConf()
 }
