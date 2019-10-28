@@ -112,7 +112,8 @@ func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.E
 	m.SetBody("text/html", body)
 
 	d := gomail.NewDialer(host, int(port), usernameOfSMTP, password)
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
+	//d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	if err := d.DialAndSend(m); err != nil {
 		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", testEmailRecipient, err)
 
