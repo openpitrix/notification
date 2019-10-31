@@ -53,8 +53,9 @@ type Config struct {
 		ApiHost string `default:"notification-manager"`
 		ApiPort int    `default:"9200"`
 
-		MaxWorkingNotifications int `default:"5"`
-		MaxWorkingTasks         int `default:"5"`
+		MaxWorkingNotifications int `default:"15"`
+		MaxWorkingTasks         int `default:"15"`
+		MaxTaskRetryTimes       int `default:"1"`
 	}
 
 	Websocket struct {

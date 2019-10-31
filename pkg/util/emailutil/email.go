@@ -28,7 +28,7 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string,
 	usernameOfSMTP := config.GetInstance().Email.Email
 	password := config.GetInstance().Email.Password
 	displaySender := config.GetInstance().Email.DisplaySender
-	sslEnable := config.GetInstance().Email.SSLEnable
+	//sslEnable := config.GetInstance().Email.SSLEnable
 	fromEmailAddr := config.GetInstance().Email.FromEmailAddr
 
 	if fromEmailAddr == "" && VerifyEmailFmt(ctx, usernameOfSMTP) {
@@ -47,9 +47,7 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string,
 	m.SetBody(contentType, body)
 
 	d := gomail.NewDialer(host, port, usernameOfSMTP, password)
-	//note:if the smtp server supports certificate,should not skip InsecureSkipVerify
-	//if just internal smtp server and without certification, should skip InsecureSkipVerify,otherwise email can not be sent out by stmp.
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	if err := d.DialAndSend(m); err != nil {
 		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
@@ -57,7 +55,7 @@ func SendMail(ctx context.Context, emailAddr string, header string, body string,
 		//Attention!!! As Gomail does not support using plainauth without STARTTLS,
 		//so if the email server is without TSL setting, the mail can not be sent.
 		//Here is to add noStartTLSPlainAuth to support this scenario.
-		if !sslEnable && err.Error() == errors.New("unencrypted connection").Error() {
+		if err.Error() == errors.New("unencrypted connection").Error() {
 			err = dialAndSendByNoStartTLSPlainAuth(ctx, emailAddr, d, m)
 		} else {
 			logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", emailAddr, err)
@@ -90,7 +88,7 @@ func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.E
 	usernameOfSMTP := emailServiceConfig.GetEmail().GetValue() //smtp user
 	password := emailServiceConfig.GetPassword().GetValue()
 	displaySender := emailServiceConfig.GetDisplaySender().GetValue()
-	sslEnable := emailServiceConfig.GetSslEnable().GetValue()
+	//sslEnable := emailServiceConfig.GetSslEnable().GetValue()
 	icon := emailServiceConfig.GetValidationIcon().GetValue()
 	title := emailServiceConfig.GetValidationTitle().GetValue()
 	fromEmailAddr := emailServiceConfig.FromEmailAddr.GetValue()
@@ -112,14 +110,14 @@ func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.E
 	m.SetBody("text/html", body)
 
 	d := gomail.NewDialer(host, int(port), usernameOfSMTP, password)
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: !sslEnable}
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	if err := d.DialAndSend(m); err != nil {
 		logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", testEmailRecipient, err)
 
 		//Attention!!! As Gomail does not support using plainauth without STARTTLS,
 		//so if the email server is without TSL setting, the mail can not be sent.
 		//Here is to add noStartTLSPlainAuth to support this scenario.
-		if !sslEnable && err.Error() == errors.New("unencrypted connection").Error() {
+		if err.Error() == errors.New("unencrypted connection").Error() {
 			err = dialAndSendByNoStartTLSPlainAuth(ctx, testEmailRecipient, d, m)
 		} else {
 			logger.Errorf(ctx, "Send email to [%s] failed, [%+v]", testEmailRecipient, err)

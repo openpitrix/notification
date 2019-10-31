@@ -67,6 +67,7 @@ func TestLoadConf(t *testing.T) {
 	logger.Debugf(nil, "NOTIFICATION_APP_API_PORT : %+v", mycfg.App.ApiPort)
 	logger.Debugf(nil, "NOTIFICATION_APP_MAX_WORKING_NOTIFICATIONS : %+v", mycfg.App.MaxWorkingNotifications)
 	logger.Debugf(nil, "NOTIFICATION_APP_MAX_WORKING_TASKS : %+v", mycfg.App.MaxWorkingTasks)
+	logger.Debugf(nil, "NOTIFICATION_APP_MAX_TASK_RETRY_TIMES : %+v", mycfg.App.MaxTaskRetryTimes)
 	logger.Debugf(nil, "")
 
 	logger.Debugf(nil, "Websocket=========================================")

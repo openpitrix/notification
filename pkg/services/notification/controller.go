@@ -34,10 +34,9 @@ type Controller struct {
 
 func NewController() (*Controller, error) {
 	iClient := global.GetInstance().GetQueueClient()
-
 	queueType := config.GetInstance().Queue.Type
-	var iqueue i.IQueue
 	var ipubsub i.IPubSub
+
 	var notificationQueue i.IQueue
 	var taskQueue i.IQueue
 	var err error
@@ -45,12 +44,17 @@ func NewController() (*Controller, error) {
 	var wsMsgStrChanMap map[string]chan string
 	wsMsgStrChanMap = make(map[string]chan string, 255)
 
-	iqueue, err = queue.NewIQueue(queueType, iClient)
+	notificationQueue, err = queue.NewIQueue(queueType, iClient)
 	if err != nil {
 		return nil, err
 	}
-	notificationQueue = iqueue.SetTopic(constants.NotificationTopicPrefix)
-	taskQueue = iqueue.SetTopic(constants.NotificationTaskTopicPrefix)
+	notificationQueue = notificationQueue.SetTopic(constants.NotificationTopicPrefix)
+
+	taskQueue, err = queue.NewIQueue(queueType, iClient)
+	if err != nil {
+		return nil, err
+	}
+	taskQueue = taskQueue.SetTopic(constants.NotificationTaskTopicPrefix)
 
 	if config.GetInstance().Websocket.Service != "none" {
 		ipubsub, err = queue.NewIPubSub(queueType, iClient)
@@ -83,17 +87,19 @@ func (c *Controller) Serve() {
 	go c.ExtractTasks()
 	go c.ExtractNotifications()
 
-	for i := 0; i < constants.MaxWorkingTasks; i++ {
+	maxWorkingTasks := config.GetInstance().App.MaxWorkingTasks
+	for i := 0; i < maxWorkingTasks; i++ {
 		go c.HandleTask(strconv.Itoa(i))
 	}
-	for i := 0; i < constants.MaxWorkingNotifications; i++ {
+
+	maxWorkingNotifications := config.GetInstance().App.MaxWorkingNotifications
+	for i := 0; i < maxWorkingNotifications; i++ {
 		go c.HandleNotification(strconv.Itoa(i))
 	}
 }
 
 func (c *Controller) ExtractTasks() error {
 	for {
-
 		taskId, err := c.taskQueue.Dequeue()
 		if err != nil {
 			logger.Errorf(nil, "Failed to dequeue task from queue: %+v", err)
@@ -127,6 +133,7 @@ func (c *Controller) HandleNotification(handlerNum string) {
 		logger.Debugf(ctx, time.Now().Format("2006-01-02 15:04:05")+" handlerNum:"+handlerNum+"  Receive:"+notificationId)
 
 		//step0: update NF status from pending to sending.
+		//update NF from channel status =sending
 		err := rs.UpdateNotificationsStatus(ctx, []string{notificationId}, constants.StatusSending)
 		if err != nil {
 			logger.Errorf(ctx, "Update notification status to [sending] failed, [%+v]", err)
@@ -134,15 +141,18 @@ func (c *Controller) HandleNotification(handlerNum string) {
 		}
 
 		//when sending,one task has 3 times to retry.
-		isNotificationFinished := false
+		//set the NF taken from channel isNfFinished=false
+		isNfFinished := false
 
 		//taskRetryTimes stores the taskid to retry and the times has retried.【taskId,retryTimes】
 		taskRetryTimes := make(map[string]int)
 		for {
-			if isNotificationFinished {
+			//if NF is finished, break out from the for, and continue next NF
+			if isNfFinished {
 				break
 			}
-			noSuccessfulTasks := rs.GetTasksByStatus(ctx,
+			//if NF is not finished, get its all tasks with unsuccessful status.
+			unsuccessfulTasks := rs.GetTasksByStatus(ctx,
 				notificationId,
 				[]string{
 					constants.StatusFailed,
@@ -153,43 +163,47 @@ func (c *Controller) HandleNotification(handlerNum string) {
 
 			//step1:check all the taskid for this one notifitication exits not successful status,
 			// if not exits, update this one nf status to successful.
-			if len(noSuccessfulTasks) == 0 {
+			//check the unsuccessful tasks, if not tasks, show the NF is succesful, update NF in DB status=successful, and set the NF isNfFinished = true.
+			if len(unsuccessfulTasks) == 0 {
 				err := rs.UpdateNotificationsStatus(ctx, []string{notificationId}, constants.StatusSuccessful)
 				if err != nil {
 					logger.Errorf(ctx, "Update notification status to [successful] failed, [%+v]", err)
 					continue
 				}
-				isNotificationFinished = true
+				isNfFinished = true
 			} else {
-				//step2: go through all the tasks with not_successful status, if status is failded, retry this task.
-				for _, noSuccessfulTask := range noSuccessfulTasks {
-					if noSuccessfulTask.Status != constants.StatusFailed {
+				//step2: go through all the tasks with unsuccessful status, if status is failded, retry this task.
+				for _, unsuccessfulTask := range unsuccessfulTasks {
+					if unsuccessfulTask.Status != constants.StatusFailed {
 						continue
 					}
 
-					retryTimes, isExist := taskRetryTimes[noSuccessfulTask.TaskId]
+					retryTimes, isExist := taskRetryTimes[unsuccessfulTask.TaskId]
 					if !isExist {
 						retryTimes = 0
 					}
-					taskRetryTimes[noSuccessfulTask.TaskId] = retryTimes + 1
+					taskRetryTimes[unsuccessfulTask.TaskId] = retryTimes + 1
 
 					//2.1 if the retryTimes for this one task is more than the setting times,
 					// update this one notification status to faild.
-					if taskRetryTimes[noSuccessfulTask.TaskId] > constants.MaxTaskRetryTimes {
+					//if the retry times of this task is greater than the setting times, just update the NF status in DB as failed, and set NF isNfFinished=true.
+					if taskRetryTimes[unsuccessfulTask.TaskId] > config.GetInstance().App.MaxTaskRetryTimes {
 						err := rs.UpdateNotificationsStatus(ctx, []string{notificationId}, constants.StatusFailed)
+
 						if err != nil {
 							logger.Errorf(ctx, "Update notification status to [failed] failed, [%+v]", err)
 							continue
 						}
 
 						//2.1.1 end retry.
-						isNotificationFinished = true
+						isNfFinished = true
 					}
 
 					//2.2 retry the task, put this one task back to task queue.
-					err := c.taskQueue.Enqueue(noSuccessfulTask.TaskId)
+					//if the retry times of this task  is smaller than the setting times, put the task id back to task queue.
+					err := c.taskQueue.Enqueue(unsuccessfulTask.TaskId)
 					if err != nil {
-						logger.Errorf(nil, "Failed to push task [%s] into queue, error: [%+v]", noSuccessfulTask.TaskId, err)
+						logger.Errorf(nil, "Failed to push task [%s] into queue, error: [%+v]", unsuccessfulTask.TaskId, err)
 						continue
 					}
 				}
@@ -245,7 +259,7 @@ func (c *Controller) HandleTask(handlerNum string) {
 				continue
 			}
 		} else {
-			//if send failed, just update task status to successful in db.
+			//if send successful , just update task status to successful in db.
 			err := rs.UpdateTasksStatus(ctx, taskIds, constants.StatusSuccessful)
 			if err != nil {
 				logger.Errorf(ctx, "Update task status to [successful] failed, [%+v]", err)
