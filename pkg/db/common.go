@@ -168,7 +168,9 @@ func (c *Chain) AddQueryOrderDir(req Request, defaultColumn string) *Chain {
 }
 
 func (c *Chain) getSearchFilter(withPrefix bool, tableName string, value interface{}, andOr string, exclude ...string) {
-	var conditions []string
+	var queries []string
+	args := []interface{}{}
+
 	if vs, ok := value.([]string); ok {
 		for _, v := range vs {
 			for _, column := range models.SearchColumns[tableName] {
@@ -180,24 +182,28 @@ func (c *Chain) getSearchFilter(withPrefix bool, tableName string, value interfa
 					if withPrefix {
 						column = tableName + "." + column
 					}
-					conditions = append(conditions, column+" = '"+v+"'")
+					queries = append(queries, column+" = ? ")
+					arg := []string{v}
+					args = append(args, arg)
 				} else {
 					likeV := "%" + stringutil.SimplifyString(v) + "%"
 					if withPrefix {
 						column = tableName + "." + column
 					}
-					conditions = append(conditions, column+" LIKE '"+likeV+"'")
+					queries = append(queries, column+" LIKE ? ")
+					arg := []string{likeV}
+					args = append(args, arg)
 				}
 			}
 		}
 	} else if value != nil {
 		logger.Warnf(nil, "search_word [%+v] is not string", value)
 	}
-	condition := strings.Join(conditions, " OR ")
-	if andOr == "or" {
-		c.DB = c.DB.Or(condition)
-	} else {
-		c.DB = c.DB.Where(condition)
-	}
 
+	query := strings.Join(queries, " OR ")
+	if andOr == "or" {
+		c.DB = c.Or(query, args...)
+	} else {
+		c.DB = c.Where(query, args...)
+	}
 }
