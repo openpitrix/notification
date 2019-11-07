@@ -84,7 +84,7 @@ func (s *Server) ValidateEmailService(ctx context.Context, req *pb.ServiceConfig
 		return nil, err
 	}
 
-	err = emailutil.SendMail4ValidateEmailService(nil, req.GetEmailServiceConfig(), "")
+	err = emailutil.SendMail4ValidateEmailService(nil, req.GetEmailServiceConfig(), "", "zh")
 	if err != nil {
 		logger.Errorf(nil, "send email failed, [%+v]", err)
 		return &pb.ValidateEmailServiceResponse{
@@ -102,7 +102,12 @@ func (s *Server) ValidateEmailServiceV2(ctx context.Context, req *pb.ValidateEma
 		return nil, err
 	}
 
-	err = emailutil.SendMail4ValidateEmailService(nil, req.GetEmailServiceConfig(), req.GetTestEmailRecipient().GetValue())
+	language := req.GetLanguage().GetValue()
+	if language == "" {
+		language = "zh"
+	}
+
+	err = emailutil.SendMail4ValidateEmailService(nil, req.GetEmailServiceConfig(), req.GetTestEmailRecipient().GetValue(), language)
 	if err != nil {
 		logger.Errorf(nil, "send email failed, [%+v]", err)
 		return &pb.ValidateEmailServiceResponse{
