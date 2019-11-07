@@ -1511,6 +1511,9 @@ var Files = map[string]string{
         "email_service_config": {
           "$ref": "#/definitions/pbEmailServiceConfig",
           "title": "email config"
+        },
+        "language": {
+          "type": "string"
         }
       }
     },

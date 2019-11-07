@@ -70,8 +70,12 @@ type EmailIcon struct {
 	Icon string
 }
 
-func getDefaultMessage(iconstr string) string {
-	t, _ := template.New("validationEmail").Parse(constants.ValidationEmailNotifyTemplate)
+func getDefaultMessage(iconstr string, language string) string {
+	notifytemplate := constants.ValidationEmailNotifyTemplate
+	if language == "en" {
+		notifytemplate = constants.ValidationEmailNotifyTemplateEn
+	}
+	t, _ := template.New("validationEmail").Parse(notifytemplate)
 
 	b := bytes.NewBuffer([]byte{})
 	emailIcon := &EmailIcon{
@@ -82,13 +86,12 @@ func getDefaultMessage(iconstr string) string {
 	return b.String()
 }
 
-func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.EmailServiceConfig, testEmailRecipient string) error {
+func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.EmailServiceConfig, testEmailRecipient string, language string) error {
 	host := emailServiceConfig.GetEmailHost().GetValue()
 	port := emailServiceConfig.GetPort().GetValue()
 	usernameOfSMTP := emailServiceConfig.GetEmail().GetValue() //smtp user
 	password := emailServiceConfig.GetPassword().GetValue()
 	displaySender := emailServiceConfig.GetDisplaySender().GetValue()
-	//sslEnable := emailServiceConfig.GetSslEnable().GetValue()
 	icon := emailServiceConfig.GetValidationIcon().GetValue()
 	title := emailServiceConfig.GetValidationTitle().GetValue()
 	fromEmailAddr := emailServiceConfig.FromEmailAddr.GetValue()
@@ -101,7 +104,7 @@ func SendMail4ValidateEmailService(ctx context.Context, emailServiceConfig *pb.E
 		testEmailRecipient = fromEmailAddr
 	}
 
-	body := getDefaultMessage(icon)
+	body := getDefaultMessage(icon, language)
 
 	m := gomail.NewMessage()
 	m.SetAddressHeader("From", fromEmailAddr, displaySender)

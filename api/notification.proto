@@ -437,6 +437,8 @@ message ValidateEmailServiceV2Request {
 	google.protobuf.StringValue test_email_recipient = 1;
 	//email config
 	EmailServiceConfig email_service_config = 2;
+
+	google.protobuf.StringValue language  =3;
 }
 
 
