@@ -81,5 +81,5 @@ Notification API 文档请参考 SwaggerUI 上详细的描述。
 若需要卸载 Notification 清理环境，在项目文件目录下，执行以下命令，停止并删除 Notification 所有服务，请谨慎操作。
 
 ```bash
-$ docker compose-down 
+$ docker-compose down 
 ```
