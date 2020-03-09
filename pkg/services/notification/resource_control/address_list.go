@@ -130,6 +130,7 @@ func ModifyAddressListWithAddrIDs(ctx context.Context, addressListId string, att
 	tx := global.GetInstance().GetDB().Begin()
 	addressListIds := []string{addressListId}
 	addrLists, err := GetAddressListsByIds(ctx, tx, addressListIds)
+	addrIds = stringutil.Unique(addrIds)
 	if len(addrLists) == 0 {
 		tx.Rollback()
 		err := gerr.New(ctx, gerr.NotFound, gerr.ErrorResourceNotExist, strings.Trim(fmt.Sprint(addressListIds), "[]"))
