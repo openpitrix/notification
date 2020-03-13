@@ -33,7 +33,7 @@ All-in-One 模式部署由 [Docker-Compose](https://github.com/docker/compose) �
 ```bash
 $ git clone https://github.com/openpitrix/notification.git
 ```
- 
+
 ## 第三步: 部署 Notification
 
 进入 解压后的 Notification 目录，编译项目。该过程需要拉取多个 Notification 相关的 docker 镜像，拉取镜像和安装速度与网络也有关系，需要等待几分钟。
@@ -52,13 +52,13 @@ $ make compose-up
 
 ```bash
 $ docker-compose ps
-              Name                             Command               State                        Ports                     
+              Name                             Command               State                        Ports
 ----------------------------------------------------------------------------------------------------------------------------
-notification-db                     docker-entrypoint.sh --low ...   Up       0.0.0.0:13306->3306/tcp                       
-notification-etcd                   etcd --data-dir /data --li ...   Up       0.0.0.0:12379->2379/tcp, 2380/tcp             
+notification-db                     docker-entrypoint.sh --low ...   Up       0.0.0.0:13306->3306/tcp
+notification-etcd                   etcd --data-dir /data --li ...   Up       0.0.0.0:12379->2379/tcp, 2380/tcp
 notification-manager                notification                     Up       0.0.0.0:9200->9200/tcp, 0.0.0.0:9201->9201/tcp
-notification-notification-db-ctrl   flyway -url=jdbc:mysql://n ...   Exit 1                                                 
-notification-redis                  docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp  
+notification-notification-db-ctrl   flyway -url=jdbc:mysql://n ...   Exit 1
+notification-redis                  docker-entrypoint.sh redis ...   Up       0.0.0.0:6379->6379/tcp
 ```
 
 2. 您可以通过浏览器，使用运行该服务的服务器的 IP 地址和 SwaggerUI 端口号即 `<NodeIP>:9200` 可以内部网络访问 SwaggerUI 页面，如 `http://192.168.0.4:9200/swagger-ui/`。
@@ -67,13 +67,13 @@ notification-redis                  docker-entrypoint.sh redis ...   Up       0.
 
 > 提示：例如在 QingCloud 平台配置端口转发和防火墙规则，则可以参考 [云平台配置端口转发和防火墙](https://openpitrix.io/docs/v0.4/zh-CN/appendix/qingcloud-manipulation)。
 
-![swaggerUI](../images/swaggerUI.png) 
+![swaggerUI](../images/swaggerUI.png)
 
 3. 查看 API Gateway 服务
 
 Notification 部署成功后，可以在 SwaggerUI 界面下体验一下各个 API 的使用，了解各个 API 的参数设置和具体使用。
 
-Notification API 文档请参考 SwaggerUI 上详细的描述。 
+Notification API 文档请参考 SwaggerUI 上详细的描述。
 
 
 ## 清理环境
@@ -81,5 +81,5 @@ Notification API 文档请参考 SwaggerUI 上详细的描述。
 若需要卸载 Notification 清理环境，在项目文件目录下，执行以下命令，停止并删除 Notification 所有服务，请谨慎操作。
 
 ```bash
-$ docker-compose down 
+$ make clean
 ```

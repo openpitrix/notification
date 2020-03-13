@@ -114,5 +114,6 @@ unit-test: ## Run unit tests
 	$(DB_TEST) $(ETCD_TEST) go test -a -tags="etcd db" ./...
 	@echo "unit-test done"
 
-
-
+.PHONY: clean
+clean: ## Run docker-compose down
+	docker-compose down
